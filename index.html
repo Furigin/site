@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8" />
+    <title>@furigin | card</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"/>
+
+    <style>
+        /* ====== Шрифт Minecraft ====== */
+        @font-face {
+            font-family: 'Minecraft';
+            src: url('CCRFBZSR.ttf') format('truetype');
+        }
+
+        :root {
+            --text-main: #ffffff;
+            --text-soft: rgba(255,255,255,0.65);
+            --card-bg: rgba(5, 8, 16, 0.72);
+            --card-blur: 20px;
+        }
+
+        /* ====== Базовые стили ====== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            cursor: none !important; /* всегда наш курсор */
+        }
+
+        body {
+            min-height: 100vh;
+            background: url("bg.jpg") center/cover fixed no-repeat;
+            font-family: 'Minecraft', Arial, sans-serif;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow-x: hidden;
+        }
+
+        /* снег */
+        #particleCanvas {
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        /* тёмный холодный оверлей */
+        .bg-overlay {
+            position: fixed;
+            inset: 0;
+            background:
+                radial-gradient(circle at top, rgba(59,130,246,0.35), transparent 60%),
+                radial-gradient(circle at bottom, rgba(56,189,248,0.25), transparent 55%),
+                rgba(3,7,18,0.80);
+            backdrop-filter: blur(8px);
+            z-index: -2;
+        }
+
+        .page {
+            width: 100%;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 22px;
+        }
+
+        /* ====== Визитка ====== */
+        .card {
+            width: min(44rem, 100%);
+            background: var(--card-bg);
+            border-radius: 26px;
+            padding: 26px 24px 22px;
+            border: 1px solid rgba(148, 163, 253, 0.35);
+            backdrop-filter: blur(var(--card-blur));
+            box-shadow: 0 30px 80px rgba(0,0,0,0.9);
+        }
+
+        .top {
+            display: flex;
+            gap: 18px;
+            align-items: flex-start;
+        }
+
+        .avatar {
+            width: 118px;
+            height: 118px;
+            border-radius: 50%;
+            overflow: hidden;
+        }
+        .avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* ====== НИК (градиент) ====== */
+        .username {
+            margin-bottom: 8px;
+        }
+
+        .name-text {
+            font-size: 34px;
+            font-weight: 400;
+
+            background: linear-gradient(90deg,
+                #1d4ed8,
+                #3b82f6,
+                #60a5fa,
+                #93c5fd,
+                #ffffff,
+                #93c5fd,
+                #60a5fa,
+                #3b82f6,
+                #1d4ed8
+            );
+            background-size: 300%;
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+
+            animation: nameGradient 6s ease-in-out infinite;
+
+            text-shadow:
+                0 0 12px rgba(147,197,253,0.8),
+                0 0 22px rgba(147,197,253,0.9),
+                0 0 32px rgba(255,255,255,0.7);
+        }
+
+        @keyframes nameGradient {
+            0%   { background-position: 0% 50%; }
+            50%  { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .tagline {
+            color: var(--text-soft);
+            margin-top: 4px;
+            font-size: 14px;
+        }
+
+        .location {
+            margin-top: 4px;
+            color: var(--text-soft);
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* Discord inline */
+        .discord-inline {
+            margin-top: 12px;
+            background: rgba(15,23,42,0.8);
+            padding: 8px 12px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border: 1px solid rgba(148,163,253,0.3);
+            box-shadow: 0 0 14px rgba(37,99,235,0.4);
+            width: max-content;
+        }
+        .discord-inline-avatar {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+        }
+        .discord-inline-badge {
+            background:#3b82f6;
+            padding:2px 6px;
+            border-radius:6px;
+            color:white;
+            font-size:11px;
+        }
+
+        /* ====== Иконки соцсетей ====== */
+        .socials {
+            margin-top: 22px;
+            display: flex;
+            justify-content: center;
+            gap: 28px;
+        }
+
+        .socials a {
+            font-size: 30px;
+            text-decoration: none;
+            color: white;
+            opacity: .9;
+            transition: .2s;
+            filter: drop-shadow(0 0 8px #bde0fe);
+        }
+        .socials a:hover {
+            opacity: 1;
+            transform: scale(1.15) translateY(-2px);
+        }
+
+        /* ====== Плеер ====== */
+        .player-shell {
+            width: min(44rem, 100%);
+            background: var(--card-bg);
+            border-radius: 22px;
+            padding: 16px 18px;
+            border: 1px solid rgba(148,163,253,0.35);
+            backdrop-filter: blur(var(--card-blur));
+            box-shadow: 0 24px 70px rgba(0,0,0,0.9);
+        }
+
+        /* верхняя строка плеера */
+        .player-row {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .player-cover {
+            width: 54px;
+            height: 54px;
+            border-radius: 12px;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+        .player-cover img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .player-main {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .player-title {
+            font-size: 14px;
+            margin-bottom: 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .player-time {
+            display: flex;
+            gap: 12px;
+            font-size: 12px;
+            color: var(--text-soft);
+            margin-bottom: 4px;
+        }
+
+        .player-controls {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            margin-left: 6px;
+        }
+
+        .player-button {
+            width: 44px;
+            height: 44px;
+            background: white;
+            border-radius: 50%;
+            border: none;
+            font-size: 18px;
+            color: #0f172a;
+            box-shadow: 0 0 14px rgba(15,23,42,0.9);
+        }
+
+        .volume {
+            font-size: 22px;
+            color: var(--text-soft);
+        }
+
+        /* прогресс на всю ширину карточки */
+        .progress {
+            width: 100%;
+            height: 4px;
+            background: rgba(148,163,253,0.3);
+            border-radius: 12px;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+        .progress-fill {
+            width: 0%;
+            height: 100%;
+            background: linear-gradient(90deg,#dbeafe,#ffffff);
+        }
+
+        .views {
+            margin-top: 6px;
+            text-align: center;
+            font-size: 12px;
+            color: var(--text-soft);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        /* ====== Кастомный курсор ====== */
+        .cursor-dot,
+        .cursor-ring,
+        .cursor-trail {
+            pointer-events: none !important;
+        }
+
+        .cursor-dot {
+            position: fixed;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: white;
+            z-index: 9999;
+            transform: translate(-50%, -50%);
+        }
+
+        .cursor-ring {
+            position: fixed;
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            border: 2px solid #dbeafe;
+            box-shadow: 0 0 12px #93c5fd;
+            z-index: 9998;
+            transform: translate(-50%, -50%);
+        }
+
+        .cursor-trail {
+            position: fixed;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: white;
+            opacity: 1;
+            z-index: 9000;
+            transform: translate(-50%, -50%);
+            transition: opacity .35s, transform .35s;
+            filter: blur(1px);
+        }
+
+        @media (max-width: 640px) {
+            .card,
+            .player-shell {
+                border-radius: 20px;
+                padding: 20px 14px;
+            }
+            .name-text { font-size: 26px; }
+            .socials a { font-size: 24px; }
+        }
+    </style>
+</head>
+<body>
+
+<canvas id="particleCanvas"></canvas>
+<div class="bg-overlay"></div>
+
+<div class="cursor-dot"></div>
+<div class="cursor-ring"></div>
+
+<div class="page">
+
+    <!-- ===== Визитка ===== -->
+    <div class="card">
+        <div class="top">
+            <div class="avatar">
+                <img src="avatar.jpg" alt="avatar">
+            </div>
+
+            <div class="info-main">
+                <div class="username">
+                    <span class="name-text">furigin</span>
+                </div>
+
+                <div class="tagline">Пока не придумал</div>
+
+                <div class="location">
+                    <i class="fa-solid fa-location-dot"></i>
+                    <span>Russia</span>
+                </div>
+
+                <div class="discord-inline">
+                    <img src="discord-avatar.jpg" class="discord-inline-avatar" alt="discord">
+                    <span>megocat0_0</span>
+                    <span class="discord-inline-badge">discord</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Соцсети -->
+        <div class="socials">
+            <a href="https://t.me/MegoCat" target="_blank" title="Telegram">
+                <i class="fa-brands fa-telegram"></i>
+            </a>
+            <a href="https://tiktok.com/@furigin_" target="_blank" title="TikTok">
+                <i class="fa-brands fa-tiktok"></i>
+            </a>
+            <a href="https://github.com/Furigin" target="_blank" title="GitHub">
+                <i class="fa-brands fa-github"></i>
+            </a>
+            <a href="https://steamcommunity.com/id/furigin/" target="_blank" title="Steam">
+                <i class="fa-brands fa-steam"></i>
+            </a>
+            <a href="https://ru.namemc.com/profile/furigin.1" target="_blank" title="NameMC">
+                N
+            </a>
+        </div>
+    </div>
+
+    <!-- ===== Плеер ===== -->
+    <div class="player-shell">
+        <!-- верхняя строка: обложка, текст, кнопки -->
+        <div class="player-row">
+            <div class="player-cover">
+                <img src="cover.jpg" alt="cover">
+            </div>
+
+            <div class="player-main">
+                <div class="player-title">
+                    sxpl — christmas
+                </div>
+                <div class="player-time">
+                    <span id="currentTime">0:00</span>
+                    <span id="totalTime">0:00</span>
+                </div>
+            </div>
+
+            <div class="player-controls">
+                <button id="playPause" class="player-button">
+                    <i class="fa-solid fa-play"></i>
+                </button>
+                <div id="volumeBtn" class="volume">
+                    <i class="fa-solid fa-volume-high"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- прогресс на всю ширину -->
+        <div class="progress">
+            <div id="progressFill" class="progress-fill"></div>
+        </div>
+
+        <!-- просмотры -->
+        <div class="views">
+            <i class="fa-regular fa-eye"></i>
+            <span id="viewsNum">0</span>
+        </div>
+
+        <audio id="audio" src="music.mp3" preload="metadata"></audio>
+    </div>
+
+</div>
+
+<script>
+    /* ===== Плеер ===== */
+    const audio       = document.getElementById("audio");
+    const playPause   = document.getElementById("playPause");
+    const progressEl  = document.getElementById("progressFill");
+    const ctime       = document.getElementById("currentTime");
+    const ttime       = document.getElementById("totalTime");
+    const volumeBtn   = document.getElementById("volumeBtn");
+    const viewsNum    = document.getElementById("viewsNum");
+
+    function fmt(t){
+        if (!isFinite(t)) return "0:00";
+        const m = Math.floor(t / 60);
+        const s = Math.floor(t % 60);
+        return m + ":" + String(s).padStart(2,"0");
+    }
+
+    audio.addEventListener("loadedmetadata", () => {
+        ttime.textContent = fmt(audio.duration);
+    });
+
+    audio.addEventListener("timeupdate", () => {
+        if (audio.duration > 0) {
+            progressEl.style.width = (audio.currentTime / audio.duration * 100) + "%";
+        }
+        ctime.textContent = fmt(audio.currentTime);
+    });
+
+    // Play / Pause
+    playPause.addEventListener("click", () => {
+        if (audio.paused) {
+            audio.play().catch(() => {});
+            playPause.innerHTML = "<i class='fa-solid fa-pause'></i>";
+        } else {
+            audio.pause();
+            playPause.innerHTML = "<i class='fa-solid fa-play'></i>";
+        }
+    });
+
+    // Mute / Unmute
+    let muted = false;
+    volumeBtn.addEventListener("click", () => {
+        muted = !muted;
+        audio.muted = muted;
+        volumeBtn.innerHTML = muted
+            ? "<i class='fa-solid fa-volume-xmark'></i>"
+            : "<i class='fa-solid fa-volume-high'></i>";
+    });
+
+    // Локальные просмотры
+    const key = "furigin_views_winter_final";
+    let views = Number(localStorage.getItem(key) || "0");
+    views++;
+    localStorage.setItem(key, String(views));
+    viewsNum.textContent = views.toString();
+
+    // Автоплей после первого действия
+    let autoplayTried = false;
+    function tryAutoplay(){
+        if (autoplayTried) return;
+        autoplayTried = true;
+        audio.volume = 0.7;
+        audio.play().then(() => {
+            playPause.innerHTML = "<i class='fa-solid fa-pause'></i>";
+        }).catch(() => {});
+    }
+    ["mousemove","click","keydown","touchstart"].forEach(ev => {
+        window.addEventListener(ev, tryAutoplay, {once:true});
+    });
+
+    /* ===== Снег ===== */
+    const canvas = document.getElementById("particleCanvas");
+    const ctx    = canvas.getContext("2d");
+    let W, H, flakes = [];
+
+    function resizeCanvas(){
+        W = canvas.width  = window.innerWidth;
+        H = canvas.height = window.innerHeight;
+        flakes = [];
+        for (let i = 0; i < 170; i++) {
+            flakes.push({
+                x: Math.random()*W,
+                y: Math.random()*H,
+                r: Math.random()*2.3+0.9,
+                sy: Math.random()*0.6+0.4
+            });
+        }
+    }
+    resizeCanvas();
+    window.addEventListener("resize", resizeCanvas);
+
+    function drawSnow(){
+        ctx.clearRect(0,0,W,H);
+        ctx.fillStyle = "rgba(255,255,255,0.95)";
+        for (const f of flakes) {
+            f.y += f.sy;
+            if (f.y > H + 5) {
+                f.y = -5;
+                f.x = Math.random()*W;
+            }
+            ctx.beginPath();
+            ctx.arc(f.x,f.y,f.r,0,Math.PI*2);
+            ctx.fill();
+        }
+        requestAnimationFrame(drawSnow);
+    }
+    drawSnow();
+
+    /* ===== Курсор ===== */
+    const dot  = document.querySelector(".cursor-dot");
+    const ring = document.querySelector(".cursor-ring");
+    let mx = window.innerWidth / 2;
+    let my = window.innerHeight / 2;
+    let rx = mx, ry = my;
+
+    window.addEventListener("mousemove", e => {
+        mx = e.clientX;
+        my = e.clientY;
+
+        const t = document.createElement("div");
+        t.className = "cursor-trail";
+        t.style.left = mx + "px";
+        t.style.top  = my + "px";
+        document.body.appendChild(t);
+        requestAnimationFrame(() => {
+            t.style.opacity = "0";
+            t.style.transform = "translate(-50%, -50%) scale(.4)";
+        });
+        setTimeout(() => t.remove(), 350);
+    });
+
+    function renderCursor(){
+        dot.style.left = mx + "px";
+        dot.style.top  = my + "px";
+
+        rx += (mx - rx) * 0.15;
+        ry += (my - ry) * 0.15;
+        ring.style.left = rx + "px";
+        ring.style.top  = ry + "px";
+
+        requestAnimationFrame(renderCursor);
+    }
+    renderCursor();
+</script>
+
+</body>
+</html>
