@@ -1,1 +1,2 @@
-https://furigin.github.io/site/
+
+](https://furigin.github.io/site/?update=1)
