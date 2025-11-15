@@ -331,18 +331,19 @@
             transform: translate(-50%, -50%);
         }
 
-        .cursor-trail {
-            position: fixed;
-            width: 6px;
-            height: 6px;
-            border-radius: 50%;
-            background: white;
-            opacity: 1;
-            z-index: 9000;
-            transform: translate(-50%, -50%);
-            transition: opacity .35s, transform .35s;
-            filter: blur(1px);
-        }
+        .cursor-trail{
+    position:fixed;
+    width:6px;
+    height:6px;
+    border-radius:50%;
+    background:white;
+    opacity:1;
+    z-index:9000;
+    transform:translate(-50%, -50%);
+    transition:opacity .35s, transform .35s;
+    pointer-events:none !important;
+}
+
 
         @media (max-width: 640px) {
             .card,
@@ -512,19 +513,44 @@
     localStorage.setItem(key, String(views));
     viewsNum.textContent = views.toString();
 
-    // Автоплей после первого действия
-    let autoplayTried = false;
-    function tryAutoplay(){
-        if (autoplayTried) return;
-        autoplayTried = true;
-        audio.volume = 0.7;
-        audio.play().then(() => {
-            playPause.innerHTML = "<i class='fa-solid fa-pause'></i>";
-        }).catch(() => {});
-    }
-    ["mousemove","click","keydown","touchstart"].forEach(ev => {
-        window.addEventListener(ev, tryAutoplay, {once:true});
-    });
+    /* ===== = Лучший возможный autoplay ====== */
+
+let autoStarted = false;
+
+// запускаем трек сразу в mute
+window.addEventListener("load", () => {
+    audio.volume = 0;
+    audio.muted = true;
+    audio.play().catch(() => {});
+});
+
+// как только пользователь сделал ЛЮБОЕ движение мышью = разрешён autoplay
+function enableSound() {
+    if (autoStarted) return;
+    autoStarted = true;
+
+    audio.muted = false;
+
+    // плавное увеличение громкости
+    let v = 0;
+    let target = 0.7;
+    let fade = setInterval(() => {
+        v += 0.05;
+        if (v >= target) {
+            v = target;
+            clearInterval(fade);
+        }
+        audio.volume = v;
+    }, 120);
+
+    window.removeEventListener("mousemove", enableSound);
+    window.removeEventListener("touchstart", enableSound);
+    window.removeEventListener("click", enableSound);
+}
+
+window.addEventListener("mousemove", enableSound);
+window.addEventListener("touchstart", enableSound);
+window.addEventListener("click", enableSound);
 
     /* ===== Снег ===== */
     const canvas = document.getElementById("particleCanvas");
@@ -571,21 +597,40 @@
     let my = window.innerHeight / 2;
     let rx = mx, ry = my;
 
-    window.addEventListener("mousemove", e => {
+    window.addEventListener("pointermove", e => {
         mx = e.clientX;
         my = e.clientY;
-
-        const t = document.createElement("div");
-        t.className = "cursor-trail";
-        t.style.left = mx + "px";
-        t.style.top  = my + "px";
-        document.body.appendChild(t);
-        requestAnimationFrame(() => {
-            t.style.opacity = "0";
-            t.style.transform = "translate(-50%, -50%) scale(.4)";
-        });
-        setTimeout(() => t.remove(), 350);
     });
+
+    // хвост
+    let lastTrailX = mx;
+    let lastTrailY = my;
+
+    function spawnTrail(){
+        const dx = mx - lastTrailX;
+        const dy = my - lastTrailY;
+        const dist2 = dx*dx + dy*dy;
+
+        if (dist2 > 9) { // >3px
+            lastTrailX = mx;
+            lastTrailY = my;
+
+            const t = document.createElement("div");
+            t.className = "cursor-trail";
+            t.style.left = mx + "px";
+            t.style.top  = my + "px";
+            document.body.appendChild(t);
+
+            requestAnimationFrame(() => {
+                t.style.opacity  = "0";
+                t.style.transform = "translate(-50%, -50%) scale(0.4)";
+            });
+            setTimeout(() => t.remove(), 350);
+        }
+
+        requestAnimationFrame(spawnTrail);
+    }
+    spawnTrail();
 
     function renderCursor(){
         dot.style.left = mx + "px";
