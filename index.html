@@ -84,25 +84,85 @@
 
         .top {
             display: flex;
-            gap: 18px;
+            gap: 22px;
             align-items: flex-start;
         }
 
+        /* ==== АВАТАР ==== */
         .avatar {
             width: 118px;
             height: 118px;
             border-radius: 50%;
-            overflow: hidden;
+            position: relative;
+            overflow: visible;
+            flex-shrink: 0;
         }
+
         .avatar img {
             width: 100%;
             height: 100%;
             object-fit: cover;
+            border-radius: 50%;
+            z-index: 3;
+            position: relative;
+        }
+
+        /* ==== ЧАСТИЦЫ ВОКРУГ АВАТАРКИ ==== */
+        .avatar-particles {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+        }
+
+        .p {
+            position: absolute;
+            border-radius: 50%;
+            background: radial-gradient(circle, #ffffff, #bde0fe);
+            opacity: 0.9;
+            filter: drop-shadow(0 0 6px #dbeafe);
+            animation: float 4s infinite ease-in-out;
+        }
+
+        .p1  { width: 7px; height: 7px; top: -12px; left: 50%;   animation-duration: 4.2s; }
+        .p2  { width: 5px; height: 5px; top: 15%; right: -14px;  animation-duration: 3.5s; }
+        .p3  { width: 6px; height: 6px; bottom: 10%; right: -10px; animation-duration: 4.8s; }
+        .p4  { width: 4px; height: 4px; bottom: -12px; left: 50%; animation-duration: 3.9s; }
+        .p5  { width: 8px; height: 8px; bottom: 15%; left: -16px; animation-duration: 4.4s; }
+        .p6  { width: 5px; height: 5px; top: 20%; left: -12px;    animation-duration: 3.7s; }
+        .p7  { width: 6px; height: 6px; top: -8px; right: 20%;    animation-duration: 4.6s; }
+        .p8  { width: 5px; height: 5px; top: 40%; left: -6px;     animation-duration: 3.8s; }
+        .p9  { width: 4px; height: 4px; top: -6px; left: 30%;     animation-duration: 4.1s; }
+        .p10 { width: 6px; height: 6px; bottom: 5%; right: 4px;   animation-duration: 4.3s; }
+        .p11 { width: 5px; height: 5px; bottom: 30%; right: -8px; animation-duration: 3.6s; }
+        .p12 { width: 7px; height: 7px; top: 5%; left: -10px;     animation-duration: 4.7s; }
+        .p13 { width: 4px; height: 4px; bottom: -8px; right: 30%; animation-duration: 3.9s; }
+        .p14 { width: 5px; height: 5px; top: 55%; right: -6px;    animation-duration: 4.5s; }
+
+        @keyframes float {
+            0%   { transform: translateY(0) scale(1);   opacity: 0.7; }
+            50%  { transform: translateY(-6px) scale(1.15); opacity: 1; }
+            100% { transform: translateY(0) scale(1);   opacity: 0.7; }
+        }
+
+        /* ====== ПРАВАЯ ЧАСТЬ (ник + about) ====== */
+        .info-main {
+            flex: 1;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 20px;
+        }
+
+        .info-left {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            min-width: 0;
         }
 
         /* ====== НИК (градиент) ====== */
         .username {
-            margin-bottom: 8px;
+            margin-bottom: 4px;
         }
 
         .name-text {
@@ -141,12 +201,11 @@
 
         .tagline {
             color: var(--text-soft);
-            margin-top: 4px;
             font-size: 14px;
         }
 
         .location {
-            margin-top: 4px;
+            margin-top: 2px;
             color: var(--text-soft);
             font-size: 14px;
             display: flex;
@@ -156,7 +215,7 @@
 
         /* Discord inline */
         .discord-inline {
-            margin-top: 12px;
+            margin-top: 10px;
             background: rgba(15,23,42,0.8);
             padding: 8px 12px;
             border-radius: 12px;
@@ -178,6 +237,50 @@
             border-radius:6px;
             color:white;
             font-size:11px;
+        }
+
+        /* ====== ABOUT-BOX (справа) ====== */
+        .about-box {
+            background: rgba(15, 23, 42, 0.55);
+            border: 1px solid rgba(147,197,253,0.25);
+            border-radius: 14px;
+            padding: 12px 14px;
+            width: 220px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+
+            box-shadow:
+                0 0 14px rgba(147,197,253,0.25),
+                inset 0 0 12px rgba(59,130,246,0.25);
+
+            backdrop-filter: blur(4px);
+        }
+
+        .about-item {
+            font-size: 14px;
+            color: #e0f2fe;
+            letter-spacing: 0.5px;
+
+            text-shadow:
+                0 0 8px rgba(147,197,253,0.7),
+                0 0 15px rgba(147,197,253,0.5);
+
+            opacity: 0;
+            transform: translateX(5px);
+            animation: aboutFade .6s forwards;
+        }
+
+        .about-item:nth-child(1){ animation-delay:.0s; }
+        .about-item:nth-child(2){ animation-delay:.1s; }
+        .about-item:nth-child(3){ animation-delay:.2s; }
+        .about-item:nth-child(4){ animation-delay:.3s; }
+        .about-item:nth-child(5){ animation-delay:.4s; }
+        .about-item:nth-child(6){ animation-delay:.5s; }
+
+        @keyframes aboutFade {
+            0%   { opacity:0; transform:translateX(5px); }
+            100% { opacity:1; transform:translateX(0); }
         }
 
         /* ====== Иконки соцсетей ====== */
@@ -212,7 +315,6 @@
             box-shadow: 0 24px 70px rgba(0,0,0,0.9);
         }
 
-        /* верхняя строка плеера */
         .player-row {
             display: flex;
             align-items: center;
@@ -277,7 +379,6 @@
             color: var(--text-soft);
         }
 
-        /* прогресс на всю ширину карточки */
         .progress {
             width: 100%;
             height: 4px;
@@ -332,18 +433,16 @@
         }
 
         .cursor-trail{
-    position:fixed;
-    width:6px;
-    height:6px;
-    border-radius:50%;
-    background:white;
-    opacity:1;
-    z-index:9000;
-    transform:translate(-50%, -50%);
-    transition:opacity .35s, transform .35s;
-    pointer-events:none !important;
-}
-
+            position:fixed;
+            width:6px;
+            height:6px;
+            border-radius:50%;
+            background:white;
+            opacity:1;
+            z-index:9000;
+            transform:translate(-50%, -50%);
+            transition:opacity .35s, transform .35s;
+        }
 
         @media (max-width: 640px) {
             .card,
@@ -352,7 +451,14 @@
                 padding: 20px 14px;
             }
             .name-text { font-size: 26px; }
-            .socials a { font-size: 24px; }
+
+            .info-main {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .about-box {
+                width: 100%;
+            }
         }
     </style>
 </head>
@@ -369,28 +475,59 @@
     <!-- ===== Визитка ===== -->
     <div class="card">
         <div class="top">
+
             <div class="avatar">
-                <img src="avatar.jpg" alt="avatar">
+                <img src="avatar.jpg">
+                <div class="avatar-particles">
+                    <span class="p p1"></span>
+                    <span class="p p2"></span>
+                    <span class="p p3"></span>
+                    <span class="p p4"></span>
+                    <span class="p p5"></span>
+                    <span class="p p6"></span>
+                    <span class="p p7"></span>
+                    <span class="p p8"></span>
+                    <span class="p p9"></span>
+                    <span class="p p10"></span>
+                    <span class="p p11"></span>
+                    <span class="p p12"></span>
+                    <span class="p p13"></span>
+                    <span class="p p14"></span>
+                </div>
             </div>
 
             <div class="info-main">
-                <div class="username">
-                    <span class="name-text">furigin</span>
+                <!-- левая колонка -->
+                <div class="info-left">
+                    <div class="username">
+                        <span class="name-text">furigin</span>
+                    </div>
+
+                    <div class="tagline">Пока не придумал</div>
+
+                    <div class="location">
+                        <i class="fa-solid fa-location-dot"></i>
+                        <span>Russia</span>
+                    </div>
+
+                    <div class="discord-inline">
+                        <img src="discord-avatar.jpg" class="discord-inline-avatar" alt="discord">
+                        <span>megocat0_0</span>
+                        <span class="discord-inline-badge">discord</span>
+                    </div>
                 </div>
 
-                <div class="tagline">Пока не придумал</div>
-
-                <div class="location">
-                    <i class="fa-solid fa-location-dot"></i>
-                    <span>Russia</span>
-                </div>
-
-                <div class="discord-inline">
-                    <img src="discord-avatar.jpg" class="discord-inline-avatar" alt="discord">
-                    <span>megocat0_0</span>
-                    <span class="discord-inline-badge">discord</span>
+                <!-- правая колонка -->
+                <div class="about-box">
+                    <div class="about-item">Ruslan</div>
+                    <div class="about-item">17</div>
+                    <div class="about-item">Minecraft Player</div>
+                    <div class="about-item">PvP Enjoyer</div>
+                    <div class="about-item">Beginner Developer</div>
+                    <div class="about-item">Vibecode</div>
                 </div>
             </div>
+
         </div>
 
         <!-- Соцсети -->
@@ -415,7 +552,6 @@
 
     <!-- ===== Плеер ===== -->
     <div class="player-shell">
-        <!-- верхняя строка: обложка, текст, кнопки -->
         <div class="player-row">
             <div class="player-cover">
                 <img src="cover.jpg" alt="cover">
@@ -441,12 +577,10 @@
             </div>
         </div>
 
-        <!-- прогресс на всю ширину -->
         <div class="progress">
             <div id="progressFill" class="progress-fill"></div>
         </div>
 
-        <!-- просмотры -->
         <div class="views">
             <i class="fa-regular fa-eye"></i>
             <span id="viewsNum">0</span>
@@ -485,7 +619,6 @@
         ctime.textContent = fmt(audio.currentTime);
     });
 
-    // Play / Pause
     playPause.addEventListener("click", () => {
         if (audio.paused) {
             audio.play().catch(() => {});
@@ -496,7 +629,6 @@
         }
     });
 
-    // Mute / Unmute
     let muted = false;
     volumeBtn.addEventListener("click", () => {
         muted = !muted;
@@ -506,51 +638,45 @@
             : "<i class='fa-solid fa-volume-high'></i>";
     });
 
-    // Локальные просмотры
     const key = "furigin_views_winter_final";
     let views = Number(localStorage.getItem(key) || "0");
     views++;
     localStorage.setItem(key, String(views));
     viewsNum.textContent = views.toString();
 
-    /* ===== = Лучший возможный autoplay ====== */
+    /* ===== Autoplay (мягкий) ===== */
+    let autoStarted = false;
 
-let autoStarted = false;
+    window.addEventListener("load", () => {
+        audio.volume = 0;
+        audio.muted = true;
+        audio.play().catch(() => {});
+    });
 
-// запускаем трек сразу в mute
-window.addEventListener("load", () => {
-    audio.volume = 0;
-    audio.muted = true;
-    audio.play().catch(() => {});
-});
+    function enableSound() {
+        if (autoStarted) return;
+        autoStarted = true;
 
-// как только пользователь сделал ЛЮБОЕ движение мышью = разрешён autoplay
-function enableSound() {
-    if (autoStarted) return;
-    autoStarted = true;
+        audio.muted = false;
+        let v = 0;
+        let target = 0.7;
+        let fade = setInterval(() => {
+            v += 0.05;
+            if (v >= target) {
+                v = target;
+                clearInterval(fade);
+            }
+            audio.volume = v;
+        }, 120);
 
-    audio.muted = false;
+        window.removeEventListener("mousemove", enableSound);
+        window.removeEventListener("touchstart", enableSound);
+        window.removeEventListener("click", enableSound);
+    }
 
-    // плавное увеличение громкости
-    let v = 0;
-    let target = 0.7;
-    let fade = setInterval(() => {
-        v += 0.05;
-        if (v >= target) {
-            v = target;
-            clearInterval(fade);
-        }
-        audio.volume = v;
-    }, 120);
-
-    window.removeEventListener("mousemove", enableSound);
-    window.removeEventListener("touchstart", enableSound);
-    window.removeEventListener("click", enableSound);
-}
-
-window.addEventListener("mousemove", enableSound);
-window.addEventListener("touchstart", enableSound);
-window.addEventListener("click", enableSound);
+    window.addEventListener("mousemove", enableSound);
+    window.addEventListener("touchstart", enableSound);
+    window.addEventListener("click", enableSound);
 
     /* ===== Снег ===== */
     const canvas = document.getElementById("particleCanvas");
@@ -602,7 +728,6 @@ window.addEventListener("click", enableSound);
         my = e.clientY;
     });
 
-    // хвост
     let lastTrailX = mx;
     let lastTrailY = my;
 
@@ -611,7 +736,7 @@ window.addEventListener("click", enableSound);
         const dy = my - lastTrailY;
         const dist2 = dx*dx + dy*dy;
 
-        if (dist2 > 9) { // >3px
+        if (dist2 > 9) {
             lastTrailX = mx;
             lastTrailY = my;
 
