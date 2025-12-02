@@ -460,9 +460,101 @@
                 width: 100%;
             }
         }
+		/* ====== Гирлянда ====== */
+.garland {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 60px;
+
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+
+    pointer-events: none;
+    z-index: 9999; /* поверх всего */
+}
+
+/* лампы */
+.bulb {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    margin: 0 20px;
+    position: relative;
+    transition: 0.4s ease;
+}
+
+/* провод */
+.bulb::after {
+    content: "";
+    position: absolute;
+    top: -12px;
+    left: 14px;
+    width: 40px;
+    height: 18px;
+    border-bottom: 2px solid rgba(180,200,255,0.35);
+    border-radius: 50%;
+}
+
+.bulb:last-child::after {
+    display: none;
+}
+
+/* цвет + свечение */
+.red    { background: #ff4b4b; animation: glowR 1.2s infinite; }
+.yellow { background: #ffd84a; animation: glowY 1.2s infinite; }
+.blue   { background: #54c2ff; animation: glowB 1.2s infinite; }
+.green  { background: #5aff8c; animation: glowG 1.2s infinite; }
+
+@keyframes glowR {
+  0%,100% { box-shadow: 0 0 14px 6px #ff4b4b; }
+  50%     { box-shadow: 0 0 0px 0px transparent; }
+}
+@keyframes glowY {
+  0%,100% { box-shadow: 0 0 0px 0px transparent; }
+  50%     { box-shadow: 0 0 14px 6px #ffd84a; }
+}
+@keyframes glowB {
+  0%,100% { box-shadow: 0 0 14px 6px #54c2ff; }
+  50%     { box-shadow: 0 0 0px 0px transparent; }
+}
+@keyframes glowG {
+  0%,100% { box-shadow: 0 0 0px 0px transparent; }
+  50%     { box-shadow: 0 0 14px 6px #5aff8c; }
+}
+
+/* телефон — скрыть */
+@media (max-width: 700px) {
+    .garland { display: none; }
+}
+
     </style>
 </head>
 <body>
+<body>
+
+<canvas id="particleCanvas"></canvas>
+<div class="bg-overlay"></div>
+
+<!-- 🎄 ГИРЛЯНДА -->
+<div class="garland">
+    <div class="bulb red"></div>
+    <div class="bulb yellow"></div>
+    <div class="bulb blue"></div>
+    <div class="bulb green"></div>
+
+    <div class="bulb red"></div>
+    <div class="bulb yellow"></div>
+    <div class="bulb blue"></div>
+    <div class="bulb green"></div>
+
+    <div class="bulb red"></div>
+    <div class="bulb yellow"></div>
+    <div class="bulb blue"></div>
+    <div class="bulb green"></div>
+</div>
 
 <canvas id="particleCanvas"></canvas>
 <div class="bg-overlay"></div>
