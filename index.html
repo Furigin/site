@@ -1,867 +1,1156 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8" />
-    <title>@furigin | card</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8" />
+  <title>@furigin | card</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <!-- Font Awesome -->
-    <link rel="stylesheet"
-          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"/>
+  <!-- Font Awesome -->
+  <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"/>
 
-    <style>
-        /* ====== Шрифт Minecraft ====== */
-        @font-face {
-            font-family: 'Minecraft';
-            src: url('CCRFBZSR.ttf') format('truetype');
-        }
+  <style>
+    /* ====== Шрифт Minecraft ====== */
+    @font-face {
+      font-family: 'Minecraft';
+      src: url('CCRFBZSR.ttf') format('truetype');
+      font-display: swap;
+    }
 
-        :root {
-            --text-main: #ffffff;
-            --text-soft: rgba(255,255,255,0.65);
-            --card-bg: rgba(5, 8, 16, 0.72);
-            --card-blur: 20px;
-        }
+    :root {
+      --text-main: #ffffff;
+      --text-soft: rgba(255,255,255,0.65);
+      --card-bg: rgba(5, 8, 16, 0.72);
+      --card-blur: 20px;
 
-        /* ====== Базовые стили ====== */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            cursor: none !important; /* всегда наш курсор */
-        }
+      --glow: rgba(147,197,253,.18);
+      --glow2: rgba(59,130,246,.12);
+    }
 
-        body {
-            min-height: 100vh;
-            background: url("bg.jpg") center/cover fixed no-repeat;
-            font-family: 'Minecraft', Arial, sans-serif;
-            color: var(--text-main);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow-x: hidden;
-        }
+    /* ====== Базовые стили ====== */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      cursor: none !important;
+    }
 
-        /* снег */
-        #particleCanvas {
-            position: fixed;
-            inset: 0;
-            z-index: -1;
-            pointer-events: none;
-        }
+    body {
+      min-height: 100vh;
+      background: url("bg.jpg") center/cover fixed no-repeat;
+      font-family: 'Minecraft', Arial, sans-serif;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow-x: hidden;
+    }
 
-        /* тёмный холодный оверлей */
-        .bg-overlay {
-            position: fixed;
-            inset: 0;
-            background:
-                radial-gradient(circle at top, rgba(59,130,246,0.35), transparent 60%),
-                radial-gradient(circle at bottom, rgba(56,189,248,0.25), transparent 55%),
-                rgba(3,7,18,0.80);
-            backdrop-filter: blur(8px);
-            z-index: -2;
-        }
+    /* снег */
+    #particleCanvas {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      pointer-events: none;
+    }
 
-        .page {
-            width: 100%;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 22px;
-        }
+    /* тёмный холодный оверлей (НЕ двигаем transform-ами) */
+    .bg-overlay {
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(circle at top, rgba(59,130,246,0.35), transparent 60%),
+        radial-gradient(circle at bottom, rgba(56,189,248,0.25), transparent 55%),
+        rgba(3,7,18,0.80);
+      backdrop-filter: blur(8px);
+      z-index: -2;
+    }
 
-        /* ====== Визитка ====== */
-        .card {
-            width: min(44rem, 100%);
-            background: var(--card-bg);
-            border-radius: 26px;
-            padding: 26px 24px 22px;
-            border: 1px solid rgba(148, 163, 253, 0.35);
-            backdrop-filter: blur(var(--card-blur));
-            box-shadow: 0 30px 80px rgba(0,0,0,0.9);
-        }
+    .page {
+      width: 100%;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 22px;
+    }
 
-        .top {
-            display: flex;
-            gap: 22px;
-            align-items: flex-start;
-        }
+    /* ====== Визитка ====== */
+    .card {
+      width: min(44rem, 100%);
+      background: var(--card-bg);
+      border-radius: 26px;
+      padding: 26px 24px 22px;
+      border: 1px solid rgba(148, 163, 253, 0.35);
+      backdrop-filter: blur(var(--card-blur));
+      box-shadow: 0 30px 80px rgba(0,0,0,0.9);
 
-        /* ==== АВАТАР ==== */
-        .avatar {
-            width: 118px;
-            height: 118px;
-            border-radius: 50%;
-            position: relative;
-            overflow: visible;
-            flex-shrink: 0;
-        }
+      position: relative;
+      overflow: hidden;
+      transform-style: preserve-3d;
+      will-change: transform, box-shadow;
+      transition:
+        transform .65s cubic-bezier(.2,.8,.2,1),
+        box-shadow .65s cubic-bezier(.2,.8,.2,1),
+        border-color .45s ease;
+    }
 
-        .avatar img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            border-radius: 50%;
-            z-index: 3;
-            position: relative;
-        }
+    .top {
+      display: flex;
+      gap: 22px;
+      align-items: flex-start;
+    }
 
-        /* ==== ЧАСТИЦЫ ВОКРУГ АВАТАРКИ ==== */
-        .avatar-particles {
-            position: absolute;
-            inset: 0;
-            pointer-events: none;
-        }
+    /* ==== АВАТАР ==== */
+    .avatar {
+      width: 118px;
+      height: 118px;
+      border-radius: 50%;
+      position: relative;
+      overflow: visible;
+      flex-shrink: 0;
 
-        .p {
-            position: absolute;
-            border-radius: 50%;
-            background: radial-gradient(circle, #ffffff, #bde0fe);
-            opacity: 0.9;
-            filter: drop-shadow(0 0 6px #dbeafe);
-            animation: float 4s infinite ease-in-out;
-        }
+      transition: transform .55s cubic-bezier(.2,.9,.2,1), filter .55s ease;
+      will-change: transform;
+    }
 
-        .p1  { width: 7px; height: 7px; top: -12px; left: 50%;   animation-duration: 4.2s; }
-        .p2  { width: 5px; height: 5px; top: 15%; right: -14px;  animation-duration: 3.5s; }
-        .p3  { width: 6px; height: 6px; bottom: 10%; right: -10px; animation-duration: 4.8s; }
-        .p4  { width: 4px; height: 4px; bottom: -12px; left: 50%; animation-duration: 3.9s; }
-        .p5  { width: 8px; height: 8px; bottom: 15%; left: -16px; animation-duration: 4.4s; }
-        .p6  { width: 5px; height: 5px; top: 20%; left: -12px;    animation-duration: 3.7s; }
-        .p7  { width: 6px; height: 6px; top: -8px; right: 20%;    animation-duration: 4.6s; }
-        .p8  { width: 5px; height: 5px; top: 40%; left: -6px;     animation-duration: 3.8s; }
-        .p9  { width: 4px; height: 4px; top: -6px; left: 30%;     animation-duration: 4.1s; }
-        .p10 { width: 6px; height: 6px; bottom: 5%; right: 4px;   animation-duration: 4.3s; }
-        .p11 { width: 5px; height: 5px; bottom: 30%; right: -8px; animation-duration: 3.6s; }
-        .p12 { width: 7px; height: 7px; top: 5%; left: -10px;     animation-duration: 4.7s; }
-        .p13 { width: 4px; height: 4px; bottom: -8px; right: 30%; animation-duration: 3.9s; }
-        .p14 { width: 5px; height: 5px; top: 55%; right: -6px;    animation-duration: 4.5s; }
+    .avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 50%;
+      z-index: 3;
+      position: relative;
+      transition: transform .55s cubic-bezier(.2,.9,.2,1);
+    }
 
-        @keyframes float {
-            0%   { transform: translateY(0) scale(1);   opacity: 0.7; }
-            50%  { transform: translateY(-6px) scale(1.15); opacity: 1; }
-            100% { transform: translateY(0) scale(1);   opacity: 0.7; }
-        }
+    .avatar:hover {
+      transform: translateZ(12px) rotate(-1.5deg) scale(1.03);
+      filter: drop-shadow(0 0 18px rgba(147,197,253,.25));
+    }
+    .avatar:hover img { transform: scale(1.04); }
 
-        /* ====== ПРАВАЯ ЧАСТЬ (ник + about) ====== */
-        .info-main {
-            flex: 1;
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            gap: 20px;
-        }
+    /* ==== ЧАСТИЦЫ ВОКРУГ АВАТАРКИ ==== */
+    .avatar-particles {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+    }
 
-        .info-left {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-            min-width: 0;
-        }
+    .p {
+      position: absolute;
+      border-radius: 50%;
+      background: radial-gradient(circle, #ffffff, #bde0fe);
+      opacity: 0.9;
+      filter: drop-shadow(0 0 6px #dbeafe);
+      animation: float 6.2s infinite ease-in-out; /* медленнее */
+    }
 
-        /* ====== НИК (градиент) ====== */
-        .username {
-            margin-bottom: 4px;
-        }
+    .p1  { width: 7px; height: 7px; top: -12px; left: 50%;   animation-duration: 6.6s; }
+    .p2  { width: 5px; height: 5px; top: 15%; right: -14px;  animation-duration: 5.8s; }
+    .p3  { width: 6px; height: 6px; bottom: 10%; right: -10px; animation-duration: 7.1s; }
+    .p4  { width: 4px; height: 4px; bottom: -12px; left: 50%; animation-duration: 6.0s; }
+    .p5  { width: 8px; height: 8px; bottom: 15%; left: -16px; animation-duration: 6.9s; }
+    .p6  { width: 5px; height: 5px; top: 20%; left: -12px;    animation-duration: 5.9s; }
+    .p7  { width: 6px; height: 6px; top: -8px; right: 20%;    animation-duration: 7.3s; }
+    .p8  { width: 5px; height: 5px; top: 40%; left: -6px;     animation-duration: 6.1s; }
+    .p9  { width: 4px; height: 4px; top: -6px; left: 30%;     animation-duration: 6.8s; }
+    .p10 { width: 6px; height: 6px; bottom: 5%; right: 4px;   animation-duration: 6.4s; }
+    .p11 { width: 5px; height: 5px; bottom: 30%; right: -8px; animation-duration: 5.7s; }
+    .p12 { width: 7px; height: 7px; top: 5%; left: -10px;     animation-duration: 7.0s; }
+    .p13 { width: 4px; height: 4px; bottom: -8px; right: 30%; animation-duration: 6.2s; }
+    .p14 { width: 5px; height: 5px; top: 55%; right: -6px;    animation-duration: 7.2s; }
 
-        .name-text {
-            font-size: 34px;
-            font-weight: 400;
+    @keyframes float {
+      0%   { transform: translateY(0) scale(1);   opacity: 0.65; }
+      50%  { transform: translateY(-5px) scale(1.12); opacity: 1; }
+      100% { transform: translateY(0) scale(1);   opacity: 0.65; }
+    }
 
-            background: linear-gradient(90deg,
-                #1d4ed8,
-                #3b82f6,
-                #60a5fa,
-                #93c5fd,
-                #ffffff,
-                #93c5fd,
-                #60a5fa,
-                #3b82f6,
-                #1d4ed8
-            );
-            background-size: 300%;
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
+    /* ====== ПРАВАЯ ЧАСТЬ ====== */
+    .info-main {
+      flex: 1;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 20px;
+    }
 
-            animation: nameGradient 6s ease-in-out infinite;
+    .info-left {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      min-width: 0;
+    }
 
-            text-shadow:
-                0 0 12px rgba(147,197,253,0.8),
-                0 0 22px rgba(147,197,253,0.9),
-                0 0 32px rgba(255,255,255,0.7);
-        }
+    .username { margin-bottom: 4px; }
 
-        @keyframes nameGradient {
-            0%   { background-position: 0% 50%; }
-            50%  { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
+    .name-text {
+      font-size: 34px;
+      font-weight: 400;
 
-        .tagline {
-            color: var(--text-soft);
-            font-size: 14px;
-        }
+      background: linear-gradient(90deg,
+        #1d4ed8,#3b82f6,#60a5fa,#93c5fd,#ffffff,#93c5fd,#60a5fa,#3b82f6,#1d4ed8
+      );
+      background-size: 300%;
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
 
-        .location {
-            margin-top: 2px;
-            color: var(--text-soft);
-            font-size: 14px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
+      animation: nameGradient 10s ease-in-out infinite; /* медленнее */
+      text-shadow:
+        0 0 12px rgba(147,197,253,0.7),
+        0 0 22px rgba(147,197,253,0.65),
+        0 0 32px rgba(255,255,255,0.55);
 
-        /* Discord inline */
-        .discord-inline {
-            margin-top: 10px;
-            background: rgba(15,23,42,0.8);
-            padding: 8px 12px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            border: 1px solid rgba(148,163,253,0.3);
-            box-shadow: 0 0 14px rgba(37,99,235,0.4);
-            width: max-content;
-        }
-        .discord-inline-avatar {
-            width: 34px;
-            height: 34px;
-            border-radius: 50%;
-        }
-        .discord-inline-badge {
-            background:#3b82f6;
-            padding:2px 6px;
-            border-radius:6px;
-            color:white;
-            font-size:11px;
-        }
+      transition: filter .45s ease;
+    }
 
-        /* ====== ABOUT-BOX (справа) ====== */
-        .about-box {
-            background: rgba(15, 23, 42, 0.55);
-            border: 1px solid rgba(147,197,253,0.25);
-            border-radius: 14px;
-            padding: 12px 14px;
-            width: 220px;
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
+    @keyframes nameGradient {
+      0%   { background-position: 0% 50%; }
+      50%  { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
 
-            box-shadow:
-                0 0 14px rgba(147,197,253,0.25),
-                inset 0 0 12px rgba(59,130,246,0.25);
+    .tagline {
+      color: var(--text-soft);
+      font-size: 14px;
+    }
 
-            backdrop-filter: blur(4px);
-        }
+    .location {
+      margin-top: 2px;
+      color: var(--text-soft);
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
 
-        .about-item {
-            font-size: 14px;
-            color: #e0f2fe;
-            letter-spacing: 0.5px;
+    /* Discord inline */
+    .discord-inline {
+      margin-top: 10px;
+      background: rgba(15,23,42,0.8);
+      padding: 8px 12px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border: 1px solid rgba(148,163,253,0.3);
+      box-shadow: 0 0 14px rgba(37,99,235,0.35);
+      width: max-content;
 
-            text-shadow:
-                0 0 8px rgba(147,197,253,0.7),
-                0 0 15px rgba(147,197,253,0.5);
+      position: relative;
+      overflow: hidden;
+      transition: transform .55s cubic-bezier(.2,.9,.2,1), box-shadow .55s ease, border-color .55s ease;
+    }
+    .discord-inline::before{
+      content:"";
+      position:absolute;
+      top:-40%;
+      left:-130%;
+      width:60%;
+      height:180%;
+      transform: rotate(20deg);
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,.10), transparent);
+      transition: left .9s ease; /* медленнее */
+      pointer-events:none;
+    }
+    .discord-inline:hover{
+      transform: translateY(-3px) scale(1.02);
+      border-color: rgba(148,163,253,.45);
+      box-shadow: 0 0 22px rgba(37,99,235,.30);
+    }
+    .discord-inline:hover::before{ left: 150%; }
 
-            opacity: 0;
-            transform: translateX(5px);
-            animation: aboutFade .6s forwards;
-        }
+    .discord-inline-avatar {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+    }
+    .discord-inline-badge {
+      background:#3b82f6;
+      padding:2px 6px;
+      border-radius:6px;
+      color:white;
+      font-size:11px;
+    }
 
-        .about-item:nth-child(1){ animation-delay:.0s; }
-        .about-item:nth-child(2){ animation-delay:.1s; }
-        .about-item:nth-child(3){ animation-delay:.2s; }
-        .about-item:nth-child(4){ animation-delay:.3s; }
-        .about-item:nth-child(5){ animation-delay:.4s; }
-        .about-item:nth-child(6){ animation-delay:.5s; }
+    /* ====== ABOUT ====== */
+    .about-box {
+      background: rgba(15, 23, 42, 0.55);
+      border: 1px solid rgba(147,197,253,0.25);
+      border-radius: 14px;
+      padding: 12px 14px;
+      width: 220px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
 
-        @keyframes aboutFade {
-            0%   { opacity:0; transform:translateX(5px); }
-            100% { opacity:1; transform:translateX(0); }
-        }
+      box-shadow:
+        0 0 14px rgba(147,197,253,0.22),
+        inset 0 0 12px rgba(59,130,246,0.18);
+      backdrop-filter: blur(4px);
 
-        /* ====== Иконки соцсетей ====== */
-        .socials {
-            margin-top: 22px;
-            display: flex;
-            justify-content: center;
-            gap: 28px;
-        }
+      position: relative;
+      overflow: hidden;
+      transition: transform .6s cubic-bezier(.2,.9,.2,1), box-shadow .6s ease, border-color .6s ease;
+    }
+    .about-box:hover{
+      transform: translateY(-3px) scale(1.01);
+      border-color: rgba(147,197,253,.42);
+      box-shadow:
+        0 0 22px rgba(147,197,253,0.20),
+        inset 0 0 16px rgba(59,130,246,0.18);
+    }
 
-        .socials a {
-            font-size: 30px;
-            text-decoration: none;
-            color: white;
-            opacity: .9;
-            transition: .2s;
-            filter: drop-shadow(0 0 8px #bde0fe);
-        }
-        .socials a:hover {
-            opacity: 1;
-            transform: scale(1.15) translateY(-2px);
-        }
+    .about-item {
+      font-size: 14px;
+      color: #e0f2fe;
+      letter-spacing: 0.5px;
+      text-shadow:
+        0 0 8px rgba(147,197,253,0.6),
+        0 0 15px rgba(147,197,253,0.35);
 
-        /* ====== Плеер ====== */
-        .player-shell {
-            width: min(44rem, 100%);
-            background: var(--card-bg);
-            border-radius: 22px;
-            padding: 16px 18px;
-            border: 1px solid rgba(148,163,253,0.35);
-            backdrop-filter: blur(var(--card-blur));
-            box-shadow: 0 24px 70px rgba(0,0,0,0.9);
-        }
+      opacity: 0;
+      transform: translateX(5px);
+      animation: aboutFade .9s forwards; /* медленнее */
+      position: relative;
+      transition: transform .55s cubic-bezier(.2,.9,.2,1), text-shadow .55s ease, color .55s ease;
+    }
 
-        .player-row {
-            display: flex;
-            align-items: center;
-            gap: 14px;
-        }
+    .about-item::before{
+      content:"▸";
+      position:absolute;
+      left:-14px;
+      opacity:0;
+      transition: opacity .45s ease, left .45s ease;
+      color: rgba(147,197,253,.9);
+    }
 
-        .player-cover {
-            width: 54px;
-            height: 54px;
-            border-radius: 12px;
-            overflow: hidden;
-            flex-shrink: 0;
-        }
-        .player-cover img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
+    .about-item:hover{
+      transform: translateX(6px);
+      color:#fff;
+      text-shadow: 0 0 14px rgba(147,197,253,.50);
+    }
+    .about-item:hover::before{
+      opacity:1;
+      left:-6px;
+    }
 
-        .player-main {
-            flex: 1;
-            min-width: 0;
-        }
+    .about-item:nth-child(1){ animation-delay:.0s; }
+    .about-item:nth-child(2){ animation-delay:.12s; }
+    .about-item:nth-child(3){ animation-delay:.24s; }
+    .about-item:nth-child(4){ animation-delay:.36s; }
+    .about-item:nth-child(5){ animation-delay:.48s; }
+    .about-item:nth-child(6){ animation-delay:.60s; }
 
-        .player-title {
-            font-size: 14px;
-            margin-bottom: 4px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
+    @keyframes aboutFade {
+      0%   { opacity:0; transform:translateX(5px); }
+      100% { opacity:1; transform:translateX(0); }
+    }
 
-        .player-time {
-            display: flex;
-            gap: 12px;
-            font-size: 12px;
-            color: var(--text-soft);
-            margin-bottom: 4px;
-        }
+    /* ====== Соцсети ====== */
+    .socials {
+      margin-top: 22px;
+      display: flex;
+      justify-content: center;
+      gap: 28px;
+    }
 
-        .player-controls {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 8px;
-            margin-left: 6px;
-        }
+    .socials a {
+      font-size: 30px;
+      text-decoration: none;
+      color: white;
+      opacity: .9;
+      filter: drop-shadow(0 0 8px #bde0fe);
+      position: relative;
 
-        .player-button {
-            width: 44px;
-            height: 44px;
-            background: white;
-            border-radius: 50%;
-            border: none;
-            font-size: 18px;
-            color: #0f172a;
-            box-shadow: 0 0 14px rgba(15,23,42,0.9);
-        }
+      transition: transform .55s cubic-bezier(.2,.9,.2,1),
+                  filter .55s ease,
+                  opacity .55s ease;
+      will-change: transform;
+    }
 
-        .volume {
-            font-size: 22px;
-            color: var(--text-soft);
-        }
+    .socials a::after{
+      content:"";
+      position:absolute;
+      inset:-10px;
+      border-radius: 999px;
+      background: radial-gradient(circle, rgba(147,197,253,.14), transparent 70%);
+      opacity:0;
+      transform: scale(.8);
+      transition: opacity .55s ease, transform .55s ease;
+      pointer-events:none;
+    }
 
-        .progress {
-            width: 100%;
-            height: 4px;
-            background: rgba(148,163,253,0.3);
-            border-radius: 12px;
-            overflow: hidden;
-            margin-top: 10px;
-        }
-        .progress-fill {
-            width: 0%;
-            height: 100%;
-            background: linear-gradient(90deg,#dbeafe,#ffffff);
-        }
+    .socials a:hover {
+      opacity: 1;
+      transform: translateY(-4px) scale(1.16) rotate(1.5deg);
+      filter: drop-shadow(0 0 14px rgba(147,197,253,.35));
+    }
+    .socials a:hover::after{
+      opacity:1;
+      transform: scale(1.05);
+    }
 
-        .views {
-            margin-top: 6px;
-            text-align: center;
-            font-size: 12px;
-            color: var(--text-soft);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-        }
+    /* ====== Плеер ====== */
+    .player-shell {
+      width: min(44rem, 100%);
+      background: var(--card-bg);
+      border-radius: 22px;
+      padding: 16px 18px;
+      border: 1px solid rgba(148,163,253,0.35);
+      backdrop-filter: blur(var(--card-blur));
+      box-shadow: 0 24px 70px rgba(0,0,0,0.9);
 
-        /* ====== Кастомный курсор ====== */
-        .cursor-dot,
-        .cursor-ring,
-        .cursor-trail {
-            pointer-events: none !important;
-        }
+      position: relative;
+      overflow: hidden;
+      transform-style: preserve-3d;
+      will-change: transform, box-shadow;
+      transition:
+        transform .65s cubic-bezier(.2,.8,.2,1),
+        box-shadow .65s cubic-bezier(.2,.8,.2,1),
+        border-color .45s ease;
+    }
 
-        .cursor-dot {
-            position: fixed;
-            width: 6px;
-            height: 6px;
-            border-radius: 50%;
-            background: white;
-            z-index: 9999;
-            transform: translate(-50%, -50%);
-        }
+    .player-row {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
 
-        .cursor-ring {
-            position: fixed;
-            width: 26px;
-            height: 26px;
-            border-radius: 50%;
-            border: 2px solid #dbeafe;
-            box-shadow: 0 0 12px #93c5fd;
-            z-index: 9998;
-            transform: translate(-50%, -50%);
-        }
+    .player-cover {
+      width: 54px;
+      height: 54px;
+      border-radius: 12px;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+    .player-cover img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
 
-        .cursor-trail{
-            position:fixed;
-            width:6px;
-            height:6px;
-            border-radius:50%;
-            background:white;
-            opacity:1;
-            z-index:9000;
-            transform:translate(-50%, -50%);
-            transition:opacity .35s, transform .35s;
-        }
+    .player-main {
+      flex: 1;
+      min-width: 0;
+    }
 
-        @media (max-width: 640px) {
-            .card,
-            .player-shell {
-                border-radius: 20px;
-                padding: 20px 14px;
-            }
-            .name-text { font-size: 26px; }
+    .player-title {
+      font-size: 14px;
+      margin-bottom: 4px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
 
-            .info-main {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-            .about-box {
-                width: 100%;
-            }
-        }
-		/* ====== Гирлянда ====== */
-.garland {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 60px;
+    .player-time {
+      display: flex;
+      gap: 12px;
+      font-size: 12px;
+      color: var(--text-soft);
+      margin-bottom: 4px;
+    }
 
-    display: flex;
-    justify-content: center;
-    align-items: flex-end;
+    .player-controls {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      margin-left: 6px;
+    }
 
-    pointer-events: none;
-    z-index: 9999; /* поверх всего */
-}
+    .player-button {
+      width: 44px;
+      height: 44px;
+      background: white;
+      border-radius: 50%;
+      border: none;
+      font-size: 18px;
+      color: #0f172a;
+      box-shadow: 0 0 14px rgba(15,23,42,0.9);
 
-/* лампы */
-.bulb {
-    width: 18px;
-    height: 18px;
-    border-radius: 50%;
-    margin: 0 20px;
-    position: relative;
-    transition: 0.4s ease;
-}
+      position: relative;
+      overflow: hidden;
+      transition: transform .55s cubic-bezier(.2,.9,.2,1), box-shadow .55s ease;
+      will-change: transform;
+    }
 
-/* провод */
-.bulb::after {
-    content: "";
-    position: absolute;
-    top: -12px;
-    left: 14px;
-    width: 40px;
-    height: 18px;
-    border-bottom: 2px solid rgba(180,200,255,0.35);
-    border-radius: 50%;
-}
+    .player-button:hover{
+      transform: scale(1.10);
+      box-shadow: 0 0 22px rgba(147,197,253,.20), 0 0 14px rgba(15,23,42,.9);
+    }
+    .player-button:active{ transform: scale(1.05); }
 
-.bulb:last-child::after {
-    display: none;
-}
+    .volume {
+      font-size: 22px;
+      color: var(--text-soft);
+      background: transparent;
+      border: none;
+      padding: 0;
+      transition: transform .55s cubic-bezier(.2,.9,.2,1), filter .55s ease;
+    }
+    .volume:hover{
+      transform: scale(1.14);
+      filter: drop-shadow(0 0 10px rgba(147,197,253,.25));
+    }
 
-/* цвет + свечение */
-.red    { background: #ff4b4b; animation: glowR 1.2s infinite; }
-.yellow { background: #ffd84a; animation: glowY 1.2s infinite; }
-.blue   { background: #54c2ff; animation: glowB 1.2s infinite; }
-.green  { background: #5aff8c; animation: glowG 1.2s infinite; }
+    .progress {
+      width: 100%;
+      height: 4px;
+      background: rgba(148,163,253,0.3);
+      border-radius: 12px;
+      overflow: hidden;
+      margin-top: 10px;
+      position: relative;
+      transition: box-shadow .55s ease, transform .55s ease;
+      cursor: none;
+      touch-action: none;
+    }
+    .progress:hover{
+      box-shadow: 0 0 16px rgba(147,197,253,.14);
+      transform: translateY(-1px);
+    }
 
-@keyframes glowR {
-  0%,100% { box-shadow: 0 0 14px 6px #ff4b4b; }
-  50%     { box-shadow: 0 0 0px 0px transparent; }
-}
-@keyframes glowY {
-  0%,100% { box-shadow: 0 0 0px 0px transparent; }
-  50%     { box-shadow: 0 0 14px 6px #ffd84a; }
-}
-@keyframes glowB {
-  0%,100% { box-shadow: 0 0 14px 6px #54c2ff; }
-  50%     { box-shadow: 0 0 0px 0px transparent; }
-}
-@keyframes glowG {
-  0%,100% { box-shadow: 0 0 0px 0px transparent; }
-  50%     { box-shadow: 0 0 14px 6px #5aff8c; }
-}
+    .progress-fill {
+      width: 0%;
+      height: 100%;
+      background: linear-gradient(90deg,#dbeafe,#ffffff);
+      transition: width .24s linear; /* медленнее/плавнее */
+    }
 
-/* телефон — скрыть */
-@media (max-width: 700px) {
-    .garland { display: none; }
-}
+    .views {
+      margin-top: 6px;
+      text-align: center;
+      font-size: 12px;
+      color: var(--text-soft);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
 
-    </style>
+    /* ====== Гирлянда ====== */
+    .garland {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 60px;
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+      pointer-events: none;
+      z-index: 9999;
+    }
+    .bulb {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      margin: 0 20px;
+      position: relative;
+    }
+    .bulb::after {
+      content: "";
+      position: absolute;
+      top: -12px;
+      left: 14px;
+      width: 40px;
+      height: 18px;
+      border-bottom: 2px solid rgba(180,200,255,0.35);
+      border-radius: 50%;
+    }
+    .bulb:last-child::after { display: none; }
+
+    .red    { background: #ff4b4b; animation: glowR 2.2s infinite; }
+    .yellow { background: #ffd84a; animation: glowY 2.2s infinite; }
+    .blue   { background: #54c2ff; animation: glowB 2.2s infinite; }
+    .green  { background: #5aff8c; animation: glowG 2.2s infinite; }
+
+    @keyframes glowR { 0%,100%{ box-shadow:0 0 14px 6px #ff4b4b; } 50%{ box-shadow:0 0 0 0 transparent; } }
+    @keyframes glowY { 0%,100%{ box-shadow:0 0 0 0 transparent; } 50%{ box-shadow:0 0 14px 6px #ffd84a; } }
+    @keyframes glowB { 0%,100%{ box-shadow:0 0 14px 6px #54c2ff; } 50%{ box-shadow:0 0 0 0 transparent; } }
+    @keyframes glowG { 0%,100%{ box-shadow:0 0 0 0 transparent; } 50%{ box-shadow:0 0 14px 6px #5aff8c; } }
+
+    @media (max-width: 700px) { .garland { display:none; } }
+
+    /* ====== Кастомный курсор ====== */
+    .cursor-dot, .cursor-ring, .cursor-trail { pointer-events: none !important; }
+
+    .cursor-dot {
+      position: fixed;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: white;
+      z-index: 9999;
+      transform: translate(-50%, -50%);
+      box-shadow: 0 0 10px rgba(255,255,255,.55), 0 0 18px rgba(147,197,253,.18);
+    }
+
+    .cursor-ring {
+      position: fixed;
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      border: 2px solid #dbeafe;
+      box-shadow: 0 0 12px rgba(147,197,253,.40);
+      z-index: 9998;
+      transform: translate(-50%, -50%);
+      backdrop-filter: blur(2px);
+    }
+
+    .cursor-trail{
+      position:fixed;
+      width:6px;
+      height:6px;
+      border-radius:50%;
+      background:white;
+      opacity:1;
+      z-index:9000;
+      transform:translate(-50%, -50%);
+      transition: opacity .55s, transform .55s; /* медленнее */
+    }
+
+    @media (max-width: 640px) {
+      .card, .player-shell { border-radius: 20px; padding: 20px 14px; }
+      .name-text { font-size: 26px; }
+      .info-main { flex-direction: column; align-items: flex-start; }
+      .about-box { width: 100%; }
+    }
+
+    /* Мобилки/тач: вернуть обычный курсор */
+    @media (hover: none), (pointer: coarse) {
+      * { cursor: auto !important; }
+      .cursor-dot, .cursor-ring, .cursor-trail { display: none !important; }
+    }
+
+    /* prefers-reduced-motion: отключить тяжёлое */
+    @media (prefers-reduced-motion: reduce) {
+      .p, .name-text, .bulb { animation: none !important; }
+      .cursor-dot, .cursor-ring, .cursor-trail { display: none !important; }
+      * { transition: none !important; }
+    }
+
+    /* ====== Ultra glow слой (двигается ТОЛЬКО в карточках) ====== */
+    .card::before, .player-shell::before{
+      content:"";
+      position:absolute;
+      inset:-2px;
+      border-radius: inherit;
+      background: radial-gradient(circle at var(--mx,50%) var(--my,50%), var(--glow), transparent 55%);
+      opacity: 0;
+      pointer-events:none;
+      transition: opacity .55s ease;
+    }
+    .card:hover::before, .player-shell:hover::before{ opacity: 1; }
+
+    /* “плёнка” сверху */
+    .card::after, .player-shell::after{
+      content:"";
+      position:absolute;
+      inset:-40%;
+      background: linear-gradient(120deg, transparent 30%, rgba(255,255,255,.06), transparent 70%);
+      transform: translateX(-65%) rotate(8deg);
+      opacity: 0;
+      pointer-events:none;
+      transition: opacity .55s ease;
+    }
+    .card:hover::after, .player-shell:hover::after{
+      opacity: 1;
+      animation: sweep 2.4s ease forwards; /* медленнее */
+    }
+    @keyframes sweep{ to{ transform: translateX(65%) rotate(8deg); } }
+
+    /* ====== Banner "включить звук" ====== */
+    .sound-hint{
+      position: fixed;
+      left: 50%;
+      bottom: 18px;
+      transform: translateX(-50%);
+      background: rgba(15,23,42,.85);
+      border: 1px solid rgba(148,163,253,.35);
+      box-shadow: 0 0 18px rgba(59,130,246,.18);
+      backdrop-filter: blur(10px);
+      color: rgba(255,255,255,.92);
+      padding: 10px 14px;
+      border-radius: 14px;
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      z-index: 10000;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .55s ease, transform .55s ease;
+    }
+    .sound-hint.show{
+      opacity: 1;
+      transform: translateX(-50%) translateY(-4px);
+      pointer-events: auto;
+    }
+    .sound-hint button{
+      cursor: none !important;
+      border: none;
+      padding: 8px 10px;
+      border-radius: 12px;
+      background: rgba(255,255,255,.92);
+      color: #0f172a;
+      font-family: inherit;
+      transition: transform .55s cubic-bezier(.2,.9,.2,1);
+    }
+    .sound-hint button:hover{ transform: scale(1.06); }
+  </style>
 </head>
+
 <body>
-<body>
+  <canvas id="particleCanvas"></canvas>
+  <div class="bg-overlay"></div>
 
-<canvas id="particleCanvas"></canvas>
-<div class="bg-overlay"></div>
+  <!-- 🎄 ГИРЛЯНДА -->
+  <div class="garland" aria-hidden="true">
+    <div class="bulb red"></div><div class="bulb yellow"></div><div class="bulb blue"></div><div class="bulb green"></div>
+    <div class="bulb red"></div><div class="bulb yellow"></div><div class="bulb blue"></div><div class="bulb green"></div>
+    <div class="bulb red"></div><div class="bulb yellow"></div><div class="bulb blue"></div><div class="bulb green"></div>
+  </div>
 
-<!-- 🎄 ГИРЛЯНДА -->
-<div class="garland">
-    <div class="bulb red"></div>
-    <div class="bulb yellow"></div>
-    <div class="bulb blue"></div>
-    <div class="bulb green"></div>
+  <div class="cursor-dot" aria-hidden="true"></div>
+  <div class="cursor-ring" aria-hidden="true"></div>
 
-    <div class="bulb red"></div>
-    <div class="bulb yellow"></div>
-    <div class="bulb blue"></div>
-    <div class="bulb green"></div>
-
-    <div class="bulb red"></div>
-    <div class="bulb yellow"></div>
-    <div class="bulb blue"></div>
-    <div class="bulb green"></div>
-</div>
-
-<canvas id="particleCanvas"></canvas>
-<div class="bg-overlay"></div>
-
-<div class="cursor-dot"></div>
-<div class="cursor-ring"></div>
-
-<div class="page">
-
+  <div class="page">
     <!-- ===== Визитка ===== -->
     <div class="card">
-        <div class="top">
-
-            <div class="avatar">
-                <img src="avatar.jpg">
-                <div class="avatar-particles">
-                    <span class="p p1"></span>
-                    <span class="p p2"></span>
-                    <span class="p p3"></span>
-                    <span class="p p4"></span>
-                    <span class="p p5"></span>
-                    <span class="p p6"></span>
-                    <span class="p p7"></span>
-                    <span class="p p8"></span>
-                    <span class="p p9"></span>
-                    <span class="p p10"></span>
-                    <span class="p p11"></span>
-                    <span class="p p12"></span>
-                    <span class="p p13"></span>
-                    <span class="p p14"></span>
-                </div>
-            </div>
-
-            <div class="info-main">
-                <!-- левая колонка -->
-                <div class="info-left">
-                    <div class="username">
-                        <span class="name-text">furigin</span>
-                    </div>
-
-                    <div class="tagline">Пока не придумал</div>
-
-                    <div class="location">
-                        <i class="fa-solid fa-location-dot"></i>
-                        <span>Russia</span>
-                    </div>
-
-                    <div class="discord-inline">
-                        <img src="discord-avatar.jpg" class="discord-inline-avatar" alt="discord">
-                        <span>megocat0_0</span>
-                        <span class="discord-inline-badge">discord</span>
-                    </div>
-                </div>
-
-                <!-- правая колонка -->
-                <div class="about-box">
-                    <div class="about-item">Ruslan</div>
-                    <div class="about-item">17</div>
-                    <div class="about-item">Minecraft Player</div>
-                    <div class="about-item">PvP Enjoyer</div>
-                    <div class="about-item">Beginner Developer</div>
-                    <div class="about-item">Vibecode</div>
-                </div>
-            </div>
-
+      <div class="top">
+        <div class="avatar">
+          <img src="avatar.jpg" alt="avatar">
+          <div class="avatar-particles" aria-hidden="true">
+            <span class="p p1"></span><span class="p p2"></span><span class="p p3"></span><span class="p p4"></span>
+            <span class="p p5"></span><span class="p p6"></span><span class="p p7"></span><span class="p p8"></span>
+            <span class="p p9"></span><span class="p p10"></span><span class="p p11"></span><span class="p p12"></span>
+            <span class="p p13"></span><span class="p p14"></span>
+          </div>
         </div>
 
-        <!-- Соцсети -->
-        <div class="socials">
-            <a href="https://t.me/MegoCat" target="_blank" title="Telegram">
-                <i class="fa-brands fa-telegram"></i>
-            </a>
-            <a href="https://tiktok.com/@furigin_" target="_blank" title="TikTok">
-                <i class="fa-brands fa-tiktok"></i>
-            </a>
-            <a href="https://github.com/Furigin" target="_blank" title="GitHub">
-                <i class="fa-brands fa-github"></i>
-            </a>
-            <a href="https://steamcommunity.com/id/furigin/" target="_blank" title="Steam">
-                <i class="fa-brands fa-steam"></i>
-            </a>
-            <a href="https://ru.namemc.com/profile/furigin.1" target="_blank" title="NameMC">
-                N
-            </a>
+        <div class="info-main">
+          <div class="info-left">
+            <div class="username"><span class="name-text">furigin</span></div>
+            <div class="tagline">Пока не придумал</div>
+
+            <div class="location"><i class="fa-solid fa-location-dot"></i><span>Russia</span></div>
+
+            <div class="discord-inline">
+              <img src="discord-avatar.jpg" class="discord-inline-avatar" alt="discord">
+              <span>megocat0_0</span>
+              <span class="discord-inline-badge">discord</span>
+            </div>
+          </div>
+
+          <div class="about-box">
+            <div class="about-item">Ruslan</div>
+            <div class="about-item">17</div>
+            <div class="about-item">Minecraft Player</div>
+            <div class="about-item">PvP Enjoyer</div>
+            <div class="about-item">Beginner Developer</div>
+            <div class="about-item">Vibecode</div>
+          </div>
         </div>
+      </div>
+
+      <div class="socials">
+        <a href="https://t.me/MegoCat" target="_blank" title="Telegram" rel="noopener"><i class="fa-brands fa-telegram"></i></a>
+        <a href="https://tiktok.com/@furigin_" target="_blank" title="TikTok" rel="noopener"><i class="fa-brands fa-tiktok"></i></a>
+        <a href="https://github.com/Furigin" target="_blank" title="GitHub" rel="noopener"><i class="fa-brands fa-github"></i></a>
+        <a href="https://steamcommunity.com/id/furigin/" target="_blank" title="Steam" rel="noopener"><i class="fa-brands fa-steam"></i></a>
+        <a href="https://ru.namemc.com/profile/furigin.1" target="_blank" title="NameMC" rel="noopener">N</a>
+      </div>
     </div>
 
     <!-- ===== Плеер ===== -->
     <div class="player-shell">
-        <div class="player-row">
-            <div class="player-cover">
-                <img src="cover.jpg" alt="cover">
-            </div>
+      <div class="player-row">
+        <div class="player-cover"><img src="cover.jpg" alt="cover"></div>
 
-            <div class="player-main">
-                <div class="player-title">
-                    sxpl — christmas
-                </div>
-                <div class="player-time">
-                    <span id="currentTime">0:00</span>
-                    <span id="totalTime">0:00</span>
-                </div>
-            </div>
-
-            <div class="player-controls">
-                <button id="playPause" class="player-button">
-                    <i class="fa-solid fa-play"></i>
-                </button>
-                <div id="volumeBtn" class="volume">
-                    <i class="fa-solid fa-volume-high"></i>
-                </div>
-            </div>
+        <div class="player-main">
+          <div class="player-title">sxpl — christmas</div>
+          <div class="player-time">
+            <span id="currentTime">0:00</span>
+            <span id="totalTime">0:00</span>
+          </div>
         </div>
 
-        <div class="progress">
-            <div id="progressFill" class="progress-fill"></div>
+        <div class="player-controls">
+          <button id="playPause" class="player-button" aria-label="Play/Pause" type="button">
+            <i class="fa-solid fa-play"></i>
+          </button>
+          <button id="volumeBtn" class="volume" aria-label="Mute/Unmute" type="button">
+            <i class="fa-solid fa-volume-high"></i>
+          </button>
         </div>
+      </div>
 
-        <div class="views">
-            <i class="fa-regular fa-eye"></i>
-            <span id="viewsNum">0</span>
-        </div>
+      <div class="progress" id="progressBar" aria-label="Progress bar">
+        <div id="progressFill" class="progress-fill"></div>
+      </div>
 
-        <audio id="audio" src="music.mp3" preload="metadata"></audio>
+      <div class="views">
+        <i class="fa-regular fa-eye"></i>
+        <span id="viewsNum">0</span>
+      </div>
+
+      <!-- ВАЖНО: playsinline помогает мобилкам -->
+      <audio id="audio" src="music.mp3" preload="auto" playsinline></audio>
     </div>
+  </div>
+  
+  <script>
+    // ===== helpers =====
+    const prefersReducedMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const isTouchLike = window.matchMedia && (window.matchMedia("(hover: none)").matches || window.matchMedia("(pointer: coarse)").matches);
 
-</div>
+    function fmt(t){
+      if (!isFinite(t) || t < 0) return "0:00";
+      const m = Math.floor(t / 60);
+      const s = Math.floor(t % 60);
+      return m + ":" + String(s).padStart(2,"0");
+    }
+    function clamp(n,a,b){ return Math.max(a, Math.min(b,n)); }
 
-<script>
-    /* ===== Плеер ===== */
+    // ===== elements =====
     const audio       = document.getElementById("audio");
     const playPause   = document.getElementById("playPause");
     const progressEl  = document.getElementById("progressFill");
+    const progressBar = document.getElementById("progressBar");
     const ctime       = document.getElementById("currentTime");
     const ttime       = document.getElementById("totalTime");
     const volumeBtn   = document.getElementById("volumeBtn");
     const viewsNum    = document.getElementById("viewsNum");
 
-    function fmt(t){
-        if (!isFinite(t)) return "0:00";
-        const m = Math.floor(t / 60);
-        const s = Math.floor(t % 60);
-        return m + ":" + String(s).padStart(2,"0");
+    function setPlayIcon(isPlaying){
+      playPause.innerHTML = isPlaying
+        ? "<i class='fa-solid fa-pause'></i>"
+        : "<i class='fa-solid fa-play'></i>";
+    }
+    function setVolIcon(isMuted){
+      volumeBtn.innerHTML = isMuted
+        ? "<i class='fa-solid fa-volume-xmark'></i>"
+        : "<i class='fa-solid fa-volume-high'></i>";
     }
 
+    // ===== player logic =====
     audio.addEventListener("loadedmetadata", () => {
-        ttime.textContent = fmt(audio.duration);
+      ttime.textContent = fmt(audio.duration);
     });
 
     audio.addEventListener("timeupdate", () => {
-        if (audio.duration > 0) {
-            progressEl.style.width = (audio.currentTime / audio.duration * 100) + "%";
-        }
-        ctime.textContent = fmt(audio.currentTime);
+      const dur = audio.duration || 0;
+      progressEl.style.width = (dur > 0) ? (audio.currentTime / dur * 100) + "%" : "0%";
+      ctime.textContent = fmt(audio.currentTime);
     });
 
-    playPause.addEventListener("click", () => {
-        if (audio.paused) {
-            audio.play().catch(() => {});
-            playPause.innerHTML = "<i class='fa-solid fa-pause'></i>";
-        } else {
-            audio.pause();
-            playPause.innerHTML = "<i class='fa-solid fa-play'></i>";
-        }
+    audio.addEventListener("play", () => setPlayIcon(true));
+    audio.addEventListener("pause", () => setPlayIcon(false));
+    audio.addEventListener("ended", () => {
+      setPlayIcon(false);
+      audio.currentTime = 0;
+    });
+
+    playPause.addEventListener("click", async () => {
+      try {
+        if (audio.paused) await audio.play();
+        else audio.pause();
+      } catch {}
     });
 
     let muted = false;
     volumeBtn.addEventListener("click", () => {
-        muted = !muted;
-        audio.muted = muted;
-        volumeBtn.innerHTML = muted
-            ? "<i class='fa-solid fa-volume-xmark'></i>"
-            : "<i class='fa-solid fa-volume-high'></i>";
+      muted = !muted;
+      audio.muted = muted;
+      setVolIcon(muted);
+      if (!muted) hideSoundHint();
     });
 
-    const key = "furigin_views_winter_final";
-    let views = Number(localStorage.getItem(key) || "0");
-    views++;
-    localStorage.setItem(key, String(views));
-    viewsNum.textContent = views.toString();
+    // seek (click + drag)
+    let seeking = false;
+    function seekByClientX(clientX){
+      const rect = progressBar.getBoundingClientRect();
+      const x = clamp(clientX - rect.left, 0, rect.width);
+      const ratio = rect.width ? (x / rect.width) : 0;
+      const dur = audio.duration || 0;
+      if (dur > 0) audio.currentTime = ratio * dur;
+    }
+    progressBar.addEventListener("pointerdown", (e) => {
+      if (!isFinite(audio.duration) || audio.duration <= 0) return;
+      seeking = true;
+      progressBar.setPointerCapture(e.pointerId);
+      seekByClientX(e.clientX);
+    });
+    progressBar.addEventListener("pointermove", (e) => { if (seeking) seekByClientX(e.clientX); });
+    function stopSeek(e){
+      if (!seeking) return;
+      seeking = false;
+      try { progressBar.releasePointerCapture(e.pointerId); } catch {}
+    }
+    progressBar.addEventListener("pointerup", stopSeek);
+    progressBar.addEventListener("pointercancel", stopSeek);
 
-    /* ===== Autoplay (мягкий) ===== */
+    // views
+    const key = "furigin_views_winter_final";
+    let views = 0;
+    try {
+      const raw = localStorage.getItem(key);
+      const n = Number(raw);
+      views = Number.isFinite(n) ? n : 0;
+      views++;
+      localStorage.setItem(key, String(views));
+    } catch {
+      views = 1;
+    }
+    viewsNum.textContent = String(views);
+
+    /* ===== Autoplay (агрессивный) ===== */
     let autoStarted = false;
 
-    window.addEventListener("load", () => {
-        audio.volume = 0;
-        audio.muted = true;
-        audio.play().catch(() => {});
-    });
-
-    function enableSound() {
+    function tryAutoPlay() {
         if (autoStarted) return;
-        autoStarted = true;
-
-        audio.muted = false;
-        let v = 0;
-        let target = 0.7;
-        let fade = setInterval(() => {
-            v += 0.05;
-            if (v >= target) {
-                v = target;
-                clearInterval(fade);
-            }
-            audio.volume = v;
-        }, 120);
-
-        window.removeEventListener("mousemove", enableSound);
-        window.removeEventListener("touchstart", enableSound);
-        window.removeEventListener("click", enableSound);
-    }
-
-    window.addEventListener("mousemove", enableSound);
-    window.addEventListener("touchstart", enableSound);
-    window.addEventListener("click", enableSound);
-
-    /* ===== Снег ===== */
-    const canvas = document.getElementById("particleCanvas");
-    const ctx    = canvas.getContext("2d");
-    let W, H, flakes = [];
-
-    function resizeCanvas(){
-        W = canvas.width  = window.innerWidth;
-        H = canvas.height = window.innerHeight;
-        flakes = [];
-        for (let i = 0; i < 170; i++) {
-            flakes.push({
-                x: Math.random()*W,
-                y: Math.random()*H,
-                r: Math.random()*2.3+0.9,
-                sy: Math.random()*0.6+0.4
+        
+        audio.volume = 0.3;
+        const playPromise = audio.play();
+        
+        if (playPromise !== undefined) {
+            playPromise.then(() => {
+                autoStarted = true;
+                playPause.innerHTML = "<i class='fa-solid fa-pause'></i>";
+                console.log("Автоплей успешно запущен");
+            }).catch((error) => {
+                console.log("Автоплей заблокирован, пробуем позже:", error);
             });
         }
+    }
+
+    // Пробуем запустить на нескольких событиях
+    document.addEventListener("DOMContentLoaded", tryAutoPlay);
+    window.addEventListener("load", tryAutoPlay);
+    
+    // Пробуем при любом взаимодействии
+    const events = ["click", "mousedown", "mouseup", "keydown", "keyup", "touchstart", "touchend"];
+    events.forEach(event => {
+        document.addEventListener(event, tryAutoPlay, { once: true });
+    });
+
+    // Также пробуем через небольшую задержку
+    setTimeout(tryAutoPlay, 1000);
+    setTimeout(tryAutoPlay, 2000);
+
+
+    // ===== Snow (canvas) =====
+    const canvas = document.getElementById("particleCanvas");
+    const ctx    = canvas.getContext("2d", { alpha: true });
+
+    let W = 0, H = 0, flakes = [];
+
+    function initFlakes(){
+      flakes = [];
+      const count = 170;
+      for (let i = 0; i < count; i++) {
+        flakes.push({
+          x: Math.random() * W,
+          y: Math.random() * H,
+          r: Math.random() * 2.3 + 0.9,
+          sy: Math.random() * 0.55 + 0.35
+        });
+      }
+    }
+    function resizeCanvas(){
+      W = canvas.width  = window.innerWidth;
+      H = canvas.height = window.innerHeight;
+      initFlakes();
     }
     resizeCanvas();
-    window.addEventListener("resize", resizeCanvas);
+    window.addEventListener("resize", () => requestAnimationFrame(resizeCanvas));
 
     function drawSnow(){
-        ctx.clearRect(0,0,W,H);
-        ctx.fillStyle = "rgba(255,255,255,0.95)";
-        for (const f of flakes) {
-            f.y += f.sy;
-            if (f.y > H + 5) {
-                f.y = -5;
-                f.x = Math.random()*W;
-            }
-            ctx.beginPath();
-            ctx.arc(f.x,f.y,f.r,0,Math.PI*2);
-            ctx.fill();
-        }
-        requestAnimationFrame(drawSnow);
+      ctx.clearRect(0,0,W,H);
+      ctx.fillStyle = "rgba(255,255,255,0.95)";
+      for (const f of flakes) {
+        f.y += f.sy;
+        if (f.y > H + 5) { f.y = -5; f.x = Math.random() * W; }
+        ctx.beginPath();
+        ctx.arc(f.x, f.y, f.r, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      requestAnimationFrame(drawSnow);
     }
-    drawSnow();
+    if (!prefersReducedMotion) drawSnow();
 
-    /* ===== Курсор ===== */
+    // ===== Cursor =====
     const dot  = document.querySelector(".cursor-dot");
     const ring = document.querySelector(".cursor-ring");
-    let mx = window.innerWidth / 2;
-    let my = window.innerHeight / 2;
-    let rx = mx, ry = my;
 
-    window.addEventListener("pointermove", e => {
-        mx = e.clientX;
-        my = e.clientY;
-    });
+    if (!isTouchLike && !prefersReducedMotion) {
+      let mx = window.innerWidth / 2, my = window.innerHeight / 2;
+      let rx = mx, ry = my;
 
-    let lastTrailX = mx;
-    let lastTrailY = my;
+      window.addEventListener("pointermove", e => { mx = e.clientX; my = e.clientY; });
 
-    function spawnTrail(){
-        const dx = mx - lastTrailX;
-        const dy = my - lastTrailY;
+      let lastTrailX = mx, lastTrailY = my;
+      function spawnTrail(){
+        const dx = mx - lastTrailX, dy = my - lastTrailY;
         const dist2 = dx*dx + dy*dy;
+        if (dist2 > 14) {
+          lastTrailX = mx; lastTrailY = my;
+          const t = document.createElement("div");
+          t.className = "cursor-trail";
+          t.style.left = mx + "px";
+          t.style.top  = my + "px";
+          document.body.appendChild(t);
 
-        if (dist2 > 9) {
-            lastTrailX = mx;
-            lastTrailY = my;
-
-            const t = document.createElement("div");
-            t.className = "cursor-trail";
-            t.style.left = mx + "px";
-            t.style.top  = my + "px";
-            document.body.appendChild(t);
-
-            requestAnimationFrame(() => {
-                t.style.opacity  = "0";
-                t.style.transform = "translate(-50%, -50%) scale(0.4)";
-            });
-            setTimeout(() => t.remove(), 350);
+          requestAnimationFrame(() => {
+            t.style.opacity  = "0";
+            t.style.transform = "translate(-50%, -50%) scale(0.4)";
+          });
+          setTimeout(() => t.remove(), 650);
         }
-
         requestAnimationFrame(spawnTrail);
-    }
-    spawnTrail();
+      }
+      spawnTrail();
 
-    function renderCursor(){
+      function renderCursor(){
         dot.style.left = mx + "px";
         dot.style.top  = my + "px";
 
-        rx += (mx - rx) * 0.15;
-        ry += (my - ry) * 0.15;
+        rx += (mx - rx) * 0.10; // медленнее, плавнее
+        ry += (my - ry) * 0.10;
         ring.style.left = rx + "px";
         ring.style.top  = ry + "px";
 
         requestAnimationFrame(renderCursor);
+      }
+      renderCursor();
+    } else {
+      if (dot) dot.style.display = "none";
+      if (ring) ring.style.display = "none";
     }
-    renderCursor();
-</script>
 
+    // ===== ULTRA BEAUTY: плавный tilt + магнит без дёрганий =====
+    const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    function addTiltSmooth(el, maxTilt=11, scale=1.02){
+      if (!el || prefersReduced) return;
+
+      let tx = 0, ty = 0;
+      let cx = 0, cy = 0;
+      let hovering = false;
+
+      el.addEventListener("mousemove", (e) => {
+        const r = el.getBoundingClientRect();
+        const x = e.clientX - r.left;
+        const y = e.clientY - r.top;
+        const px = x / r.width;
+        const py = y / r.height;
+
+        tx = (0.5 - py) * maxTilt;
+        ty = (px - 0.5) * maxTilt;
+
+        el.style.setProperty("--mx", (px*100).toFixed(1) + "%");
+        el.style.setProperty("--my", (py*100).toFixed(1) + "%");
+        hovering = true;
+      });
+
+      el.addEventListener("mouseleave", () => {
+        hovering = false;
+        tx = 0; ty = 0;
+        el.style.setProperty("--mx", "50%");
+        el.style.setProperty("--my", "50%");
+      });
+
+      function tick(){
+        // плавный lerp
+        cx += (tx - cx) * 0.08;
+        cy += (ty - cy) * 0.08;
+
+        if (hovering) {
+          el.style.transform = `perspective(900px) rotateX(${cx}deg) rotateY(${cy}deg) translateY(-7px) scale(${scale})`;
+          el.style.borderColor = "rgba(148,163,253,.55)";
+          el.style.boxShadow = "0 42px 110px rgba(0,0,0,.92), 0 0 50px rgba(147,197,253,.16)";
+        } else {
+          // мягко возвращаем
+          el.style.transform = "";
+          el.style.borderColor = "";
+          el.style.boxShadow = "";
+        }
+        requestAnimationFrame(tick);
+      }
+      tick();
+    }
+
+    addTiltSmooth(document.querySelector(".card"), 11, 1.02);
+    addTiltSmooth(document.querySelector(".player-shell"), 9, 1.015);
+
+    function magneticSmooth(el, strength=14){
+      if (!el || prefersReduced) return;
+
+      let tx=0, ty=0, cx=0, cy=0, hovering=false;
+
+      el.addEventListener("mousemove", (e) => {
+        const r = el.getBoundingClientRect();
+        const dx = (e.clientX - (r.left + r.width/2)) / r.width;
+        const dy = (e.clientY - (r.top  + r.height/2)) / r.height;
+
+        tx = clamp(dx, -1, 1) * strength;
+        ty = clamp(dy, -1, 1) * strength;
+        hovering = true;
+      });
+
+      el.addEventListener("mouseleave", () => {
+        hovering = false;
+        tx = 0; ty = 0;
+      });
+
+      function tick(){
+        cx += (tx - cx) * 0.10;
+        cy += (ty - cy) * 0.10;
+
+        if (hovering) {
+          el.style.transform = `translate(${cx}px, ${cy}px) translateY(-4px) scale(1.16) rotate(1.5deg)`;
+        } else {
+          el.style.transform = "";
+        }
+        requestAnimationFrame(tick);
+      }
+      tick();
+    }
+    document.querySelectorAll(".socials a").forEach(a => magneticSmooth(a, 12));
+
+    // ripple на play (медленнее)
+    function ripple(btn){
+      if (!btn || prefersReduced) return;
+      btn.addEventListener("click", (e) => {
+        const r = btn.getBoundingClientRect();
+        const x = e.clientX - r.left;
+        const y = e.clientY - r.top;
+
+        const s = document.createElement("span");
+        s.style.position = "absolute";
+        s.style.left = x + "px";
+        s.style.top  = y + "px";
+        s.style.width = s.style.height = Math.max(r.width, r.height) * 1.6 + "px";
+        s.style.transform = "translate(-50%,-50%) scale(0)";
+        s.style.borderRadius = "999px";
+        s.style.background = "radial-gradient(circle, rgba(255,255,255,.35), transparent 60%)";
+        s.style.pointerEvents = "none";
+        s.style.opacity = "1";
+        s.style.transition = "transform .75s ease, opacity .85s ease";
+        btn.appendChild(s);
+
+        requestAnimationFrame(() => {
+          s.style.transform = "translate(-50%,-50%) scale(1)";
+          s.style.opacity = "0";
+        });
+        setTimeout(() => s.remove(), 900);
+      });
+    }
+    ripple(playPause);
+  </script>
 </body>
 </html>
