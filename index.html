@@ -5,12 +5,9 @@
     <title>@furigin | card</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <!-- Font Awesome -->
-    <link rel="stylesheet"
-          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"/>
 
     <style>
-        /* ====== Шрифт Minecraft ====== */
         @font-face {
             font-family: 'Minecraft';
             src: url('CCRFBZSR.ttf') format('truetype');
@@ -21,14 +18,14 @@
             --text-soft: rgba(255,255,255,0.65);
             --card-bg: rgba(5, 8, 16, 0.72);
             --card-blur: 20px;
+            --accent: #60a5fa;
         }
 
-        /* ====== Базовые стили ====== */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            cursor: none !important; /* всегда наш курсор */
+            cursor: none !important;
         }
 
         body {
@@ -40,9 +37,9 @@
             align-items: center;
             justify-content: center;
             overflow-x: hidden;
+            position: relative;
         }
 
-        /* снег */
         #particleCanvas {
             position: fixed;
             inset: 0;
@@ -50,7 +47,6 @@
             pointer-events: none;
         }
 
-        /* тёмный холодный оверлей */
         .bg-overlay {
             position: fixed;
             inset: 0;
@@ -62,6 +58,54 @@
             z-index: -2;
         }
 
+        .aurora {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .aurora-blob {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(70px);
+            opacity: 0.45;
+            mix-blend-mode: screen;
+            animation: drift 14s ease-in-out infinite alternate;
+        }
+
+        .aurora-blob:nth-child(1) {
+            width: 320px;
+            height: 320px;
+            background: rgba(56,189,248,0.8);
+            left: 12%;
+            top: 20%;
+        }
+
+        .aurora-blob:nth-child(2) {
+            width: 360px;
+            height: 360px;
+            background: rgba(147,197,253,0.65);
+            right: 10%;
+            top: 12%;
+            animation-duration: 17s;
+        }
+
+        .aurora-blob:nth-child(3) {
+            width: 260px;
+            height: 260px;
+            background: rgba(59,130,246,0.7);
+            left: 40%;
+            bottom: 6%;
+            animation-duration: 12s;
+        }
+
+        @keyframes drift {
+            0% { transform: translate(-18px, 0) scale(1); }
+            100% { transform: translate(16px, -20px) scale(1.08); }
+        }
+
         .page {
             width: 100%;
             padding: 20px;
@@ -69,9 +113,9 @@
             flex-direction: column;
             align-items: center;
             gap: 22px;
+            perspective: 1200px;
         }
 
-        /* ====== Визитка ====== */
         .card {
             width: min(44rem, 100%);
             background: var(--card-bg);
@@ -80,6 +124,24 @@
             border: 1px solid rgba(148, 163, 253, 0.35);
             backdrop-filter: blur(var(--card-blur));
             box-shadow: 0 30px 80px rgba(0,0,0,0.9);
+            transform-style: preserve-3d;
+            transition: transform .25s ease, box-shadow .25s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at var(--mx, 50%) var(--my, 50%), rgba(191,219,254,0.2), transparent 32%);
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity .2s ease;
+        }
+
+        .card:hover::before {
+            opacity: 1;
         }
 
         .top {
@@ -88,7 +150,6 @@
             align-items: flex-start;
         }
 
-        /* ==== АВАТАР ==== */
         .avatar {
             width: 118px;
             height: 118px;
@@ -105,9 +166,9 @@
             border-radius: 50%;
             z-index: 3;
             position: relative;
+            box-shadow: 0 0 30px rgba(125, 211, 252, .4);
         }
 
-        /* ==== ЧАСТИЦЫ ВОКРУГ АВАТАРКИ ==== */
         .avatar-particles {
             position: absolute;
             inset: 0;
@@ -139,12 +200,11 @@
         .p14 { width: 5px; height: 5px; top: 55%; right: -6px;    animation-duration: 4.5s; }
 
         @keyframes float {
-            0%   { transform: translateY(0) scale(1);   opacity: 0.7; }
+            0%   { transform: translateY(0) scale(1); opacity: 0.7; }
             50%  { transform: translateY(-6px) scale(1.15); opacity: 1; }
-            100% { transform: translateY(0) scale(1);   opacity: 0.7; }
+            100% { transform: translateY(0) scale(1); opacity: 0.7; }
         }
 
-        /* ====== ПРАВАЯ ЧАСТЬ (ник + about) ====== */
         .info-main {
             flex: 1;
             display: flex;
@@ -153,67 +213,30 @@
             gap: 20px;
         }
 
-        .info-left {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-            min-width: 0;
-        }
-
-        /* ====== НИК (градиент) ====== */
-        .username {
-            margin-bottom: 4px;
-        }
+        .info-left { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+        .username { margin-bottom: 4px; }
 
         .name-text {
             font-size: 34px;
             font-weight: 400;
-
-            background: linear-gradient(90deg,
-                #1d4ed8,
-                #3b82f6,
-                #60a5fa,
-                #93c5fd,
-                #ffffff,
-                #93c5fd,
-                #60a5fa,
-                #3b82f6,
-                #1d4ed8
-            );
+            background: linear-gradient(90deg,#1d4ed8,#3b82f6,#60a5fa,#93c5fd,#ffffff,#93c5fd,#60a5fa,#3b82f6,#1d4ed8);
             background-size: 300%;
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
-
             animation: nameGradient 6s ease-in-out infinite;
-
-            text-shadow:
-                0 0 12px rgba(147,197,253,0.8),
-                0 0 22px rgba(147,197,253,0.9),
-                0 0 32px rgba(255,255,255,0.7);
+            text-shadow: 0 0 12px rgba(147,197,253,0.8),0 0 22px rgba(147,197,253,0.9),0 0 32px rgba(255,255,255,0.7);
         }
 
         @keyframes nameGradient {
-            0%   { background-position: 0% 50%; }
-            50%  { background-position: 100% 50%; }
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
             100% { background-position: 0% 50%; }
         }
 
-        .tagline {
-            color: var(--text-soft);
-            font-size: 14px;
-        }
+        .tagline, .location { color: var(--text-soft); font-size: 14px; }
+        .location { margin-top: 2px; display: flex; align-items: center; gap: 6px; }
 
-        .location {
-            margin-top: 2px;
-            color: var(--text-soft);
-            font-size: 14px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        /* Discord inline */
         .discord-inline {
             margin-top: 10px;
             background: rgba(15,23,42,0.8);
@@ -225,21 +248,17 @@
             border: 1px solid rgba(148,163,253,0.3);
             box-shadow: 0 0 14px rgba(37,99,235,0.4);
             width: max-content;
-        }
-        .discord-inline-avatar {
-            width: 34px;
-            height: 34px;
-            border-radius: 50%;
-        }
-        .discord-inline-badge {
-            background:#3b82f6;
-            padding:2px 6px;
-            border-radius:6px;
-            color:white;
-            font-size:11px;
+            animation: pulseCard 3s ease-in-out infinite;
         }
 
-        /* ====== ABOUT-BOX (справа) ====== */
+        @keyframes pulseCard {
+            0%, 100% { box-shadow: 0 0 14px rgba(37,99,235,0.4); }
+            50% { box-shadow: 0 0 22px rgba(96,165,250,0.65); }
+        }
+
+        .discord-inline-avatar { width: 34px; height: 34px; border-radius: 50%; }
+        .discord-inline-badge { background:#3b82f6; padding:2px 6px; border-radius:6px; color:white; font-size:11px; }
+
         .about-box {
             background: rgba(15, 23, 42, 0.55);
             border: 1px solid rgba(147,197,253,0.25);
@@ -249,11 +268,7 @@
             display: flex;
             flex-direction: column;
             gap: 6px;
-
-            box-shadow:
-                0 0 14px rgba(147,197,253,0.25),
-                inset 0 0 12px rgba(59,130,246,0.25);
-
+            box-shadow: 0 0 14px rgba(147,197,253,0.25), inset 0 0 12px rgba(59,130,246,0.25);
             backdrop-filter: blur(4px);
         }
 
@@ -261,11 +276,7 @@
             font-size: 14px;
             color: #e0f2fe;
             letter-spacing: 0.5px;
-
-            text-shadow:
-                0 0 8px rgba(147,197,253,0.7),
-                0 0 15px rgba(147,197,253,0.5);
-
+            text-shadow: 0 0 8px rgba(147,197,253,0.7),0 0 15px rgba(147,197,253,0.5);
             opacity: 0;
             transform: translateX(5px);
             animation: aboutFade .6s forwards;
@@ -279,17 +290,11 @@
         .about-item:nth-child(6){ animation-delay:.5s; }
 
         @keyframes aboutFade {
-            0%   { opacity:0; transform:translateX(5px); }
+            0% { opacity:0; transform:translateX(5px); }
             100% { opacity:1; transform:translateX(0); }
         }
 
-        /* ====== Иконки соцсетей ====== */
-        .socials {
-            margin-top: 22px;
-            display: flex;
-            justify-content: center;
-            gap: 28px;
-        }
+        .socials { margin-top: 22px; display: flex; justify-content: center; gap: 28px; }
 
         .socials a {
             font-size: 30px;
@@ -299,12 +304,9 @@
             transition: .2s;
             filter: drop-shadow(0 0 8px #bde0fe);
         }
-        .socials a:hover {
-            opacity: 1;
-            transform: scale(1.15) translateY(-2px);
-        }
 
-        /* ====== Плеер ====== */
+        .socials a:hover { opacity: 1; transform: scale(1.15) translateY(-2px); }
+
         .player-shell {
             width: min(44rem, 100%);
             background: var(--card-bg);
@@ -313,55 +315,49 @@
             border: 1px solid rgba(148,163,253,0.35);
             backdrop-filter: blur(var(--card-blur));
             box-shadow: 0 24px 70px rgba(0,0,0,0.9);
+            position: relative;
+            overflow: hidden;
         }
 
-        .player-row {
+        .player-shell::before {
+            content: "";
+            position: absolute;
+            inset: -40% 0 auto;
+            height: 120px;
+            background: radial-gradient(circle at center, rgba(147,197,253,0.3), transparent 70%);
+            animation: sweep 6s linear infinite;
+            pointer-events: none;
+        }
+
+        @keyframes sweep {
+            0% { transform: translateX(-65%); }
+            100% { transform: translateX(70%); }
+        }
+
+        .player-row { display: flex; align-items: center; gap: 14px; }
+        .player-cover { width: 54px; height: 54px; border-radius: 12px; overflow: hidden; flex-shrink: 0; }
+        .player-cover img { width: 100%; height: 100%; object-fit: cover; }
+        .player-main { flex: 1; min-width: 0; }
+        .player-title { font-size: 14px; margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .player-time { display: flex; justify-content: space-between; font-size: 12px; color: var(--text-soft); margin-bottom: 8px; }
+
+        .visualizer {
             display: flex;
-            align-items: center;
-            gap: 14px;
+            align-items: flex-end;
+            gap: 4px;
+            height: 20px;
         }
 
-        .player-cover {
-            width: 54px;
-            height: 54px;
+        .visualizer-bar {
+            width: 4px;
             border-radius: 12px;
-            overflow: hidden;
-            flex-shrink: 0;
-        }
-        .player-cover img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
+            background: linear-gradient(180deg, #bfdbfe, #60a5fa);
+            height: 5px;
+            transition: height .12s linear;
+            box-shadow: 0 0 10px rgba(147,197,253,0.45);
         }
 
-        .player-main {
-            flex: 1;
-            min-width: 0;
-        }
-
-        .player-title {
-            font-size: 14px;
-            margin-bottom: 4px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .player-time {
-            display: flex;
-            gap: 12px;
-            font-size: 12px;
-            color: var(--text-soft);
-            margin-bottom: 4px;
-        }
-
-        .player-controls {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 8px;
-            margin-left: 6px;
-        }
+        .player-controls { display: flex; flex-direction: column; align-items: center; gap: 8px; margin-left: 6px; }
 
         .player-button {
             width: 44px;
@@ -372,29 +368,40 @@
             font-size: 18px;
             color: #0f172a;
             box-shadow: 0 0 14px rgba(15,23,42,0.9);
+            cursor: pointer !important;
+            transition: transform .16s ease;
         }
+        .player-button:active { transform: scale(.95); }
 
-        .volume {
-            font-size: 22px;
-            color: var(--text-soft);
+        .volume-wrap { display: flex; align-items: center; gap: 8px; }
+        .volume { font-size: 20px; color: var(--text-soft); }
+
+        .volume-slider {
+            width: 90px;
+            accent-color: #93c5fd;
+            cursor: pointer !important;
         }
 
         .progress {
             width: 100%;
-            height: 4px;
+            height: 8px;
             background: rgba(148,163,253,0.3);
             border-radius: 12px;
             overflow: hidden;
-            margin-top: 10px;
+            margin-top: 12px;
+            position: relative;
+            cursor: pointer !important;
         }
+
         .progress-fill {
             width: 0%;
             height: 100%;
             background: linear-gradient(90deg,#dbeafe,#ffffff);
+            box-shadow: 0 0 14px rgba(219,234,254,.9);
         }
 
         .views {
-            margin-top: 6px;
+            margin-top: 8px;
             text-align: center;
             font-size: 12px;
             color: var(--text-soft);
@@ -404,12 +411,9 @@
             gap: 6px;
         }
 
-        /* ====== Кастомный курсор ====== */
         .cursor-dot,
         .cursor-ring,
-        .cursor-trail {
-            pointer-events: none !important;
-        }
+        .cursor-trail { pointer-events: none !important; }
 
         .cursor-dot {
             position: fixed;
@@ -432,7 +436,7 @@
             transform: translate(-50%, -50%);
         }
 
-        .cursor-trail{
+        .cursor-trail {
             position:fixed;
             width:6px;
             height:6px;
@@ -444,6 +448,57 @@
             transition:opacity .35s, transform .35s;
         }
 
+        .garland {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 60px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            pointer-events: none;
+            z-index: 9997;
+        }
+
+        .bulb {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            margin: 0 20px;
+            position: relative;
+            transition: 0.4s ease;
+        }
+
+        .bulb::after {
+            content: "";
+            position: absolute;
+            top: -12px;
+            left: 14px;
+            width: 40px;
+            height: 18px;
+            border-bottom: 2px solid rgba(180,200,255,0.35);
+            border-radius: 50%;
+        }
+
+        .bulb:last-child::after { display: none; }
+        .red { background: #ff4b4b; animation: glowR 1.2s infinite; }
+        .yellow { background: #ffd84a; animation: glowY 1.2s infinite; }
+        .blue { background: #54c2ff; animation: glowB 1.2s infinite; }
+        .green { background: #5aff8c; animation: glowG 1.2s infinite; }
+
+        @keyframes glowR { 0%,100% { box-shadow: 0 0 14px 6px #ff4b4b; } 50% { box-shadow: 0 0 0 0 transparent; } }
+        @keyframes glowY { 0%,100% { box-shadow: 0 0 0 0 transparent; } 50% { box-shadow: 0 0 14px 6px #ffd84a; } }
+        @keyframes glowB { 0%,100% { box-shadow: 0 0 14px 6px #54c2ff; } 50% { box-shadow: 0 0 0 0 transparent; } }
+        @keyframes glowG { 0%,100% { box-shadow: 0 0 0 0 transparent; } 50% { box-shadow: 0 0 14px 6px #5aff8c; } }
+
+        @media (max-width: 700px) {
+            .garland { display: none; }
+            .cursor-dot, .cursor-ring { display: none; }
+            * { cursor: auto !important; }
+            .volume-slider { width: 70px; }
+        }
+
         @media (max-width: 640px) {
             .card,
             .player-shell {
@@ -451,157 +506,47 @@
                 padding: 20px 14px;
             }
             .name-text { font-size: 26px; }
-
-            .info-main {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-            .about-box {
-                width: 100%;
-            }
+            .info-main { flex-direction: column; align-items: flex-start; }
+            .about-box { width: 100%; }
         }
-		/* ====== Гирлянда ====== */
-.garland {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 60px;
-
-    display: flex;
-    justify-content: center;
-    align-items: flex-end;
-
-    pointer-events: none;
-    z-index: 9999; /* поверх всего */
-}
-
-/* лампы */
-.bulb {
-    width: 18px;
-    height: 18px;
-    border-radius: 50%;
-    margin: 0 20px;
-    position: relative;
-    transition: 0.4s ease;
-}
-
-/* провод */
-.bulb::after {
-    content: "";
-    position: absolute;
-    top: -12px;
-    left: 14px;
-    width: 40px;
-    height: 18px;
-    border-bottom: 2px solid rgba(180,200,255,0.35);
-    border-radius: 50%;
-}
-
-.bulb:last-child::after {
-    display: none;
-}
-
-/* цвет + свечение */
-.red    { background: #ff4b4b; animation: glowR 1.2s infinite; }
-.yellow { background: #ffd84a; animation: glowY 1.2s infinite; }
-.blue   { background: #54c2ff; animation: glowB 1.2s infinite; }
-.green  { background: #5aff8c; animation: glowG 1.2s infinite; }
-
-@keyframes glowR {
-  0%,100% { box-shadow: 0 0 14px 6px #ff4b4b; }
-  50%     { box-shadow: 0 0 0px 0px transparent; }
-}
-@keyframes glowY {
-  0%,100% { box-shadow: 0 0 0px 0px transparent; }
-  50%     { box-shadow: 0 0 14px 6px #ffd84a; }
-}
-@keyframes glowB {
-  0%,100% { box-shadow: 0 0 14px 6px #54c2ff; }
-  50%     { box-shadow: 0 0 0px 0px transparent; }
-}
-@keyframes glowG {
-  0%,100% { box-shadow: 0 0 0px 0px transparent; }
-  50%     { box-shadow: 0 0 14px 6px #5aff8c; }
-}
-
-/* телефон — скрыть */
-@media (max-width: 700px) {
-    .garland { display: none; }
-}
-
     </style>
 </head>
 <body>
-<body>
-
 <canvas id="particleCanvas"></canvas>
 <div class="bg-overlay"></div>
-
-<!-- 🎄 ГИРЛЯНДА -->
-<div class="garland">
-    <div class="bulb red"></div>
-    <div class="bulb yellow"></div>
-    <div class="bulb blue"></div>
-    <div class="bulb green"></div>
-
-    <div class="bulb red"></div>
-    <div class="bulb yellow"></div>
-    <div class="bulb blue"></div>
-    <div class="bulb green"></div>
-
-    <div class="bulb red"></div>
-    <div class="bulb yellow"></div>
-    <div class="bulb blue"></div>
-    <div class="bulb green"></div>
+<div class="aurora">
+    <div class="aurora-blob"></div>
+    <div class="aurora-blob"></div>
+    <div class="aurora-blob"></div>
 </div>
 
-<canvas id="particleCanvas"></canvas>
-<div class="bg-overlay"></div>
+<div class="garland">
+    <div class="bulb red"></div><div class="bulb yellow"></div><div class="bulb blue"></div><div class="bulb green"></div>
+    <div class="bulb red"></div><div class="bulb yellow"></div><div class="bulb blue"></div><div class="bulb green"></div>
+    <div class="bulb red"></div><div class="bulb yellow"></div><div class="bulb blue"></div><div class="bulb green"></div>
+</div>
 
 <div class="cursor-dot"></div>
 <div class="cursor-ring"></div>
 
 <div class="page">
-
-    <!-- ===== Визитка ===== -->
-    <div class="card">
+    <div class="card" id="tiltCard">
         <div class="top">
-
             <div class="avatar">
-                <img src="avatar.jpg">
+                <img src="avatar.jpg" alt="avatar">
                 <div class="avatar-particles">
-                    <span class="p p1"></span>
-                    <span class="p p2"></span>
-                    <span class="p p3"></span>
-                    <span class="p p4"></span>
-                    <span class="p p5"></span>
-                    <span class="p p6"></span>
-                    <span class="p p7"></span>
-                    <span class="p p8"></span>
-                    <span class="p p9"></span>
-                    <span class="p p10"></span>
-                    <span class="p p11"></span>
-                    <span class="p p12"></span>
-                    <span class="p p13"></span>
-                    <span class="p p14"></span>
+                    <span class="p p1"></span><span class="p p2"></span><span class="p p3"></span><span class="p p4"></span>
+                    <span class="p p5"></span><span class="p p6"></span><span class="p p7"></span><span class="p p8"></span>
+                    <span class="p p9"></span><span class="p p10"></span><span class="p p11"></span><span class="p p12"></span>
+                    <span class="p p13"></span><span class="p p14"></span>
                 </div>
             </div>
 
             <div class="info-main">
-                <!-- левая колонка -->
                 <div class="info-left">
-                    <div class="username">
-                        <span class="name-text">furigin</span>
-                    </div>
-
+                    <div class="username"><span class="name-text">furigin</span></div>
                     <div class="tagline">Пока не придумал</div>
-
-                    <div class="location">
-                        <i class="fa-solid fa-location-dot"></i>
-                        <span>Russia</span>
-                    </div>
-
+                    <div class="location"><i class="fa-solid fa-location-dot"></i><span>Russia</span></div>
                     <div class="discord-inline">
                         <img src="discord-avatar.jpg" class="discord-inline-avatar" alt="discord">
                         <span>megocat0_0</span>
@@ -609,7 +554,6 @@
                     </div>
                 </div>
 
-                <!-- правая колонка -->
                 <div class="about-box">
                     <div class="about-item">Ruslan</div>
                     <div class="about-item">17</div>
@@ -619,85 +563,75 @@
                     <div class="about-item">Vibecode</div>
                 </div>
             </div>
-
         </div>
 
-        <!-- Соцсети -->
         <div class="socials">
-            <a href="https://t.me/MegoCat" target="_blank" title="Telegram">
-                <i class="fa-brands fa-telegram"></i>
-            </a>
-            <a href="https://tiktok.com/@furigin_" target="_blank" title="TikTok">
-                <i class="fa-brands fa-tiktok"></i>
-            </a>
-            <a href="https://github.com/Furigin" target="_blank" title="GitHub">
-                <i class="fa-brands fa-github"></i>
-            </a>
-            <a href="https://steamcommunity.com/id/furigin/" target="_blank" title="Steam">
-                <i class="fa-brands fa-steam"></i>
-            </a>
-            <a href="https://ru.namemc.com/profile/furigin.1" target="_blank" title="NameMC">
-                N
-            </a>
+            <a href="https://t.me/MegoCat" target="_blank" title="Telegram"><i class="fa-brands fa-telegram"></i></a>
+            <a href="https://tiktok.com/@furigin_" target="_blank" title="TikTok"><i class="fa-brands fa-tiktok"></i></a>
+            <a href="https://github.com/Furigin" target="_blank" title="GitHub"><i class="fa-brands fa-github"></i></a>
+            <a href="https://steamcommunity.com/id/furigin/" target="_blank" title="Steam"><i class="fa-brands fa-steam"></i></a>
+            <a href="https://ru.namemc.com/profile/furigin.1" target="_blank" title="NameMC">N</a>
         </div>
     </div>
 
-    <!-- ===== Плеер ===== -->
     <div class="player-shell">
         <div class="player-row">
-            <div class="player-cover">
-                <img src="cover.jpg" alt="cover">
-            </div>
-
+            <div class="player-cover"><img src="cover.jpg" alt="cover"></div>
             <div class="player-main">
-                <div class="player-title">
-                    sxpl — christmas
-                </div>
-                <div class="player-time">
-                    <span id="currentTime">0:00</span>
-                    <span id="totalTime">0:00</span>
-                </div>
+                <div class="player-title">sxpl — christmas</div>
+                <div class="player-time"><span id="currentTime">0:00</span><span id="totalTime">0:00</span></div>
+                <div class="visualizer" id="visualizer"></div>
             </div>
 
             <div class="player-controls">
-                <button id="playPause" class="player-button">
+                <button id="playPause" class="player-button" aria-label="play">
                     <i class="fa-solid fa-play"></i>
                 </button>
-                <div id="volumeBtn" class="volume">
-                    <i class="fa-solid fa-volume-high"></i>
-                </div>
             </div>
         </div>
 
-        <div class="progress">
-            <div id="progressFill" class="progress-fill"></div>
+        <div class="progress" id="progressBar"><div id="progressFill" class="progress-fill"></div></div>
+
+        <div class="volume-wrap">
+            <div id="volumeBtn" class="volume"><i class="fa-solid fa-volume-high"></i></div>
+            <input id="volumeSlider" class="volume-slider" type="range" min="0" max="1" step="0.01" value="0.7">
         </div>
 
-        <div class="views">
-            <i class="fa-regular fa-eye"></i>
-            <span id="viewsNum">0</span>
-        </div>
-
+        <div class="views"><i class="fa-regular fa-eye"></i><span id="viewsNum">0</span></div>
         <audio id="audio" src="music.mp3" preload="metadata"></audio>
     </div>
-
 </div>
 
 <script>
-    /* ===== Плеер ===== */
-    const audio       = document.getElementById("audio");
-    const playPause   = document.getElementById("playPause");
-    const progressEl  = document.getElementById("progressFill");
-    const ctime       = document.getElementById("currentTime");
-    const ttime       = document.getElementById("totalTime");
-    const volumeBtn   = document.getElementById("volumeBtn");
-    const viewsNum    = document.getElementById("viewsNum");
+    const audio = document.getElementById("audio");
+    const playPause = document.getElementById("playPause");
+    const progressEl = document.getElementById("progressFill");
+    const progressBar = document.getElementById("progressBar");
+    const ctime = document.getElementById("currentTime");
+    const ttime = document.getElementById("totalTime");
+    const volumeBtn = document.getElementById("volumeBtn");
+    const volumeSlider = document.getElementById("volumeSlider");
+    const viewsNum = document.getElementById("viewsNum");
+    const visualizer = document.getElementById("visualizer");
 
-    function fmt(t){
+    for (let i = 0; i < 20; i++) {
+        const bar = document.createElement("span");
+        bar.className = "visualizer-bar";
+        visualizer.appendChild(bar);
+    }
+    const bars = [...visualizer.children];
+
+    function fmt(t) {
         if (!isFinite(t)) return "0:00";
         const m = Math.floor(t / 60);
         const s = Math.floor(t % 60);
-        return m + ":" + String(s).padStart(2,"0");
+        return m + ":" + String(s).padStart(2, "0");
+    }
+
+    function updatePlayIcon() {
+        playPause.innerHTML = audio.paused
+            ? "<i class='fa-solid fa-play'></i>"
+            : "<i class='fa-solid fa-pause'></i>";
     }
 
     audio.addEventListener("loadedmetadata", () => {
@@ -711,24 +645,44 @@
         ctime.textContent = fmt(audio.currentTime);
     });
 
+    audio.addEventListener("play", updatePlayIcon);
+    audio.addEventListener("pause", updatePlayIcon);
+    audio.addEventListener("ended", () => {
+        updatePlayIcon();
+        audio.currentTime = 0;
+        progressEl.style.width = "0%";
+    });
+
     playPause.addEventListener("click", () => {
         if (audio.paused) {
             audio.play().catch(() => {});
-            playPause.innerHTML = "<i class='fa-solid fa-pause'></i>";
         } else {
             audio.pause();
-            playPause.innerHTML = "<i class='fa-solid fa-play'></i>";
         }
     });
 
-    let muted = false;
-    volumeBtn.addEventListener("click", () => {
-        muted = !muted;
-        audio.muted = muted;
-        volumeBtn.innerHTML = muted
-            ? "<i class='fa-solid fa-volume-xmark'></i>"
-            : "<i class='fa-solid fa-volume-high'></i>";
+    progressBar.addEventListener("click", (e) => {
+        const rect = progressBar.getBoundingClientRect();
+        const ratio = Math.min(1, Math.max(0, (e.clientX - rect.left) / rect.width));
+        if (audio.duration > 0) {
+            audio.currentTime = audio.duration * ratio;
+            progressEl.style.width = (ratio * 100) + "%";
+        }
     });
+
+    function applyVolume(v) {
+        audio.volume = v;
+        audio.muted = v === 0;
+        volumeSlider.value = String(v);
+        volumeBtn.innerHTML = v === 0
+            ? "<i class='fa-solid fa-volume-xmark'></i>"
+            : v < 0.55
+            ? "<i class='fa-solid fa-volume-low'></i>"
+            : "<i class='fa-solid fa-volume-high'></i>";
+    }
+
+    volumeSlider.addEventListener("input", () => applyVolume(Number(volumeSlider.value)));
+    volumeBtn.addEventListener("click", () => applyVolume(audio.muted || audio.volume === 0 ? 0.7 : 0));
 
     const key = "furigin_views_winter_final";
     let views = Number(localStorage.getItem(key) || "0");
@@ -736,29 +690,24 @@
     localStorage.setItem(key, String(views));
     viewsNum.textContent = views.toString();
 
-    /* ===== Autoplay (мягкий) ===== */
     let autoStarted = false;
-
     window.addEventListener("load", () => {
-        audio.volume = 0;
-        audio.muted = true;
+        applyVolume(0);
         audio.play().catch(() => {});
     });
 
     function enableSound() {
         if (autoStarted) return;
         autoStarted = true;
-
-        audio.muted = false;
         let v = 0;
-        let target = 0.7;
-        let fade = setInterval(() => {
+        const target = 0.7;
+        const fade = setInterval(() => {
             v += 0.05;
             if (v >= target) {
                 v = target;
                 clearInterval(fade);
             }
-            audio.volume = v;
+            applyVolume(v);
         }, 120);
 
         window.removeEventListener("mousemove", enableSound);
@@ -770,46 +719,66 @@
     window.addEventListener("touchstart", enableSound);
     window.addEventListener("click", enableSound);
 
-    /* ===== Снег ===== */
+    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    if (AudioCtx) {
+        const audioCtx = new AudioCtx();
+        const track = audioCtx.createMediaElementSource(audio);
+        const analyser = audioCtx.createAnalyser();
+        analyser.fftSize = 64;
+        const data = new Uint8Array(analyser.frequencyBinCount);
+        track.connect(analyser);
+        analyser.connect(audioCtx.destination);
+
+        audio.addEventListener("play", () => {
+            if (audioCtx.state === "suspended") {
+                audioCtx.resume().catch(() => {});
+            }
+        });
+
+        function renderBars() {
+            analyser.getByteFrequencyData(data);
+            bars.forEach((bar, i) => {
+                const amp = data[i % data.length] / 255;
+                bar.style.height = `${4 + amp * 16}px`;
+            });
+            requestAnimationFrame(renderBars);
+        }
+        renderBars();
+    }
+
     const canvas = document.getElementById("particleCanvas");
-    const ctx    = canvas.getContext("2d");
+    const ctx = canvas.getContext("2d");
     let W, H, flakes = [];
 
-    function resizeCanvas(){
-        W = canvas.width  = window.innerWidth;
+    function resizeCanvas() {
+        W = canvas.width = window.innerWidth;
         H = canvas.height = window.innerHeight;
         flakes = [];
         for (let i = 0; i < 170; i++) {
-            flakes.push({
-                x: Math.random()*W,
-                y: Math.random()*H,
-                r: Math.random()*2.3+0.9,
-                sy: Math.random()*0.6+0.4
-            });
+            flakes.push({ x: Math.random() * W, y: Math.random() * H, r: Math.random() * 2.3 + 0.9, sy: Math.random() * 0.6 + 0.4 });
         }
     }
     resizeCanvas();
     window.addEventListener("resize", resizeCanvas);
 
-    function drawSnow(){
-        ctx.clearRect(0,0,W,H);
+    function drawSnow() {
+        ctx.clearRect(0, 0, W, H);
         ctx.fillStyle = "rgba(255,255,255,0.95)";
         for (const f of flakes) {
             f.y += f.sy;
             if (f.y > H + 5) {
                 f.y = -5;
-                f.x = Math.random()*W;
+                f.x = Math.random() * W;
             }
             ctx.beginPath();
-            ctx.arc(f.x,f.y,f.r,0,Math.PI*2);
+            ctx.arc(f.x, f.y, f.r, 0, Math.PI * 2);
             ctx.fill();
         }
         requestAnimationFrame(drawSnow);
     }
     drawSnow();
 
-    /* ===== Курсор ===== */
-    const dot  = document.querySelector(".cursor-dot");
+    const dot = document.querySelector(".cursor-dot");
     const ring = document.querySelector(".cursor-ring");
     let mx = window.innerWidth / 2;
     let my = window.innerHeight / 2;
@@ -823,45 +792,57 @@
     let lastTrailX = mx;
     let lastTrailY = my;
 
-    function spawnTrail(){
+    function spawnTrail() {
         const dx = mx - lastTrailX;
         const dy = my - lastTrailY;
-        const dist2 = dx*dx + dy*dy;
+        const dist2 = dx * dx + dy * dy;
 
         if (dist2 > 9) {
             lastTrailX = mx;
             lastTrailY = my;
-
             const t = document.createElement("div");
             t.className = "cursor-trail";
             t.style.left = mx + "px";
-            t.style.top  = my + "px";
+            t.style.top = my + "px";
             document.body.appendChild(t);
-
             requestAnimationFrame(() => {
-                t.style.opacity  = "0";
+                t.style.opacity = "0";
                 t.style.transform = "translate(-50%, -50%) scale(0.4)";
             });
             setTimeout(() => t.remove(), 350);
         }
-
         requestAnimationFrame(spawnTrail);
     }
     spawnTrail();
 
-    function renderCursor(){
+    function renderCursor() {
         dot.style.left = mx + "px";
-        dot.style.top  = my + "px";
-
+        dot.style.top = my + "px";
         rx += (mx - rx) * 0.15;
         ry += (my - ry) * 0.15;
         ring.style.left = rx + "px";
-        ring.style.top  = ry + "px";
-
+        ring.style.top = ry + "px";
         requestAnimationFrame(renderCursor);
     }
     renderCursor();
-</script>
 
+    const tiltCard = document.getElementById("tiltCard");
+    tiltCard.addEventListener("mousemove", (e) => {
+        const r = tiltCard.getBoundingClientRect();
+        const px = ((e.clientX - r.left) / r.width) * 100;
+        const py = ((e.clientY - r.top) / r.height) * 100;
+        const rotX = ((e.clientY - r.top) / r.height - .5) * -7;
+        const rotY = ((e.clientX - r.left) / r.width - .5) * 9;
+        tiltCard.style.transform = `rotateX(${rotX}deg) rotateY(${rotY}deg)`;
+        tiltCard.style.boxShadow = "0 35px 90px rgba(0,0,0,.95), 0 0 28px rgba(147,197,253,.25)";
+        tiltCard.style.setProperty("--mx", `${px}%`);
+        tiltCard.style.setProperty("--my", `${py}%`);
+    });
+
+    tiltCard.addEventListener("mouseleave", () => {
+        tiltCard.style.transform = "rotateX(0deg) rotateY(0deg)";
+        tiltCard.style.boxShadow = "0 30px 80px rgba(0,0,0,0.9)";
+    });
+</script>
 </body>
 </html>
