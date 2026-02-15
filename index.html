@@ -581,40 +581,6 @@
       font-size:11px;
     }
 
-    .sound-hint{
-      position:fixed;
-      left:50%;
-      bottom:18px;
-      transform:translateX(-50%);
-      z-index:10001;
-      width:min(420px, 92vw);
-      background:rgba(9,13,24,.95);
-      border:2px solid rgba(143,183,255,.6);
-      box-shadow:var(--pixel-shadow), 0 10px 28px rgba(0,0,0,.5);
-      border-radius:10px;
-      padding:10px;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:12px;
-      opacity:0;
-      pointer-events:none;
-      transition:opacity .7s var(--ease-smooth), transform .7s var(--ease-smooth);
-      font-size:11px;
-      color:var(--txt-main);
-    }
-    .sound-hint.show{
-      opacity:1;
-      pointer-events:auto;
-      transform:translateX(-50%) translateY(-3px);
-    }
-    .sound-hint button{
-      min-width:132px;
-      padding:8px 10px;
-      font-family:inherit;
-      font-size:11px;
-    }
-
     .cursor-dot,.cursor-ring,.cursor-trail{
       pointer-events:none !important;
       z-index:10002;
@@ -727,11 +693,6 @@
 
   <div class="cursor-dot" aria-hidden="true"></div>
   <div class="cursor-ring" aria-hidden="true"></div>
-
-  <div id="soundHint" class="sound-hint" role="dialog" aria-live="polite" aria-label="Enable sound hint">
-    <span>Press to enable sound</span>
-    <button id="enableSoundBtn" class="pixel-btn" type="button">Enable sound</button>
-  </div>
 
   <div class="page">
     <div class="card pixel-panel tilt-card" id="profileCard">
@@ -979,9 +940,6 @@
     const viewsNum = document.getElementById("viewsNum");
     const bgVideo = document.getElementById("bgVideo");
 
-    const soundHint = document.getElementById("soundHint");
-    const enableSoundBtn = document.getElementById("enableSoundBtn");
-
     // ===== Playlist =====
     const tracks = [
       { title:"Sloe — fears", subtitle:"Track 1 / 3", src:"music.mp3",  cover:"cover.png" },
@@ -990,9 +948,9 @@
     ];
 
     let currentTrackIndex = Math.floor(Math.random() * tracks.length);
-    let muted = true;
+	let muted = false;
     let seeking = false;
-    let soundUnlocked = false;
+	let soundUnlocked = true;
 
     function setPlayIcon(isPlaying){
       playPause.innerHTML = isPlaying ? "<i class='fa-solid fa-pause'></i>" : "<i class='fa-solid fa-play'></i>";
@@ -1034,8 +992,6 @@
       loadTrack(currentTrackIndex + step, shouldPlay);
     }
 
-    function showSoundHint(){ soundHint.classList.add("show"); }
-    function hideSoundHint(){ soundHint.classList.remove("show"); }
 
     function fadeVolumeTo(target=0.35, duration=900){
       const start = audio.volume;
@@ -1046,36 +1002,6 @@
         if (p < 1) requestAnimationFrame(tick);
       }
       requestAnimationFrame(tick);
-    }
-
-    async function unlockSoundFromUser(){
-      if (soundUnlocked) return;
-      soundUnlocked = true;
-      muted = false;
-      audio.muted = false;
-      setVolumeIcon(false);
-
-      if (audio.paused) await safePlay();
-      fadeVolumeTo(0.35, 1000);
-      hideSoundHint();
-    }
-
-    function initAutoplayBestEffort(){
-      audio.muted = true;
-      audio.volume = 0.0;
-      setVolumeIcon(true);
-
-      safePlay().finally(() => showSoundHint());
-
-      const firstGesture = async () => {
-        await unlockSoundFromUser();
-      };
-
-      window.addEventListener("pointerdown", firstGesture, { once:true });
-      window.addEventListener("keydown", firstGesture, { once:true });
-      window.addEventListener("touchstart", firstGesture, { once:true, passive:true });
-
-      enableSoundBtn.addEventListener("click", unlockSoundFromUser);
     }
 
     playPause.addEventListener("click", async () => {
@@ -1328,6 +1254,47 @@
     loadTrack(currentTrackIndex);
     setPlayIcon(false);
     initAutoplayBestEffort();
+	
+	  function initAutoplayBestEffort(){
+        audio.muted = false;
+        audio.volume = 0.5; // 50%
+        setVolumeIcon(false);
+        safePlay();
+    }
+
+	/* ===== Autoplay (агрессивный) ===== */
+    let autoStarted = false;
+
+    function tryAutoPlay() {
+        if (autoStarted) return;
+        
+        audio.volume = 0.3;
+        const playPromise = audio.play();
+        
+        if (playPromise !== undefined) {
+            playPromise.then(() => {
+                autoStarted = true;
+                playPause.innerHTML = "<i class='fa-solid fa-pause'></i>";
+                console.log("Автоплей успешно запущен");
+            }).catch((error) => {
+                console.log("Автоплей заблокирован, пробуем позже:", error);
+            });
+        }
+    }
+
+    // Пробуем запустить на нескольких событиях
+    document.addEventListener("DOMContentLoaded", tryAutoPlay);
+    window.addEventListener("load", tryAutoPlay);
+    
+    // Пробуем при любом взаимодействии
+    const events = ["click", "mousedown", "mouseup", "keydown", "keyup", "touchstart", "touchend"];
+    events.forEach(event => {
+        document.addEventListener(event, tryAutoPlay, { once: true });
+    });
+
+    // Также пробуем через небольшую задержку
+    setTimeout(tryAutoPlay, 1000);
+    setTimeout(tryAutoPlay, 2000);
   </script>
 </body>
 </html>
