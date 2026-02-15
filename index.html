@@ -3,759 +3,720 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>@furigin | pixel card</title>
+  <title>furigin</title>
 
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"/>
 
   <style>
-    /* // EDIT: шрифт Minecraft с fallback; желательно конвертировать в woff2/woff */
-    @font-face {
-      font-family: 'Minecraft';
+    @font-face{
+      font-family:'Minecraft';
       src:
         local('Minecraft'),
         local('Minecraft Regular'),
-        url('minecraft.ttf') format('truetype'),
         url('minecraft.woff2') format('woff2'),
-        url('minecraft.woff') format('woff');
-      font-style: normal;
-      font-weight: 400;
-      font-display: swap;
+        url('minecraft.woff') format('woff'),
+        url('minecraft.ttf') format('truetype');
+      font-style:normal;
+      font-weight:400;
+      font-display:swap;
     }
 
-    :root {
-      --bg-ink: #090a12;
-      --bg-card: rgba(13, 16, 29, 0.86);
-      --bg-soft: rgba(18, 24, 44, 0.72);
-      --txt-main: #eef4ff;
-      --txt-soft: rgba(210, 226, 255, 0.72);
-      --accent: #8fb7ff;
-      --accent-2: #6ee7ff;
-      --accent-3: #9c7bff;
-      --danger: #ff8ea5;
-      --pixel-shadow: 0 0 0 2px rgba(0,0,0,.35), 0 0 0 4px rgba(143,183,255,.18);
-      --ease-smooth: cubic-bezier(.22,.8,.2,1);
+    :root{
+      --bg-ink:#090a12;
+      --bg-card:rgba(13,16,29,.86);
+      --bg-soft:rgba(18,24,44,.72);
+      --txt-main:#eef4ff;
+      --txt-soft:rgba(210,226,255,.72);
+      --accent:#8fb7ff;
+      --accent-2:#6ee7ff;
+      --accent-3:#9c7bff;
+      --pixel-shadow:0 0 0 2px rgba(0,0,0,.35), 0 0 0 4px rgba(143,183,255,.18);
+      --ease-smooth:cubic-bezier(.22,.8,.2,1);
     }
 
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      cursor: none !important;
-      image-rendering: pixelated;
+    *{
+      margin:0;
+      padding:0;
+      box-sizing:border-box;
+      cursor:none !important;
+      image-rendering:pixelated;
     }
 
-    html, body {
-      width: 100%;
-      min-height: 100%;
+    html,body{
+      width:100%;
+      min-height:100%;
     }
 
-    body {
-      font-family: 'Minecraft', 'Press Start 2P', 'Courier New', monospace;
-      background: url("bg.jpg") center/cover fixed no-repeat;
-      color: var(--txt-main);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      overflow-x: hidden;
-      position: relative;
-      letter-spacing: .3px;
+    body{
+      font-family:'Minecraft','Courier New',monospace;
+      background:url("bg.jpg") center/cover fixed no-repeat;
+      color:var(--txt-main);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      overflow-x:hidden;
+      position:relative;
+      letter-spacing:.3px;
     }
 
-    .bg-orb {
-      position: fixed;
-      width: 38vmax;
-      height: 38vmax;
-      border-radius: 50%;
-      filter: blur(50px);
-      pointer-events: none;
-      z-index: -2;
-      opacity: .22;
-      animation: orbDrift 18s ease-in-out infinite;
+    .bg-orb{
+      position:fixed;
+      width:38vmax;
+      height:38vmax;
+      border-radius:50%;
+      filter:blur(50px);
+      pointer-events:none;
+      z-index:-2;
+      opacity:.22;
+      animation:orbDrift 18s ease-in-out infinite;
     }
-    .bg-orb.a { background: rgba(143,183,255,.42); top: -10vmax; left: -8vmax; }
-    .bg-orb.b { background: rgba(110,231,255,.32); right: -8vmax; bottom: -12vmax; animation-delay: -6s; }
-    .bg-orb.c { background: rgba(156,123,255,.36); left: 30vw; bottom: -15vmax; animation-delay: -10s; }
+    .bg-orb.a{ background:rgba(143,183,255,.42); top:-10vmax; left:-8vmax; }
+    .bg-orb.b{ background:rgba(110,231,255,.32); right:-8vmax; bottom:-12vmax; animation-delay:-6s; }
+    .bg-orb.c{ background:rgba(156,123,255,.36); left:30vw; bottom:-15vmax; animation-delay:-10s; }
 
-    @keyframes orbDrift {
-      0%,100% { transform: translate3d(0,0,0) scale(1); }
-      50% { transform: translate3d(0,-18px,0) scale(1.06); }
+    @keyframes orbDrift{
+      0%,100%{ transform:translate3d(0,0,0) scale(1); }
+      50%{ transform:translate3d(0,-18px,0) scale(1.06); }
     }
 
-    .bg-video {
-      position: fixed;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      z-index: -4;
-      opacity: 0;
-      transition: opacity .9s var(--ease-smooth);
-      pointer-events: none;
+    .bg-video{
+      position:fixed;
+      inset:0;
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      z-index:-4;
+      opacity:0;
+      transition:opacity .9s var(--ease-smooth);
+      pointer-events:none;
     }
-    .bg-video.show { opacity: 1; }
+    .bg-video.show{ opacity:1; }
 
-    .bg-overlay {
-      position: fixed;
-      inset: 0;
-      z-index: -3;
-      pointer-events: none;
+    .bg-overlay{
+      position:fixed;
+      inset:0;
+      z-index:-3;
+      pointer-events:none;
       background:
-        radial-gradient(circle at top, rgba(107,160,255,0.22), transparent 58%),
-        radial-gradient(circle at bottom, rgba(156,123,255,0.18), transparent 60%),
-        rgba(5, 8, 16, .65);
-      backdrop-filter: blur(6px) saturate(1.1);
+        radial-gradient(circle at top, rgba(107,160,255,.22), transparent 58%),
+        radial-gradient(circle at bottom, rgba(156,123,255,.18), transparent 60%),
+        rgba(5,8,16,.65);
+      backdrop-filter:blur(6px) saturate(1.1);
     }
 
-    /* // EDIT: CRT/scanlines лёгкие */
-    .scanlines {
-      position: fixed;
-      inset: 0;
-      z-index: -2;
-      pointer-events: none;
-      opacity: .22;
-      background:
-        repeating-linear-gradient(
-          to bottom,
-          rgba(255,255,255,.045) 0px,
-          rgba(255,255,255,.045) 1px,
-          transparent 2px,
-          transparent 4px
-        );
-      mix-blend-mode: soft-light;
-    }
-
-    #particleCanvas {
-      position: fixed;
-      inset: 0;
-      z-index: -1;
-      pointer-events: none;
-    }
-
-    .loading-screen {
-      position: fixed;
-      inset: 0;
-      z-index: 11000;
-      background: #05070f;
-      display: grid;
-      place-items: center;
-      transition: opacity .7s var(--ease-smooth), visibility .7s var(--ease-smooth);
-    }
-    .loading-screen.hidden {
-      opacity: 0;
-      visibility: hidden;
-    }
-    .loading-box {
-      width: min(420px, 86vw);
-      background: #0a1226;
-      border: 2px solid #a8c8ff;
-      box-shadow: var(--pixel-shadow), 0 14px 40px rgba(0,0,0,.5);
-      padding: 14px;
-    }
-    .loading-label {
-      font-size: 12px;
-      color: #dbe9ff;
-      margin-bottom: 10px;
-      text-transform: uppercase;
-    }
-    .loading-bar {
-      width: 100%;
-      height: 14px;
-      border: 2px solid #8fb7ff;
-      background: #0a1121;
-      padding: 1px;
-    }
-    .loading-fill {
-      width: 0%;
-      height: 100%;
-      background: repeating-linear-gradient(
-        45deg,
-        #8fb7ff 0 8px,
-        #6ee7ff 8px 16px
+    .scanlines{
+      position:fixed;
+      inset:0;
+      z-index:-2;
+      pointer-events:none;
+      opacity:.22;
+      background:repeating-linear-gradient(
+        to bottom,
+        rgba(255,255,255,.045) 0px,
+        rgba(255,255,255,.045) 1px,
+        transparent 2px,
+        transparent 4px
       );
-      transition: width .25s var(--ease-smooth);
+      mix-blend-mode:soft-light;
     }
 
-    .page {
-      width: 100%;
-      max-width: 1080px;
-      min-height: 100vh;
-      margin: 0 auto;
-      padding: 24px;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      gap: 20px;
+    #particleCanvas{
+      position:fixed;
+      inset:0;
+      z-index:-1;
+      pointer-events:none;
     }
 
-    .pixel-panel {
-      background: var(--bg-card);
-      border: 2px solid rgba(143,183,255,0.65);
-      box-shadow: var(--pixel-shadow), 0 18px 48px rgba(3,6,14,.65);
-      backdrop-filter: blur(12px);
-      position: relative;
-      overflow: hidden;
-      transition: transform .8s var(--ease-smooth), box-shadow .8s var(--ease-smooth), border-color .6s var(--ease-smooth);
+    /* ===== Loading Screen ===== */
+    .loading-screen{
+      position:fixed;
+      inset:0;
+      z-index:11000;
+      background:#05070f;
+      display:grid;
+      place-items:center;
+      transition:opacity .7s var(--ease-smooth), visibility .7s var(--ease-smooth);
+    }
+    .loading-screen.hidden{
+      opacity:0;
+      visibility:hidden;
     }
 
-    .pixel-panel::before {
-      content: "";
-      position: absolute;
-      inset: -2px;
-      pointer-events: none;
-      border: 1px dashed rgba(190,220,255,.16);
-      opacity: 0;
-      transition: opacity .7s var(--ease-smooth);
+    .loading-content{
+      width:min(420px, 90vw);
+      background:#0a1226;
+      border:2px solid #a8c8ff;
+      box-shadow:var(--pixel-shadow), 0 14px 40px rgba(0,0,0,.5);
+      padding:16px 14px;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      gap:12px;
+      text-align:center;
     }
-    .pixel-panel::after {
-      content: "";
-      position: absolute;
-      inset: -1px;
-      border-radius: inherit;
-      pointer-events: none;
-      background: radial-gradient(circle at var(--mx,50%) var(--my,50%), rgba(110,231,255,.18), transparent 55%);
-      opacity: 0;
-      transition: opacity .6s var(--ease-smooth);
+
+    .loading-gif{
+      width:150px;
+      image-rendering:pixelated;
+      filter:drop-shadow(0 0 20px rgba(59,211,255,.65));
+      animation:float 3s ease-in-out infinite;
+    }
+    @keyframes float{
+      0%,100%{ transform:translateY(0); }
+      50%{ transform:translateY(-12px); }
+    }
+
+    .loading-text{
+      font-size:16px;
+      color:#3bd3ff;
+      text-shadow:0 0 12px rgba(59,211,255,.85);
+    }
+    .loading-percent{
+      font-size:12px;
+      color:#bde9ff;
+      opacity:.9;
+    }
+
+    .loading-bar{
+      width:100%;
+      height:14px;
+      border:2px solid #8fb7ff;
+      background:#0a1121;
+      padding:1px;
+    }
+    .loading-fill{
+      width:0%;
+      height:100%;
+      background:repeating-linear-gradient(45deg, #8fb7ff 0 8px, #6ee7ff 8px 16px);
+      transition:width .22s var(--ease-smooth);
+    }
+
+    /* ===== Page / Panels ===== */
+    .page{
+      width:100%;
+      max-width:1080px;
+      min-height:100vh;
+      margin:0 auto;
+      padding:24px;
+      display:flex;
+      flex-direction:column;
+      justify-content:center;
+      align-items:center;
+      gap:20px;
+    }
+
+    .pixel-panel{
+      background:var(--bg-card);
+      border:2px solid rgba(143,183,255,.65);
+      box-shadow:var(--pixel-shadow), 0 18px 48px rgba(3,6,14,.65);
+      backdrop-filter:blur(12px);
+      position:relative;
+      overflow:hidden;
+      transition:transform .8s var(--ease-smooth), box-shadow .8s var(--ease-smooth), border-color .6s var(--ease-smooth);
+    }
+
+    .pixel-panel::before{
+      content:"";
+      position:absolute;
+      inset:-2px;
+      pointer-events:none;
+      border:1px dashed rgba(190,220,255,.16);
+      opacity:0;
+      transition:opacity .7s var(--ease-smooth);
+    }
+    .pixel-panel::after{
+      content:"";
+      position:absolute;
+      inset:-1px;
+      border-radius:inherit;
+      pointer-events:none;
+      background:radial-gradient(circle at var(--mx,50%) var(--my,50%), rgba(110,231,255,.18), transparent 55%);
+      opacity:0;
+      transition:opacity .6s var(--ease-smooth);
     }
     .pixel-panel:hover::before,
-    .pixel-panel:hover::after { opacity: 1; }
-    .pixel-panel:hover {
-      border-color: rgba(110,231,255,.78);
-      box-shadow: var(--pixel-shadow), 0 24px 62px rgba(3,6,14,.75), 0 0 26px rgba(110,231,255,.16);
+    .pixel-panel:hover::after{ opacity:1; }
+    .pixel-panel:hover{
+      border-color:rgba(110,231,255,.78);
+      box-shadow:var(--pixel-shadow), 0 24px 62px rgba(3,6,14,.75), 0 0 26px rgba(110,231,255,.16);
     }
 
-    .tilt-card {
-      transform-style: preserve-3d;
-      will-change: transform;
-      backface-visibility: hidden;
+    .tilt-card{
+      transform-style:preserve-3d;
+      will-change:transform;
+      backface-visibility:hidden;
     }
 
-    .card {
-      width: min(45rem, 100%);
-      border-radius: 14px;
-      padding: 24px;
+    .card{
+      width:min(45rem, 100%);
+      border-radius:14px;
+      padding:24px;
     }
-
 
     .card,
-    .player-shell {
-      animation: panelEnter 1s var(--ease-smooth) both;
+    .player-shell{
+      animation:panelEnter 1s var(--ease-smooth) both;
     }
-    .player-shell { animation-delay: .12s; }
+    .player-shell{ animation-delay:.12s; }
 
-    @keyframes panelEnter {
-      from {
-        opacity: 0;
-        filter: blur(2px);
-      }
-      to {
-        opacity: 1;
-        filter: blur(0);
-      }
+    @keyframes panelEnter{
+      from{ opacity:0; filter:blur(2px); }
+      to{ opacity:1; filter:blur(0); }
     }
 
-    .top {
-      display: flex;
-      gap: 20px;
-      align-items: center;
-      justify-content: center;
+    .top{
+      display:flex;
+      gap:20px;
+      align-items:center;
+      justify-content:center;
     }
 
-    .avatar {
-      width: 116px;
-      height: 116px;
-      border-radius: 10px;
-      overflow: hidden;
-      flex-shrink: 0;
-      border: 2px solid rgba(143,183,255,.6);
-      box-shadow: var(--pixel-shadow);
-      transition: transform .75s var(--ease-smooth), border-color .75s var(--ease-smooth);
-      position: relative;
+    .avatar{
+      width:116px;
+      height:116px;
+      border-radius:10px;
+      overflow:hidden;
+      flex-shrink:0;
+      border:2px solid rgba(143,183,255,.6);
+      box-shadow:var(--pixel-shadow);
+      transition:transform .75s var(--ease-smooth), border-color .75s var(--ease-smooth);
+      position:relative;
     }
-    .avatar img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      transition: transform .75s var(--ease-smooth), filter .75s var(--ease-smooth);
+    .avatar img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      transition:transform .75s var(--ease-smooth), filter .75s var(--ease-smooth);
     }
-    .avatar:hover {
-      transform: translateY(-4px) scale(1.04);
-      border-color: rgba(110,231,255,.75);
+    .avatar:hover{
+      transform:translateY(-4px) scale(1.04);
+      border-color:rgba(110,231,255,.75);
     }
-    .avatar:hover img {
-      transform: scale(1.04);
-      filter: contrast(1.06) saturate(1.04);
+    .avatar:hover img{
+      transform:scale(1.04);
+      filter:contrast(1.06) saturate(1.04);
     }
 
-    .avatar-particles { position: absolute; inset: 0; pointer-events: none; }
-    .p {
-      position: absolute;
-      width: 4px;
-      height: 4px;
-      border-radius: 0;
-      background: #d6e7ff;
-      box-shadow: 0 0 8px rgba(145,197,255,.45);
-      animation: pixelFloat 6s ease-in-out infinite;
-      opacity: .85;
+    .avatar-particles{ position:absolute; inset:0; pointer-events:none; }
+    .p{
+      position:absolute;
+      width:4px;
+      height:4px;
+      border-radius:0;
+      background:#d6e7ff;
+      box-shadow:0 0 8px rgba(145,197,255,.45);
+      animation:pixelFloat 6s ease-in-out infinite;
+      opacity:.85;
     }
-    .p1{ top: -5px; left: 49%; } .p2{ top: 15%; right: -6px; } .p3{ bottom: 12%; right:-6px; }
-    .p4{ bottom:-5px; left: 50%; } .p5{ left:-7px; top:42%; } .p6{ left:12%; top:-6px; }
-    .p7{ right:16%; top:-6px;} .p8{ left:-7px; bottom:26%; } .p9{ right:-6px; top:55%; }
-    .p10{ left:26%; bottom:-6px;} .p11{ right:26%; bottom:-6px;} .p12{ left:-7px; top:20%; }
+    .p1{ top:-5px; left:49%; } .p2{ top:15%; right:-6px; } .p3{ bottom:12%; right:-6px; }
+    .p4{ bottom:-5px; left:50%; } .p5{ left:-7px; top:42%; } .p6{ left:12%; top:-6px; }
+    .p7{ right:16%; top:-6px; } .p8{ left:-7px; bottom:26%; } .p9{ right:-6px; top:55%; }
+    .p10{ left:26%; bottom:-6px; } .p11{ right:26%; bottom:-6px; } .p12{ left:-7px; top:20%; }
     .p13{ right:-6px; top:24%; } .p14{ left:62%; top:-6px; }
 
-    @keyframes pixelFloat {
-      0%,100% { transform: translateY(0); opacity: .65; }
-      50% { transform: translateY(-4px); opacity: 1; }
+    @keyframes pixelFloat{
+      0%,100%{ transform:translateY(0); opacity:.65; }
+      50%{ transform:translateY(-4px); opacity:1; }
     }
 
-    .info-main {
-      flex: 1;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 18px;
-      min-width: 0;
+    .info-main{
+      flex:1;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:18px;
+      min-width:0;
     }
 
-    .info-left {
-      min-width: 0;
-      display: flex;
-      flex-direction: column;
-      align-items: flex-start;
-      justify-content: center;
+    .info-left{
+      min-width:0;
+      display:flex;
+      flex-direction:column;
+      align-items:flex-start;
+      justify-content:center;
     }
 
-    .name-text {
-      font-size: 34px;
-      line-height: 1;
-      background: linear-gradient(90deg, #a8c8ff, #6ee7ff, #d4d4ff, #a8c8ff);
-      background-size: 240%;
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-      animation: nameGradient 10s ease-in-out infinite;
-      text-shadow: 0 0 16px rgba(143,183,255,.35);
+    .name-text{
+      font-size:34px;
+      line-height:1;
+      background:linear-gradient(90deg,#a8c8ff,#6ee7ff,#d4d4ff,#a8c8ff);
+      background-size:240%;
+      -webkit-background-clip:text;
+      background-clip:text;
+      color:transparent;
+      animation:nameGradient 10s ease-in-out infinite;
+      text-shadow:0 0 16px rgba(143,183,255,.35);
     }
-
-    @keyframes nameGradient {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
+    @keyframes nameGradient{
+      0%{ background-position:0% 50%; }
+      50%{ background-position:100% 50%; }
+      100%{ background-position:0% 50%; }
     }
 
     .tagline,
-    .location { color: var(--txt-soft); font-size: 13px; }
+    .location{ color:var(--txt-soft); font-size:13px; }
 
-    .location {
-      margin-top: 8px;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .discord-inline {
-      margin-top: 10px;
-      width: max-content;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 7px 10px;
-      background: var(--bg-soft);
-      border: 2px solid rgba(143,183,255,.45);
-      border-radius: 8px;
-      box-shadow: var(--pixel-shadow);
-      transition: transform .7s var(--ease-smooth), border-color .7s var(--ease-smooth), box-shadow .7s var(--ease-smooth);
-    }
-    .discord-inline:hover {
-      transform: translateY(-2px);
-      border-color: rgba(110,231,255,.7);
-      box-shadow: var(--pixel-shadow), 0 0 18px rgba(110,231,255,.2);
-    }
-    .discord-inline-avatar {
-      width: 30px;
-      height: 30px;
-      border-radius: 6px;
-      border: 2px solid rgba(143,183,255,.45);
-    }
-    .discord-inline-badge {
-      font-size: 10px;
-      background: #5b7fff;
-      color: #eef4ff;
-      padding: 2px 5px;
-      border-radius: 4px;
-      border: 1px solid rgba(220,230,255,.4);
+    .location{
+      margin-top:8px;
+      display:flex;
+      align-items:center;
+      gap:6px;
     }
 
-    .about-box {
-      width: 228px;
-      background: rgba(12,18,34,.8);
-      border: 2px solid rgba(143,183,255,.36);
-      border-radius: 10px;
-      padding: 12px 12px 12px 18px;
-      box-shadow: var(--pixel-shadow);
-      display: flex;
-      flex-direction: column;
-      gap: 7px;
-      transition: transform .7s var(--ease-smooth), border-color .7s var(--ease-smooth);
+    .discord-inline{
+      margin-top:10px;
+      width:max-content;
+      display:flex;
+      align-items:center;
+      gap:8px;
+      padding:7px 10px;
+      background:var(--bg-soft);
+      border:2px solid rgba(143,183,255,.45);
+      border-radius:8px;
+      box-shadow:var(--pixel-shadow);
+      transition:transform .7s var(--ease-smooth), border-color .7s var(--ease-smooth), box-shadow .7s var(--ease-smooth);
     }
-    .about-box:hover {
-      transform: translateY(-2px);
-      border-color: rgba(156,123,255,.62);
+    .discord-inline:hover{
+      transform:translateY(-2px);
+      border-color:rgba(110,231,255,.7);
+      box-shadow:var(--pixel-shadow), 0 0 18px rgba(110,231,255,.2);
     }
-
-    .about-item {
-      font-size: 12px;
-      color: #dceafe;
-      position: relative;
-      opacity: 0;
-      transform: translateX(4px);
-      animation: aboutReveal .95s forwards;
-      transition: transform .7s var(--ease-smooth), color .7s var(--ease-smooth);
+    .discord-inline-avatar{
+      width:30px;
+      height:30px;
+      border-radius:6px;
+      border:2px solid rgba(143,183,255,.45);
     }
-    .about-item::before {
-      content: ">";
-      position: absolute;
-      left: -12px;
-      color: #8fb7ff;
-    }
-    .about-item:hover {
-      transform: translateX(4px);
-      color: #ffffff;
-    }
-    .about-item:nth-child(1){ animation-delay: .04s; }
-    .about-item:nth-child(2){ animation-delay: .12s; }
-    .about-item:nth-child(3){ animation-delay: .20s; }
-    .about-item:nth-child(4){ animation-delay: .28s; }
-    .about-item:nth-child(5){ animation-delay: .36s; }
-    .about-item:nth-child(6){ animation-delay: .44s; }
-
-    @keyframes aboutReveal {
-      to { opacity: 1; transform: translateX(0); }
+    .discord-inline-badge{
+      font-size:10px;
+      background:#5b7fff;
+      color:#eef4ff;
+      padding:2px 5px;
+      border-radius:4px;
+      border:1px solid rgba(220,230,255,.4);
     }
 
-    .socials {
-      margin-top: 20px;
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 16px;
+    .about-box{
+      width:228px;
+      background:rgba(12,18,34,.8);
+      border:2px solid rgba(143,183,255,.36);
+      border-radius:10px;
+      padding:12px 12px 12px 18px;
+      box-shadow:var(--pixel-shadow);
+      display:flex;
+      flex-direction:column;
+      gap:7px;
+      transition:transform .7s var(--ease-smooth), border-color .7s var(--ease-smooth);
+    }
+    .about-box:hover{
+      transform:translateY(-2px);
+      border-color:rgba(156,123,255,.62);
     }
 
-    /* // EDIT: пиксельные соц-кнопки */
-    .socials a {
-      width: 46px;
-      height: 46px;
-      display: grid;
-      place-items: center;
-      color: #f0f6ff;
-      text-decoration: none;
-      font-size: 20px;
-      background: rgba(12,18,34,.88);
-      border: 2px solid rgba(143,183,255,.48);
-      border-radius: 8px;
-      box-shadow: var(--pixel-shadow);
-      transition: transform .72s var(--ease-smooth), box-shadow .72s var(--ease-smooth), border-color .72s var(--ease-smooth);
-      will-change: transform;
+    .about-item{
+      font-size:12px;
+      color:#dceafe;
+      position:relative;
+      opacity:0;
+      transform:translateX(4px);
+      animation:aboutReveal .95s forwards;
+      transition:transform .7s var(--ease-smooth), color .7s var(--ease-smooth);
     }
-    .socials a:hover {
-      transform: translateY(-3px) scale(1.06);
-      border-color: rgba(110,231,255,.85);
-      box-shadow: var(--pixel-shadow), 0 0 20px rgba(110,231,255,.25);
+    .about-item::before{
+      content:">";
+      position:absolute;
+      left:-12px;
+      color:#8fb7ff;
+    }
+    .about-item:hover{
+      transform:translateX(4px);
+      color:#fff;
+    }
+    .about-item:nth-child(1){ animation-delay:.04s; }
+    .about-item:nth-child(2){ animation-delay:.12s; }
+    .about-item:nth-child(3){ animation-delay:.20s; }
+    .about-item:nth-child(4){ animation-delay:.28s; }
+    .about-item:nth-child(5){ animation-delay:.36s; }
+    .about-item:nth-child(6){ animation-delay:.44s; }
+
+    @keyframes aboutReveal{ to{ opacity:1; transform:translateX(0); } }
+
+    .socials{
+      margin-top:20px;
+      display:flex;
+      flex-wrap:wrap;
+      justify-content:center;
+      gap:16px;
     }
 
-    .player-shell {
-      width: min(45rem, 100%);
-      border-radius: 12px;
-      padding: 16px;
+    .socials a{
+      width:46px;
+      height:46px;
+      display:grid;
+      place-items:center;
+      color:#f0f6ff;
+      text-decoration:none;
+      font-size:20px;
+      background:rgba(12,18,34,.88);
+      border:2px solid rgba(143,183,255,.48);
+      border-radius:8px;
+      box-shadow:var(--pixel-shadow);
+      transition:transform .72s var(--ease-smooth), box-shadow .72s var(--ease-smooth), border-color .72s var(--ease-smooth);
+      will-change:transform;
+    }
+    .socials a:hover{
+      transform:translateY(-3px) scale(1.06);
+      border-color:rgba(110,231,255,.85);
+      box-shadow:var(--pixel-shadow), 0 0 20px rgba(110,231,255,.25);
     }
 
-    .player-row {
-      display: flex;
-      align-items: center;
-      gap: 12px;
+    .player-shell{
+      width:min(45rem, 100%);
+      border-radius:12px;
+      padding:16px;
     }
 
-    .player-cover {
-      width: 58px;
-      height: 58px;
-      border-radius: 8px;
-      overflow: hidden;
-      border: 2px solid rgba(143,183,255,.55);
-      box-shadow: var(--pixel-shadow);
-      flex-shrink: 0;
-    }
-    .player-cover img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      transition: transform .72s var(--ease-smooth), filter .72s var(--ease-smooth);
+    .player-row{
+      display:flex;
+      align-items:center;
+      gap:12px;
     }
 
-    .player-main {
-      flex: 1;
-      min-width: 0;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
+    .player-cover{
+      width:58px;
+      height:58px;
+      border-radius:8px;
+      overflow:hidden;
+      border:2px solid rgba(143,183,255,.55);
+      box-shadow:var(--pixel-shadow);
+      flex-shrink:0;
     }
-    .player-title {
-      font-size: 13px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      margin-bottom: 3px;
-    }
-    .player-subtitle {
-      font-size: 11px;
-      color: var(--txt-soft);
+    .player-cover img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      transition:transform .72s var(--ease-smooth), filter .72s var(--ease-smooth);
     }
 
-    .player-time {
-      display: flex;
-      gap: 10px;
-      font-size: 11px;
-      color: var(--txt-soft);
-      margin-top: 4px;
+    .player-main{
+      flex:1;
+      min-width:0;
+      display:flex;
+      flex-direction:column;
+      justify-content:center;
+    }
+    .player-title{
+      font-size:13px;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      margin-bottom:3px;
+    }
+    .player-subtitle{
+      font-size:11px;
+      color:var(--txt-soft);
     }
 
-    .player-controls {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin-left: 6px;
+    .player-time{
+      display:flex;
+      gap:10px;
+      font-size:11px;
+      color:var(--txt-soft);
+      margin-top:4px;
     }
 
-    /* // EDIT: пиксельные кнопки плеера */
-    .pixel-btn {
-      border: 2px solid rgba(143,183,255,.55);
-      background: rgba(13,19,36,.9);
-      color: #eff6ff;
-      border-radius: 8px;
-      box-shadow: var(--pixel-shadow);
-      transition: transform .72s var(--ease-smooth), border-color .72s var(--ease-smooth), box-shadow .72s var(--ease-smooth);
-      display: grid;
-      place-items: center;
-      cursor: none;
-    }
-    .pixel-btn:hover {
-      transform: translateY(-2px) scale(1.06);
-      border-color: rgba(110,231,255,.8);
-      box-shadow: var(--pixel-shadow), 0 0 18px rgba(143,183,255,.3);
-    }
-    .pixel-btn:active {
-      transform: translateY(-1px) scale(1.03);
+    .player-controls{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      margin-left:6px;
     }
 
-    .player-skip,
-    .volume {
-      width: 34px;
-      height: 34px;
-      font-size: 13px;
+    .pixel-btn{
+      border:2px solid rgba(143,183,255,.55);
+      background:rgba(13,19,36,.9);
+      color:#eff6ff;
+      border-radius:8px;
+      box-shadow:var(--pixel-shadow);
+      transition:transform .72s var(--ease-smooth), border-color .72s var(--ease-smooth), box-shadow .72s var(--ease-smooth);
+      display:grid;
+      place-items:center;
+      cursor:none;
+    }
+    .pixel-btn:hover{
+      transform:translateY(-2px) scale(1.06);
+      border-color:rgba(110,231,255,.8);
+      box-shadow:var(--pixel-shadow), 0 0 18px rgba(143,183,255,.3);
+    }
+    .pixel-btn:active{ transform:translateY(-1px) scale(1.03); }
+
+    .player-skip,.volume{ width:34px; height:34px; font-size:13px; }
+    .player-button{ width:44px; height:44px; font-size:16px; }
+
+    .progress{
+      width:100%;
+      margin-top:10px;
+      height:12px;
+      border:2px solid rgba(143,183,255,.45);
+      border-radius:7px;
+      background:rgba(8,12,22,.95);
+      box-shadow:inset 0 0 0 2px rgba(6,8,16,.75);
+      overflow:hidden;
+      touch-action:none;
+      cursor:none;
+    }
+    .progress-fill{
+      width:0%;
+      height:100%;
+      background:repeating-linear-gradient(90deg, var(--accent) 0 8px, var(--accent-2) 8px 16px);
+      transition:width .28s linear;
     }
 
-    .player-button {
-      width: 44px;
-      height: 44px;
-      font-size: 16px;
+    .views{
+      margin-top:8px;
+      display:flex;
+      justify-content:center;
+      gap:6px;
+      color:var(--txt-soft);
+      font-size:11px;
     }
 
-    .progress {
-      width: 100%;
-      margin-top: 10px;
-      height: 12px;
-      border: 2px solid rgba(143,183,255,.45);
-      border-radius: 7px;
-      background: rgba(8, 12, 22, .95);
-      box-shadow: inset 0 0 0 2px rgba(6,8,16,.75);
-      overflow: hidden;
-      touch-action: none;
-      cursor: none;
+    .sound-hint{
+      position:fixed;
+      left:50%;
+      bottom:18px;
+      transform:translateX(-50%);
+      z-index:10001;
+      width:min(420px, 92vw);
+      background:rgba(9,13,24,.95);
+      border:2px solid rgba(143,183,255,.6);
+      box-shadow:var(--pixel-shadow), 0 10px 28px rgba(0,0,0,.5);
+      border-radius:10px;
+      padding:10px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      opacity:0;
+      pointer-events:none;
+      transition:opacity .7s var(--ease-smooth), transform .7s var(--ease-smooth);
+      font-size:11px;
+      color:var(--txt-main);
+    }
+    .sound-hint.show{
+      opacity:1;
+      pointer-events:auto;
+      transform:translateX(-50%) translateY(-3px);
+    }
+    .sound-hint button{
+      min-width:132px;
+      padding:8px 10px;
+      font-family:inherit;
+      font-size:11px;
     }
 
-    /* // EDIT: пиксельный прогресс */
-    .progress-fill {
-      width: 0%;
-      height: 100%;
-      background:
-        repeating-linear-gradient(
-          90deg,
-          var(--accent) 0 8px,
-          var(--accent-2) 8px 16px
-        );
-      transition: width .28s linear;
+    .cursor-dot,.cursor-ring,.cursor-trail{
+      pointer-events:none !important;
+      z-index:10002;
+    }
+    .cursor-dot{
+      position:fixed;
+      width:6px;
+      height:6px;
+      background:#fff;
+      border-radius:1px;
+      transform:translate(-50%,-50%);
+      box-shadow:0 0 8px rgba(130,180,255,.5);
+    }
+    .cursor-ring{
+      position:fixed;
+      width:18px;
+      height:18px;
+      border:2px solid rgba(175,215,255,.95);
+      border-radius:2px;
+      transform:translate(-50%,-50%);
+      transition:width .35s var(--ease-smooth), height .35s var(--ease-smooth), border-color .35s var(--ease-smooth);
+    }
+    .cursor-trail{
+      position:fixed;
+      width:4px;
+      height:4px;
+      border-radius:1px;
+      background:rgba(215,234,255,.95);
+      transform:translate(-50%,-50%);
+      opacity:1;
+      transition:transform .8s var(--ease-smooth), opacity .8s var(--ease-smooth);
     }
 
-    .views {
-      margin-top: 8px;
-      display: flex;
-      justify-content: center;
-      gap: 6px;
-      color: var(--txt-soft);
-      font-size: 11px;
+    .card::after,.player-shell::after{
+      content:"";
+      position:absolute;
+      inset:-40%;
+      pointer-events:none;
+      opacity:0;
+      background:linear-gradient(120deg, transparent 35%, rgba(255,255,255,.08), transparent 62%);
+      transform:translateX(-65%) rotate(8deg);
+      transition:opacity .8s var(--ease-smooth);
     }
+    .card:hover::after,.player-shell:hover::after{
+      opacity:1;
+      animation:sweep 2.8s var(--ease-smooth) forwards;
+    }
+    @keyframes sweep{ to{ transform:translateX(60%) rotate(8deg); } }
 
-    .bulb {
-      width: 12px;
-      height: 12px;
-      margin: 0 14px;
-      border-radius: 3px;
-      animation: bulbPulse 3.4s ease-in-out infinite;
-      box-shadow: 0 0 8px currentColor;
-    }
-    .bulb:nth-child(odd){ color: #8fb7ff; background: #8fb7ff; }
-    .bulb:nth-child(even){ color: #9c7bff; background: #9c7bff; }
-
-    @keyframes bulbPulse {
-      0%,100% { opacity: .55; transform: translateY(0); }
-      50% { opacity: 1; transform: translateY(-2px); }
-    }
-
-    /* // EDIT: плашка autoplay */
-    .sound-hint {
-      position: fixed;
-      left: 50%;
-      bottom: 18px;
-      transform: translateX(-50%);
-      z-index: 10001;
-      width: min(420px, 92vw);
-      background: rgba(9,13,24,.95);
-      border: 2px solid rgba(143,183,255,.6);
-      box-shadow: var(--pixel-shadow), 0 10px 28px rgba(0,0,0,.5);
-      border-radius: 10px;
-      padding: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity .7s var(--ease-smooth), transform .7s var(--ease-smooth);
-      font-size: 11px;
-      color: var(--txt-main);
-    }
-    .sound-hint.show {
-      opacity: 1;
-      pointer-events: auto;
-      transform: translateX(-50%) translateY(-3px);
-    }
-    .sound-hint button {
-      min-width: 132px;
-      padding: 8px 10px;
-      font-family: inherit;
-      font-size: 11px;
-    }
-
-    .cursor-dot,
-    .cursor-ring,
-    .cursor-trail {
-      pointer-events: none !important;
-      z-index: 10002;
-    }
-    .cursor-dot {
-      position: fixed;
-      width: 6px;
-      height: 6px;
-      background: #fff;
-      border-radius: 1px;
-      transform: translate(-50%, -50%);
-      box-shadow: 0 0 8px rgba(130,180,255,.5);
-    }
-    .cursor-ring {
-      position: fixed;
-      width: 18px;
-      height: 18px;
-      border: 2px solid rgba(175,215,255,.95);
-      border-radius: 2px;
-      transform: translate(-50%, -50%);
-      transition: width .35s var(--ease-smooth), height .35s var(--ease-smooth), border-color .35s var(--ease-smooth);
-    }
-    .cursor-trail {
-      position: fixed;
-      width: 4px;
-      height: 4px;
-      border-radius: 1px;
-      background: rgba(215,234,255,.95);
-      transform: translate(-50%, -50%);
-      opacity: 1;
-      transition: transform .8s var(--ease-smooth), opacity .8s var(--ease-smooth);
-    }
-
-    .card::after,
-    .player-shell::after {
-      content: "";
-      position: absolute;
-      inset: -40%;
-      pointer-events: none;
-      opacity: 0;
-      background: linear-gradient(120deg, transparent 35%, rgba(255,255,255,.08), transparent 62%);
-      transform: translateX(-65%) rotate(8deg);
-      transition: opacity .8s var(--ease-smooth);
-    }
-    .card:hover::after,
-    .player-shell:hover::after {
-      opacity: 1;
-      animation: sweep 2.8s var(--ease-smooth) forwards;
-    }
-
-    .player-shell.is-switching .player-cover img {
-      animation: trackPulse .68s var(--ease-smooth);
-    }
+    .player-shell.is-switching .player-cover img{ animation:trackPulse .68s var(--ease-smooth); }
     .player-shell.is-switching .player-title,
-    .player-shell.is-switching .player-subtitle {
-      animation: trackSlide .68s var(--ease-smooth);
+    .player-shell.is-switching .player-subtitle{ animation:trackSlide .68s var(--ease-smooth); }
+
+    @keyframes trackPulse{
+      0%{ transform:scale(1); filter:brightness(1); }
+      45%{ transform:scale(1.06); filter:brightness(1.18); }
+      100%{ transform:scale(1); filter:brightness(1); }
+    }
+    @keyframes trackSlide{
+      0%{ opacity:0; transform:translateY(6px); }
+      100%{ opacity:1; transform:translateY(0); }
     }
 
-    @keyframes trackPulse {
-      0% { transform: scale(1); filter: brightness(1); }
-      45% { transform: scale(1.06); filter: brightness(1.18); }
-      100% { transform: scale(1); filter: brightness(1); }
+    @media (max-width:760px){
+      .card,.player-shell{ padding:16px 14px; }
+      .top{ flex-direction:column; }
+      .info-main{ width:100%; flex-direction:column; align-items:center; }
+      .info-left{ align-items:center; text-align:center; }
+      .about-box{ width:100%; }
+      .name-text{ font-size:28px; }
+      .player-row{ align-items:flex-start; }
+      .player-controls{ margin-left:0; flex-wrap:wrap; justify-content:flex-end; }
+      .bg-orb{ opacity:.14; }
     }
 
-    @keyframes trackSlide {
-      0% { opacity: 0; transform: translateY(6px); }
-      100% { opacity: 1; transform: translateY(0); }
+    @media (hover:none), (pointer:coarse){
+      *{ cursor:auto !important; }
+      .cursor-dot,.cursor-ring,.cursor-trail{ display:none !important; }
     }
 
-    @keyframes sweep {
-      to { transform: translateX(60%) rotate(8deg); }
-    }
-
-    @media (max-width: 760px) {
-      .card, .player-shell { padding: 16px 14px; }
-      .top { flex-direction: column; }
-      .info-main { width: 100%; flex-direction: column; align-items: center; }
-      .info-left { align-items: center; text-align: center; }
-      .about-box { width: 100%; }
-      .name-text { font-size: 28px; }
-      .player-row { align-items: flex-start; }
-      .player-controls { margin-left: 0; flex-wrap: wrap; justify-content: flex-end; }
-      .bg-orb { opacity: .14; }
-    }
-
-    @media (hover: none), (pointer: coarse) {
-      * { cursor: auto !important; }
-      .cursor-dot, .cursor-ring, .cursor-trail { display: none !important; }
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-      * { transition: none !important; animation: none !important; }
-      .cursor-dot, .cursor-ring, .cursor-trail,
-      .scanlines { display: none !important; }
+    @media (prefers-reduced-motion:reduce){
+      *{ transition:none !important; animation:none !important; }
+      .cursor-dot,.cursor-ring,.cursor-trail,.scanlines{ display:none !important; }
     }
   </style>
 </head>
+
 <body>
-  <div id="loadingScreen" class="loading-screen">
-    <div class="loading-box">
-      <div class="loading-label">Loading pixel profile...</div>
+  <!-- LOADING -->
+  <div id="loadingScreen" class="loading-screen" aria-label="Loading screen">
+    <div class="loading-content">
+      <img src="loading.gif" class="loading-gif" alt="loading"/>
+      <div class="loading-text" id="loadingText">Loading...</div>
+      <div class="loading-percent" id="loadingPercent">0%</div>
       <div class="loading-bar"><div id="loadingFill" class="loading-fill"></div></div>
     </div>
   </div>
 
   <video id="bgVideo" class="bg-video" autoplay muted loop playsinline aria-hidden="true">
-    <source src="bg.mp4" type="video/mp4" />
+    <source src="bg.mp4" type="video/mp4"/>
   </video>
+
   <div class="bg-orb a" aria-hidden="true"></div>
   <div class="bg-orb b" aria-hidden="true"></div>
   <div class="bg-orb c" aria-hidden="true"></div>
@@ -776,7 +737,7 @@
     <div class="card pixel-panel tilt-card" id="profileCard">
       <div class="top">
         <div class="avatar">
-          <img src="avatar.jpg" alt="avatar" />
+          <img src="avatar.jpg" alt="avatar"/>
           <div class="avatar-particles" aria-hidden="true">
             <span class="p p1"></span><span class="p p2"></span><span class="p p3"></span><span class="p p4"></span>
             <span class="p p5"></span><span class="p p6"></span><span class="p p7"></span><span class="p p8"></span>
@@ -792,7 +753,7 @@
             <div class="location"><i class="fa-solid fa-location-dot"></i><span>Russia</span></div>
 
             <div class="discord-inline tilt-card">
-              <img src="discord-avatar.jpg" class="discord-inline-avatar" alt="discord" />
+              <img src="discord-avatar.jpg" class="discord-inline-avatar" alt="discord"/>
               <span>megocat0_0</span>
               <span class="discord-inline-badge">discord</span>
             </div>
@@ -820,10 +781,10 @@
 
     <div class="player-shell pixel-panel tilt-card" id="playerShell">
       <div class="player-row">
-        <div class="player-cover"><img id="playerCoverImg" src="cover.jpg" alt="cover" /></div>
+        <div class="player-cover"><img id="playerCoverImg" src="cover.png" alt="cover"/></div>
 
         <div class="player-main">
-          <div class="player-title" id="playerTitle">sxpl — christmas</div>
+          <div class="player-title" id="playerTitle">Sloe — fears</div>
           <div class="player-subtitle" id="playerSubtitle">Track 1 / 3</div>
           <div class="player-time">
             <span id="currentTime">0:00</span>
@@ -853,36 +814,155 @@
   </div>
 
   <script>
+           
+    // ===== Random/rotating page title =====
+    (function titleCycler(){
+      const variants = ["furigin", "developer", "ioy", "vibecode", "minecraft", "pvp enjoyer", "pixel menu", "night walk"];
+      const pick = () => variants[Math.floor(Math.random() * variants.length)];
+
+      let current = pick();
+      document.title = current;
+
+      // каждые 3.5 сек меняем (можешь поставить 2000/5000)
+      setInterval(() => {
+        let next = pick();
+        if (next === current && variants.length > 1) next = pick();
+        current = next;
+        document.title = current;
+      }, 3500);
+    })();
+
     const prefersReducedMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const isTouchLike = window.matchMedia && (window.matchMedia("(hover: none)").matches || window.matchMedia("(pointer: coarse)").matches);
 
+
+
+
+    // ===== Title: typing + deleting + blinking cursor (game menu vibe) =====
+    (function titleTypewriter(){
+      const variants = [
+        "furigin ",
+        "dev ",
+        "ioy ",
+        "legenda ",
+        "vibe ",
+        "music ",
+        "pixel ",
+        "dance "
+      ];
+
+      const prefix = "";               // можно "▶ " или "@"
+      const suffix = "";  // можно "" если не надо
+      const cursorChar = "_";
+
+      const typeSpeed = 500;
+      const deleteSpeed = 300;
+      const holdAfterType = 90;
+      const holdAfterDelete = 26;
+
+      const blinkSpeed = 450; // мигание курсора
+
+      let wordIndex = Math.floor(Math.random() * variants.length);
+      let charIndex = 0;
+      let deleting = false;
+
+      let cursorOn = true;
+      let currentShown = ""; // то, что сейчас напечатано (без курсора)
+
+      function setTitle(){
+        const cursor = cursorOn ? cursorChar : "";
+        document.title = `${prefix}${currentShown}${cursor}${suffix}`;
+      }
+
+      // мигание курсора независимо от печати
+      setInterval(() => {
+        cursorOn = !cursorOn;
+        setTitle();
+      }, blinkSpeed);
+
+      function nextWord(){
+        let next = Math.floor(Math.random() * variants.length);
+        if (variants.length > 1 && next === wordIndex) next = (next + 1) % variants.length;
+        wordIndex = next;
+      }
+
+      function tick(){
+        const word = variants[wordIndex];
+
+        if (!deleting){
+          charIndex++;
+          currentShown = word.slice(0, charIndex);
+          setTitle();
+
+          if (charIndex >= word.length){
+            deleting = true;
+            setTimeout(tick, holdAfterType);
+            return;
+          }
+          setTimeout(tick, typeSpeed);
+        } else {
+          charIndex--;
+          currentShown = word.slice(0, Math.max(0, charIndex));
+          setTitle();
+    
+          if (charIndex <= 0){
+            deleting = false;
+            nextWord();
+            setTimeout(tick, holdAfterDelete);
+            return;
+          }
+          setTimeout(tick, deleteSpeed);
+        }
+      }
+
+      tick();
+    })();
+
+
+
+    // ===== Loading (GIF + percent + bar) =====
     const loadingScreen = document.getElementById("loadingScreen");
     const loadingFill = document.getElementById("loadingFill");
+    const loadingPercent = document.getElementById("loadingPercent");
+    const loadingText = document.getElementById("loadingText");
 
-    function runLoadingEffect() {
-      // EDIT: пиксельный loading-эффект первой загрузки
-      let progress = 0;
-      const timer = setInterval(() => {
-        progress = Math.min(progress + Math.random() * 18, 92);
-        loadingFill.style.width = progress + "%";
-      }, 120);
+    let p = 0;
+    const loadingPhrases = ["Loading...", "Generating world...", "Loading chunks...", "Cooking pixels...", "Spawning UI..."];
+    const phraseTimer = setInterval(() => {
+      loadingText.textContent = loadingPhrases[Math.floor(Math.random() * loadingPhrases.length)];
+    }, 900);
 
-      window.addEventListener("load", () => {
-        clearInterval(timer);
-        loadingFill.style.width = "100%";
-        setTimeout(() => loadingScreen.classList.add("hidden"), 280);
-      });
-    }
-    runLoadingEffect();
+    const fakeTimer = setInterval(() => {
+      p += Math.random() * 12;
+      if (p > 95) p = 95;
+      const pp = Math.floor(p);
+      loadingFill.style.width = pp + "%";
+      loadingPercent.textContent = pp + "%";
+    }, 120);
 
-    function fmt(t) {
+    window.addEventListener("load", () => {
+      clearInterval(fakeTimer);
+      clearInterval(phraseTimer);
+
+      loadingFill.style.width = "100%";
+      loadingPercent.textContent = "100%";
+
+      setTimeout(() => {
+        loadingScreen.classList.add("hidden");
+        setTimeout(() => loadingScreen.remove(), 800);
+      }, 350);
+    });
+
+    // ===== Helpers =====
+    function fmt(t){
       if (!isFinite(t) || t < 0) return "0:00";
       const m = Math.floor(t / 60);
       const s = Math.floor(t % 60);
-      return `${m}:${String(s).padStart(2, "0")}`;
+      return `${m}:${String(s).padStart(2,"0")}`;
     }
-    function clamp(n, a, b) { return Math.max(a, Math.min(b, n)); }
+    function clamp(n,a,b){ return Math.max(a, Math.min(b,n)); }
 
+    // ===== Elements =====
     const audio = document.getElementById("audio");
     const playPause = document.getElementById("playPause");
     const prevTrack = document.getElementById("prevTrack");
@@ -902,35 +982,37 @@
     const soundHint = document.getElementById("soundHint");
     const enableSoundBtn = document.getElementById("enableSoundBtn");
 
-    // EDIT: плейлист tracks[] с несколькими треками
+    // ===== Playlist =====
     const tracks = [
-      { title: "Sloe — fears", subtitle: "Track 1 / 3", src: "music.mp3", cover: "cover.png" },
-      { title: "pyatno — hardcore", subtitle: "Track 2 / 3", src: "music2.mp3", cover: "cover2.png" },
-      { title: "nyan.mp3 — Takoyaki", subtitle: "Track 3 / 3", src: "music3.mp3", cover: "cover3.png" }
+      { title:"Sloe — fears", subtitle:"Track 1 / 3", src:"music.mp3",  cover:"cover.png" },
+      { title:"pyatno — hardcore", subtitle:"Track 2 / 3", src:"music2.mp3", cover:"cover2.png" },
+      { title:"nyan.mp3 — Takoyaki", subtitle:"Track 3 / 3", src:"music3.mp3", cover:"cover3.png" }
     ];
 
     let currentTrackIndex = Math.floor(Math.random() * tracks.length);
     let muted = true;
     let seeking = false;
-    let autoStarted = false;
     let soundUnlocked = false;
 
-    function setPlayIcon(isPlaying) {
+    function setPlayIcon(isPlaying){
       playPause.innerHTML = isPlaying ? "<i class='fa-solid fa-pause'></i>" : "<i class='fa-solid fa-play'></i>";
     }
-
-    function setVolumeIcon(isMuted) {
+    function setVolumeIcon(isMuted){
       volumeBtn.innerHTML = isMuted ? "<i class='fa-solid fa-volume-xmark'></i>" : "<i class='fa-solid fa-volume-high'></i>";
     }
 
-    function animateTrackSwitch() {
+    function animateTrackSwitch(){
       playerShell.classList.remove("is-switching");
       void playerShell.offsetWidth;
       playerShell.classList.add("is-switching");
       setTimeout(() => playerShell.classList.remove("is-switching"), 720);
     }
 
-    function loadTrack(index, shouldPlay = false) {
+    async function safePlay(){
+      try { await audio.play(); } catch {}
+    }
+
+    function loadTrack(index, shouldPlay=false){
       currentTrackIndex = (index + tracks.length) % tracks.length;
       const track = tracks[currentTrackIndex];
 
@@ -947,34 +1029,18 @@
       if (shouldPlay) safePlay();
     }
 
-    function switchTrack(step) {
+    function switchTrack(step){
       const shouldPlay = !audio.paused;
       loadTrack(currentTrackIndex + step, shouldPlay);
     }
 
-    async function safePlay() {
-      try {
-        await audio.play();
-        autoStarted = true;
-      } catch {
-        autoStarted = false;
-      }
-    }
+    function showSoundHint(){ soundHint.classList.add("show"); }
+    function hideSoundHint(){ soundHint.classList.remove("show"); }
 
-    function showSoundHint() {
-      soundHint.classList.add("show");
-    }
-
-    function hideSoundHint() {
-      soundHint.classList.remove("show");
-    }
-
-    function fadeVolumeTo(target = 0.35, duration = 900) {
-      // EDIT: плавное включение громкости после первого взаимодействия
+    function fadeVolumeTo(target=0.35, duration=900){
       const start = audio.volume;
       const startAt = performance.now();
-
-      function tick(now) {
+      function tick(now){
         const p = clamp((now - startAt) / duration, 0, 1);
         audio.volume = start + (target - start) * p;
         if (p < 1) requestAnimationFrame(tick);
@@ -982,7 +1048,7 @@
       requestAnimationFrame(tick);
     }
 
-    async function unlockSoundFromUser() {
+    async function unlockSoundFromUser(){
       if (soundUnlocked) return;
       soundUnlocked = true;
       muted = false;
@@ -994,28 +1060,20 @@
       hideSoundHint();
     }
 
-    function initAutoplayBestEffort() {
-      // EDIT: лучший возможный autoplay (muted), затем плашка + user gesture
+    function initAutoplayBestEffort(){
       audio.muted = true;
       audio.volume = 0.0;
       setVolumeIcon(true);
 
-      safePlay().then(() => {
-        showSoundHint();
-      }).catch(() => {
-        showSoundHint();
-      });
+      safePlay().finally(() => showSoundHint());
 
       const firstGesture = async () => {
         await unlockSoundFromUser();
-        window.removeEventListener("pointerdown", firstGesture);
-        window.removeEventListener("keydown", firstGesture);
-        window.removeEventListener("touchstart", firstGesture);
       };
 
-      window.addEventListener("pointerdown", firstGesture, { once: true });
-      window.addEventListener("keydown", firstGesture, { once: true });
-      window.addEventListener("touchstart", firstGesture, { once: true, passive: true });
+      window.addEventListener("pointerdown", firstGesture, { once:true });
+      window.addEventListener("keydown", firstGesture, { once:true });
+      window.addEventListener("touchstart", firstGesture, { once:true, passive:true });
 
       enableSoundBtn.addEventListener("click", unlockSoundFromUser);
     }
@@ -1024,7 +1082,6 @@
       if (audio.paused) await safePlay();
       else audio.pause();
     });
-
     prevTrack.addEventListener("click", () => switchTrack(-1));
     nextTrack.addEventListener("click", () => switchTrack(1));
 
@@ -1032,7 +1089,7 @@
       muted = !muted;
       audio.muted = muted;
       setVolumeIcon(muted);
-      if (!muted) {
+      if (!muted){
         soundUnlocked = true;
         fadeVolumeTo(0.35, 700);
         hideSoundHint();
@@ -1053,10 +1110,10 @@
     audio.addEventListener("pause", () => setPlayIcon(false));
     audio.addEventListener("ended", () => switchTrack(1));
 
-    function seekByClientX(clientX) {
+    function seekByClientX(clientX){
       const rect = progressBar.getBoundingClientRect();
       const x = clamp(clientX - rect.left, 0, rect.width);
-      const ratio = rect.width ? x / rect.width : 0;
+      const ratio = rect.width ? (x / rect.width) : 0;
       const dur = audio.duration || 0;
       if (dur > 0) audio.currentTime = ratio * dur;
     }
@@ -1067,73 +1124,66 @@
       progressBar.setPointerCapture(e.pointerId);
       seekByClientX(e.clientX);
     });
-
-    progressBar.addEventListener("pointermove", (e) => {
-      if (seeking) seekByClientX(e.clientX);
-    });
-
-    function stopSeek(e) {
+    progressBar.addEventListener("pointermove", (e) => { if (seeking) seekByClientX(e.clientX); });
+    function stopSeek(e){
       if (!seeking) return;
       seeking = false;
       try { progressBar.releasePointerCapture(e.pointerId); } catch {}
     }
-
     progressBar.addEventListener("pointerup", stopSeek);
     progressBar.addEventListener("pointercancel", stopSeek);
 
-    if (bgVideo) {
-      bgVideo.addEventListener("canplay", () => bgVideo.classList.add("show"), { once: true });
+    // bg video
+    if (bgVideo){
+      bgVideo.addEventListener("canplay", () => bgVideo.classList.add("show"), { once:true });
       bgVideo.addEventListener("error", () => bgVideo.remove());
     }
 
+    // views
     const viewsKey = "furigin_views_pixel_retro";
     let views = 0;
-    try {
+    try{
       const raw = localStorage.getItem(viewsKey);
       views = Number.isFinite(Number(raw)) ? Number(raw) : 0;
       views += 1;
       localStorage.setItem(viewsKey, String(views));
-    } catch {
-      views = 1;
-    }
+    } catch { views = 1; }
     viewsNum.textContent = String(views);
 
-    function drawSnowScene() {
+    // snow
+    (function drawSnowScene(){
       const canvas = document.getElementById("particleCanvas");
-      const ctx = canvas.getContext("2d", { alpha: true });
-      let W = 0;
-      let H = 0;
-      let flakes = [];
+      const ctx = canvas.getContext("2d", { alpha:true });
+      let W = 0, H = 0, flakes = [];
 
-      function initFlakes() {
+      function initFlakes(){
         flakes = [];
         const count = 140;
-        for (let i = 0; i < count; i++) {
+        for (let i=0;i<count;i++){
           flakes.push({
-            x: Math.random() * W,
-            y: Math.random() * H,
-            r: Math.random() * 2 + 1,
-            sy: Math.random() * 0.5 + 0.25,
-            sx: Math.random() * 0.4 - 0.2
+            x: Math.random()*W,
+            y: Math.random()*H,
+            r: Math.random()*2 + 1,
+            sy: Math.random()*0.5 + 0.25,
+            sx: Math.random()*0.4 - 0.2
           });
         }
       }
 
-      function resizeCanvas() {
+      function resizeCanvas(){
         W = canvas.width = window.innerWidth;
         H = canvas.height = window.innerHeight;
         initFlakes();
       }
 
-      function draw() {
-        ctx.clearRect(0, 0, W, H);
-        for (const f of flakes) {
+      function draw(){
+        ctx.clearRect(0,0,W,H);
+        for (const f of flakes){
           f.y += f.sy;
-          f.x += Math.sin(f.y * 0.02) * 0.2 + f.sx;
-          if (f.y > H + 4) { f.y = -4; f.x = Math.random() * W; }
-          if (f.x < -4) f.x = W + 2;
-          if (f.x > W + 4) f.x = -2;
-
+          f.x += Math.sin(f.y*0.02)*0.2 + f.sx;
+          if (f.y > H+4){ f.y = -4; f.x = Math.random()*W; }
+          if (f.x < -4) f.x = W+2;
+          if (f.x > W+4) f.x = -2;
           ctx.fillStyle = "rgba(225,240,255,.85)";
           ctx.fillRect(f.x, f.y, f.r, f.r);
         }
@@ -1143,78 +1193,55 @@
       resizeCanvas();
       window.addEventListener("resize", () => requestAnimationFrame(resizeCanvas));
       if (!prefersReducedMotion) draw();
-    }
-    drawSnowScene();
+    })();
 
+    // ===== Tilt engine (работает нормально) =====
     const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-    // EDIT: 3D-наклон табличек в зависимости от положения курсора (глобальный трекинг, устойчиво во всех браузерах)
     const tiltItems = [];
     let globalMX = window.innerWidth / 2;
     let globalMY = window.innerHeight / 2;
 
-    window.addEventListener("pointermove", (e) => {
-      globalMX = e.clientX;
-      globalMY = e.clientY;
-    });
-    window.addEventListener("mousemove", (e) => {
-      globalMX = e.clientX;
-      globalMY = e.clientY;
-    });
+    window.addEventListener("pointermove", (e) => { globalMX = e.clientX; globalMY = e.clientY; });
 
-    function addTiltSmooth(el, maxTilt = 10, scale = 1.02) {
+    function addTiltSmooth(el, maxTilt=10, scale=1.02){
       if (!el) return;
-
       tiltItems.push({
         el,
         maxTilt: prefersReduced ? maxTilt * 0.45 : maxTilt,
         scale,
-        tx: 0,
-        ty: 0,
-        cx: 0,
-        cy: 0,
-        hovering: false,
-        wasHovering: false
+        tx:0, ty:0, cx:0, cy:0,
+        hovering:false
       });
     }
 
-    function runTiltEngine() {
-      for (const item of tiltItems) {
+    function runTiltEngine(){
+      for (const item of tiltItems){
         const r = item.el.getBoundingClientRect();
         const inside = globalMX >= r.left && globalMX <= r.right && globalMY >= r.top && globalMY <= r.bottom;
 
-        if (inside) {
+        if (inside){
           const px = (globalMX - r.left) / r.width;
           const py = (globalMY - r.top) / r.height;
           item.tx = (0.5 - py) * item.maxTilt;
           item.ty = (px - 0.5) * item.maxTilt;
           item.hovering = true;
-
-          item.el.style.setProperty("--mx", (px * 100).toFixed(1) + "%");
-          item.el.style.setProperty("--my", (py * 100).toFixed(1) + "%");
+          item.el.style.setProperty("--mx", (px*100).toFixed(1) + "%");
+          item.el.style.setProperty("--my", (py*100).toFixed(1) + "%");
         } else {
-          item.tx = 0;
-          item.ty = 0;
-          item.hovering = false;
+          item.tx = 0; item.ty = 0; item.hovering = false;
           item.el.style.setProperty("--mx", "50%");
           item.el.style.setProperty("--my", "50%");
         }
-		
-        if (!item.hovering && item.wasHovering) {
-          item.cx = 0;
-          item.cy = 0;
-          item.el.style.transform = "";
-          item.wasHovering = false;
-          continue;
-        }
 
-        item.cx += (item.tx - item.cx) * 0.08;
-        item.cy += (item.ty - item.cy) * 0.08;
-        item.wasHovering = item.hovering;
-        if (Math.abs(item.cx) < 0.01 && Math.abs(item.cy) < 0.01 && !item.hovering) {
-          item.el.style.transform = "";
-        } else {
+        item.cx += (item.tx - item.cx) * 0.10;
+        item.cy += (item.ty - item.cy) * 0.10;
+
+        // ВАЖНО: если transform уже используется где-то ещё — тут будет конфликт.
+        // Поэтому мы наклоняем только "основные панели", а соц.кнопки магнитим отдельно.
+        if (item.hovering || Math.abs(item.cx) > 0.02 || Math.abs(item.cy) > 0.02){
           item.el.style.transform = `perspective(920px) rotateX(${item.cx}deg) rotateY(${item.cy}deg) translateY(-6px) scale(${item.scale})`;
+        } else {
+          item.el.style.transform = "";
         }
       }
       requestAnimationFrame(runTiltEngine);
@@ -1226,66 +1253,64 @@
     addTiltSmooth(document.querySelector(".discord-inline"), 7, 1.01);
     runTiltEngine();
 
-    function addMagnetic(el, strength = 8) {
+    // ===== Magnetic for socials =====
+    function addMagnetic(el, strength=7){
       if (!el || prefersReducedMotion) return;
-      let tx = 0, ty = 0, cx = 0, cy = 0, hover = false;
+      let tx=0, ty=0, cx=0, cy=0, hover=false;
+
       el.addEventListener("mousemove", (e) => {
         const r = el.getBoundingClientRect();
-        tx = ((e.clientX - (r.left + r.width / 2)) / r.width) * strength;
-        ty = ((e.clientY - (r.top + r.height / 2)) / r.height) * strength;
+        tx = ((e.clientX - (r.left + r.width/2)) / r.width) * strength;
+        ty = ((e.clientY - (r.top + r.height/2)) / r.height) * strength;
         hover = true;
       });
-            el.addEventListener("mouseleave", () => {
-        hover = false;
-        tx = 0;
-        ty = 0;
-        cx = 0;
-        cy = 0;
+
+      el.addEventListener("mouseleave", () => {
+        hover = false; tx=0; ty=0; cx=0; cy=0;
         el.style.transform = "";
       });
-      function tick() {
-        cx += (tx - cx) * .12;
-        cy += (ty - cy) * .12;
+
+      function tick(){
+        cx += (tx - cx) * 0.12;
+        cy += (ty - cy) * 0.12;
         el.style.transform = hover ? `translate(${cx}px, ${cy}px) translateY(-3px) scale(1.06)` : "";
         requestAnimationFrame(tick);
       }
       tick();
     }
-    document.querySelectorAll('.socials a').forEach((item) => addMagnetic(item, 7));
+    document.querySelectorAll(".socials a").forEach(a => addMagnetic(a, 7));
 
-    if (!isTouchLike && !prefersReducedMotion) {
+    // ===== Custom cursor =====
+    if (!isTouchLike && !prefersReducedMotion){
       const dot = document.querySelector(".cursor-dot");
       const ring = document.querySelector(".cursor-ring");
-      let mx = innerWidth / 2, my = innerHeight / 2;
+      let mx = innerWidth/2, my = innerHeight/2;
       let rx = mx, ry = my;
       let lastTrailX = mx, lastTrailY = my;
 
-      addEventListener("pointermove", (e) => {
-        mx = e.clientX;
-        my = e.clientY;
-      });
+      addEventListener("pointermove", (e) => { mx = e.clientX; my = e.clientY; });
 
-      function spawnTrail() {
+      function spawnTrail(){
         const dx = mx - lastTrailX;
         const dy = my - lastTrailY;
-        if ((dx * dx + dy * dy) > 20) {
-          lastTrailX = mx;
-          lastTrailY = my;
-          const trail = document.createElement("div");
-          trail.className = "cursor-trail";
-          trail.style.left = `${mx}px`;
-          trail.style.top = `${my}px`;
-          document.body.appendChild(trail);
+        if ((dx*dx + dy*dy) > 20){
+          lastTrailX = mx; lastTrailY = my;
+          const t = document.createElement("div");
+          t.className = "cursor-trail";
+          t.style.left = `${mx}px`;
+          t.style.top = `${my}px`;
+          document.body.appendChild(t);
+
           requestAnimationFrame(() => {
-            trail.style.opacity = "0";
-            trail.style.transform = "translate(-50%, -50%) scale(0.4)";
+            t.style.opacity = "0";
+            t.style.transform = "translate(-50%, -50%) scale(0.4)";
           });
-          setTimeout(() => trail.remove(), 800);
+          setTimeout(() => t.remove(), 800);
         }
         requestAnimationFrame(spawnTrail);
       }
 
-      function renderCursor() {
+      function renderCursor(){
         dot.style.left = `${mx}px`;
         dot.style.top = `${my}px`;
         rx += (mx - rx) * 0.14;
@@ -1299,6 +1324,7 @@
       renderCursor();
     }
 
+    // init
     loadTrack(currentTrackIndex);
     setPlayIcon(false);
     initAutoplayBestEffort();
