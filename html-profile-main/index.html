@@ -1,0 +1,534 @@
+<!--
+⡏⠉⠉⠉⠉⠉⠉⠋⠉⠉⠉⠉⠉⠉⠋⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠙⠉⠉⠉⠹
+⡇⢸⣿⡟⠛⢿⣷⠀⢸⣿⡟⠛⢿⣷⡄⢸⣿⡇⠀⢸⣿⡇⢸⣿⡇⠀⢸⣿⡇⠀
+⡇⢸⣿⣧⣤⣾⠿⠀⢸⣿⣇⣀⣸⡿⠃⢸⣿⡇⠀⢸⣿⡇⢸⣿⣇⣀⣸⣿⡇⠀
+⡇⢸⣿⡏⠉⢹⣿⡆⢸⣿⡟⠛⢻⣷⡄⢸⣿⡇⠀⢸⣿⡇⢸⣿⡏⠉⢹⣿⡇⠀
+⡇⢸⣿⣧⣤⣼⡿⠃⢸⣿⡇⠀⢸⣿⡇⠸⣿⣧⣤⣼⡿⠁⢸⣿⡇⠀⢸⣿⡇⠀
+⣇⣀⣀⣀⣀⣀⣀⣄⣀⣀⣀⣀⣀⣀⣀⣠⣀⡈⠉⣁⣀⣄⣀⣀⣀⣠⣀⣀⣀⣰
+⣇⣿⠘⣿⣿⣿⡿⡿⣟⣟⢟⢟⢝⠵⡝⣿⡿⢂⣼⣿⣷⣌⠩⡫⡻⣝⠹⢿⣿⣷
+⡆⣿⣆⠱⣝⡵⣝⢅⠙⣿⢕⢕⢕⢕⢝⣥⢒⠅⣿⣿⣿⡿⣳⣌⠪⡪⣡⢑⢝⣇
+⡆⣿⣿⣦⠹⣳⣳⣕⢅⠈⢗⢕⢕⢕⢕⢕⢈⢆⠟⠋⠉⠁⠉⠉⠁⠈⠼⢐⢕⢽
+⡗⢰⣶⣶⣦⣝⢝⢕⢕⠅⡆⢕⢕⢕⢕⢕⣴⠏⣠⡶⠛⡉⡉⡛⢶⣦⡀⠐⣕⢕
+⡝⡄⢻⢟⣿⣿⣷⣕⣕⣅⣿⣔⣕⣵⣵⣿⣿⢠⣿⢠⣮⡈⣌⠨⠅⠹⣷⡀⢱⢕
+⡝⡵⠟⠈⢀⣀⣀⡀⠉⢿⣿⣿⣿⣿⣿⣿⣿⣼⣿⢈⡋⠴⢿⡟⣡⡇⣿⡇⡀⢕
+⡝⠁⣠⣾⠟⡉⡉⡉⠻⣦⣻⣿⣿⣿⣿⣿⣿⣿⣿⣧⠸⣿⣦⣥⣿⡇⡿⣰⢗⢄
+⠁⢰⣿⡏⣴⣌⠈⣌⠡⠈⢻⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣬⣉⣉⣁⣄⢖⢕⢕⢕
+⡀⢻⣿⡇⢙⠁⠴⢿⡟⣡⡆⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣷⣵⣵⣿
+⡻⣄⣻⣿⣌⠘⢿⣷⣥⣿⠇⣿⣿⣿⣿⣿⣿⠛⠻⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
+⣷⢄⠻⣿⣟⠿⠦⠍⠉⣡⣾⣿⣿⣿⣿⣿⣿⢸⣿⣦⠙⣿⣿⣿⣿⣿⣿⣿⣿⠟
+⡕⡑⣑⣈⣻⢗⢟⢞⢝⣻⣿⣿⣿⣿⣿⣿⣿⠸⣿⠿⠃⣿⣿⣿⣿⣿⣿⡿⠁⣠
+⡝⡵⡈⢟⢕⢕⢕⢕⣵⣿⣿⣿⣿⣿⣿⣿⣿⣿⣶⣶⣿⣿⣿⣿⣿⠿⠋⣀⣈⠙
+⡝⡵⡕⡀⠑⠳⠿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠿⠛⢉⡠⡲⡫⡪⡪⡣
+-->
+
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta property="og:title" content="Diramix">
+	<meta property="og:description" content="Extrovert, not a linguist">
+	<meta property="og:image" content="https://diram1x.ru/src/assets/profile/avatar.webp">
+	<meta property="og:url" content="https://diram1x.ru/main/index.html">
+	<meta property="og:type" content="website">
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>dir/a</title>
+	<meta name="description" content="">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<!-- Modules -->
+	<script src="https://cdn.jsdelivr.net/npm/showdown/dist/showdown.min.js"></script>
+
+	<!-- favicon -->
+	<link rel="icon" href="favicon.ico" type="image/icon">
+
+	<!-- CSS -->
+	<link rel="stylesheet" href="src/css/liquid-glass.css">
+	<link rel="stylesheet" href="src/css/fonts.css">
+	<link rel="stylesheet" href="src/css/dev-mode.css">
+	<link rel="stylesheet" href="src/css/nextmusic.css">
+	<link rel="stylesheet" href="src/css/toast.css">
+	<link rel="stylesheet" href="src/css/snow.css">
+	<link rel="stylesheet" href="src/css/start.css">
+	<link rel="stylesheet" href="src/css/page.css">
+	<link rel="stylesheet" href="src/css/mobile.css">
+	<link rel="stylesheet" href="src/css/var.css">
+	<link rel="stylesheet" href="src/css/youtube_embed.css">
+</head>
+
+<body class="light-theme">
+
+	<div class="desktop toast-container" id="toastContainer"></div>
+
+	<div class="dev_hidden indev"></div>
+
+	<div class="loading_wrapper" id="loadingWrapper">
+		<div class="custom_font" id="loader">Loading: 0%</div>
+		<img src="src/assets/loading.gif" class="desktop loading_gif">
+		<img src="src/assets/thumbnail.webp" class="desktop loading_thumbnail">
+	</div>
+
+	<div class="fb_container" id="fb_container">
+	<img src="src/assets/thumbnail.webp" class="desktop loading_thumbnail">
+		<button class="first_button custom_font" onclick="handleFirstButtonClick()">
+			Click to enter...
+		</button>
+	</div>
+	<!-- r -->
+	<script src="src/js/first_button_action.js"></script>
+	</div>
+
+	<div id="dev-bg-cover"></div>
+
+	<video class="desktop background_video" id="background-video" disablePictureInPicture loop playsinline
+		preload="metadata">
+		<source src="https://github.com/Diramix/html-profile/releases/download/666.void.scream/bg.webm"
+			type="video/webm">
+	</video>
+
+	<div class="hidden_control">
+
+	<button class="desktop nextmusic_modal_wrapper" onclick="if(event.target === this) this.style.display = 'none';">
+        <div class="user_gradient nextmusic_modal">
+            <div class="modal_wrapper">
+                <h1>Next Music Client</h1>
+                <img src="https://github.com/Web-Next-Music/Next-Music-Client/raw/main/doc/preview.png?raw=true"></img>
+                <h2>Try the best Yandex Music client for PC</h2>
+                <h4>This client allows you to install themes and add-ons. It features Discord Rich Presence activity and is overall really awesome.</h4>
+                <a href="https://github.com/Web-Next-Music/Next-Music-Client" class="desktop ds_button">
+                    Download Next Music
+                </a>
+            </div>
+        </div>
+    </button>
+
+		<div class="desktop topbar_wrapper">
+			<div class="liquid_glass topbar">
+				<div class="links_profile_title">Links</div>
+				<div class="Experiments topbar_controls">
+					<div id="topbarLinks">
+						<a href="https://www.last.fm/user/Diramix" target="_blank" class="topbar_link" title="Last.fm">
+							<svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="20"
+								height="20">
+								<path
+									d="M10.584 17.21l-.88-2.392s-1.43 1.594-3.573 1.594c-1.897 0-3.244-1.649-3.244-4.288 0-3.382 1.704-4.591 3.381-4.591 2.42 0 3.189 1.567 3.849 3.574l.88 2.749c.88 2.666 2.529 4.81 7.285 4.81 3.409 0 5.718-1.044 5.718-3.793 0-2.227-1.265-3.381-3.63-3.931l-1.758-.385c-1.21-.275-1.567-.77-1.567-1.595 0-.934.742-1.484 1.952-1.484 1.32 0 2.034.495 2.144 1.677l2.749-.33c-.22-2.474-1.924-3.492-4.729-3.492-2.474 0-4.893.935-4.893 3.932 0 1.87.907 3.051 3.189 3.601l1.87.44c1.402.33 1.869.907 1.869 1.704 0 1.017-.99 1.43-2.86 1.43-2.776 0-3.93-1.457-4.59-3.464l-.907-2.75c-1.155-3.573-2.997-4.893-6.653-4.893C2.144 5.333 0 7.89 0 12.233c0 4.18 2.144 6.434 5.993 6.434 3.106 0 4.591-1.457 4.591-1.457z" />
+							</svg>
+						</a>
+
+						<a href="https://pinterest.com/diram1x/" target="_blank" class="topbar_link" title="Pinterest">
+							<svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="20"
+								height="20">
+								<path
+									d="M12.017 0C5.396 0 .029 5.367.029 11.987c0 5.079 3.158 9.417 7.618 11.162-.105-.949-.199-2.403.041-3.439.219-.937 1.406-5.957 1.406-5.957s-.359-.72-.359-1.781c0-1.663.967-2.911 2.168-2.911 1.024 0 1.518.769 1.518 1.688 0 1.029-.653 2.567-.992 3.992-.285 1.193.6 2.165 1.775 2.165 2.128 0 3.768-2.245 3.768-5.487 0-2.861-2.063-4.869-5.008-4.869-3.41 0-5.409 2.562-5.409 5.199 0 1.033.394 2.143.889 2.741.099.12.112.225.085.345-.09.375-.293 1.199-.334 1.363-.053.225-.172.271-.401.165-1.495-.69-2.433-2.878-2.433-4.646 0-3.776 2.748-7.252 7.92-7.252 4.158 0 7.392 2.967 7.392 6.923 0 4.135-2.607 7.462-6.233 7.462-1.214 0-2.354-.629-2.758-1.379l-.749 2.848c-.269 1.045-1.004 2.352-1.498 3.146 1.123.345 2.306.535 3.55.535 6.607 0 11.985-5.365 11.985-11.987C23.97 5.39 18.592.026 11.985.026L12.017 0z" />
+							</svg>
+						</a>
+
+						<a href="https://x.com/Diram1x" target="_blank" class="topbar_link" title="Twitter">
+							<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
+								<path
+									d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.31l-5.214-6.817L4.99 21.75H1.68l7.73-8.836L1.214 2.25H8.1l4.713 6.231zm-1.162 17.52h1.833L7.084 4.126H5.117z" />
+							</svg>
+						</a>
+
+						<a href="https://discord.gg/ky6bcdy7KA" target="_blank" class="topbar_link" title="Discord">
+							<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
+								<path
+									d="M20.317 4.369a19.91 19.91 0 0 0-4.885-1.515c-.21.375-.45.88-.617 1.28a18.27 18.27 0 0 0-5.63 0 12.15 12.15 0 0 0-.617-1.28c-1.69.282-3.33.77-4.885 1.515C1.508 9.08.723 13.63 1.087 18.125a19.9 19.9 0 0 0 5.99 2.975c.483-.658.91-1.356 1.274-2.09a12.96 12.96 0 0 1-2.01-.967c.168-.125.331-.255.488-.39 3.85 1.787 8.032 1.787 11.856 0 .158.135.32.265.488.39-.64.397-1.31.724-2.01.967.364.734.79 1.432 1.274 2.09a19.9 19.9 0 0 0 5.99-2.975c.407-4.9-.7-9.41-3.12-13.756zM8.72 15.347c-1.183 0-2.155-1.086-2.155-2.419s.955-2.419 2.155-2.419c1.21 0 2.174 1.096 2.155 2.419.02 1.333-.945 2.419-2.155 2.419zm6.56 0c-1.183 0-2.155-1.086-2.155-2.419s.955-2.419 2.155-2.419c1.21 0 2.174 1.096 2.155 2.419.02 1.333-.945 2.419-2.155 2.419z" />
+							</svg>
+						</a>
+
+						<a href="https://boosty.to/diramix" target="_blank" class="topbar_link boosty-link"
+							title="Boosty">
+							<svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 24 24" width="20"
+								height="20">
+								<path
+									d="M2.661 14.337 6.801 0h6.362L11.88 4.444l-.038.077-3.378 11.733h3.15c-1.321 3.289-2.35 5.867-3.086 7.733-5.816-.063-7.442-4.228-6.02-9.155M8.554 24l7.67-11.035h-3.25l2.83-7.073c4.852.508 7.137 4.33 5.791 8.952C20.16 19.81 14.344 24 8.68 24h-.127z" />
+							</svg>
+						</a>
+
+						<a href="https://github.com/diramix/" target="_blank" class="topbar_link" title="GitHub">
+							<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
+								<path
+									d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12" />
+							</svg>
+						</a>
+
+						<a href="https://open.spotify.com/user/31aorysoanwbjcrfk2ikjfcl6pd4" target="_blank"
+							class="topbar_link" title="Spotify">
+							<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
+								<path
+									d="M12 0a12 12 0 1 0 0 24 12 12 0 0 0 0-24zm5.48 17.35a.748.748 0 0 1-1.03.25c-2.82-1.73-6.36-2.13-10.56-1.21a.75.75 0 1 1-.31-1.46c4.58-.99 8.53-.54 11.66 1.34.36.22.48.69.24 1.08zm1.46-3.24a.93.93 0 0 1-1.28.31c-3.23-1.98-8.15-2.56-11.96-1.45a.93.93 0 1 1-.52-1.78c4.3-1.26 9.73-.62 13.4 1.6.45.27.59.86.36 1.32zm.13-3.33c-3.74-2.22-9.91-2.43-13.48-1.38a1.12 1.12 0 1 1-.62-2.15c4.15-1.2 10.92-.95 15.18 1.57a1.12 1.12 0 0 1-1.08 1.96z" />
+							</svg>
+						</a>
+						<a href="pages/signal/scan.html" class="topbar_link" title="Signal">
+							<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" class="bi bi-signal"
+								viewBox="0 0 16 16">
+								<path
+									d="m6.08.234.179.727a7.264 7.264 0 0 0-2.01.832l-.383-.643A7.9 7.9 0 0 1 6.079.234zm3.84 0L9.742.96a7.265 7.265 0 0 1 2.01.832l.388-.643A7.957 7.957 0 0 0 9.92.234zm-8.77 3.63a7.944 7.944 0 0 0-.916 2.215l.727.18a7.264 7.264 0 0 1 .832-2.01l-.643-.386zM.75 8a7.3 7.3 0 0 1 .081-1.086L.091 6.8a8 8 0 0 0 0 2.398l.74-.112A7.262 7.262 0 0 1 .75 8zm11.384 6.848-.384-.64a7.23 7.23 0 0 1-2.007.831l.18.728a7.965 7.965 0 0 0 2.211-.919zM15.251 8c0 .364-.028.727-.082 1.086l.74.112a7.966 7.966 0 0 0 0-2.398l-.74.114c.054.36.082.722.082 1.086zm.516 1.918-.728-.18a7.252 7.252 0 0 1-.832 2.012l.643.387a7.933 7.933 0 0 0 .917-2.219zm-6.68 5.25c-.72.11-1.453.11-2.173 0l-.112.742a7.99 7.99 0 0 0 2.396 0l-.112-.741zm4.75-2.868a7.229 7.229 0 0 1-1.537 1.534l.446.605a8.07 8.07 0 0 0 1.695-1.689l-.604-.45zM12.3 2.163c.587.432 1.105.95 1.537 1.537l.604-.45a8.06 8.06 0 0 0-1.69-1.691l-.45.604zM2.163 3.7A7.242 7.242 0 0 1 3.7 2.163l-.45-.604a8.06 8.06 0 0 0-1.691 1.69l.604.45zm12.688.163-.644.387c.377.623.658 1.3.832 2.007l.728-.18a7.931 7.931 0 0 0-.916-2.214zM6.913.831a7.254 7.254 0 0 1 2.172 0l.112-.74a7.985 7.985 0 0 0-2.396 0l.112.74zM2.547 14.64 1 15l.36-1.549-.729-.17-.361 1.548a.75.75 0 0 0 .9.902l1.548-.357-.17-.734zM.786 12.612l.732.168.25-1.073A7.187 7.187 0 0 1 .96 9.74l-.727.18a8 8 0 0 0 .736 1.902l-.184.79zm3.5 1.623-1.073.25.17.731.79-.184c.6.327 1.239.574 1.902.737l.18-.728a7.197 7.197 0 0 1-1.962-.811l-.007.005zM8 1.5a6.502 6.502 0 0 0-6.498 6.502 6.516 6.516 0 0 0 .998 3.455l-.625 2.668L4.54 13.5a6.502 6.502 0 0 0 6.93-11A6.516 6.516 0 0 0 8 1.5">
+								</path>
+							</svg>
+						</a>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="desktop" id="gradient-overlay"></div>
+
+		<div class="user_actions_buttons_container">
+			<button class="desktop liquid_glass toggle-theme-btn" aria-pressed="false">☀️</button>
+			<button class="desktop liquid_glass" id="mute-btn" aria-pressed="false">🔊</button>
+		</div>
+
+		<div class="page_wrapper">
+			<div id="snow"></div>
+			<div class="liquid_glass dev-panel">
+				<div class="dev_block">
+					<div class="dev_panel_title">Main</div>
+					<div class="dev_buttons_container">
+						<button id="themeToggleBtn">Toggle Theme</button>
+						<button id="toggleBgImg">Test BG Img</button>
+						<button id="toggleMainContainerVisible">Dev Hidden</button>
+						<button id="toggleUserProfileModalContrast">Contrast UPM</button>
+						<button id="toggleSnowfall">Snowfall</button>
+						<button id="toggleDevInfo">Dev Info</button>
+					</div>
+				</div>
+				<div class="dev_block">
+					<div class="dev_panel_title">Toast Control</div>
+					<div class="dev_buttons_container">
+						<button id="sendT">Send T</button>
+						<button id="sendTWL">Send T w/l</button>
+					</div>
+				</div>
+			</div>
+
+			<button class="desktop liquid_glass nextmusic_popup" onclick="document.querySelector('.nextmusic_modal_wrapper').style.display = 'flex';">
+			        <img src="https://avatars.githubusercontent.com/u/186498563?s=200&v=4" class="nextmusic_logo"></img>
+                    <div class="nextmusic_title">Next Music</div>
+			</button>
+
+			<div class="mobile you_shadow"></div>
+
+			<div class="mobile liquid_glass you_bar">
+				<div class="you_nameplated">
+					<video src="./src/assets/profile/nameplate.webm" class="nameplate" autoplay muted loop></video>
+				</div>
+				<img src="src/assets/profile/avatar.webp" class="avatar"
+					onerror="this.onerror=null; this.src='./src/assets/fallback/avatar-fallback.png';">
+				<img class="avatar_frame" src="src/assets/profile/frame.png" alt="Frame"
+					onerror="this.onerror=null; this.src='./src/assets/fallback/frame-fallback.png';">
+				<div class="member_details">
+					<div class="nickname custom_font" id="Diramix">diram1x</div>
+					<div class="status">
+						Gay? <span class="emoji_status">• <img
+								src="https://images.weserv.nl/?url=https://cdn.discordapp.com/emojis/1375662294788472852.webp"
+								width="15" height="15"></span>
+					</div>
+				</div>
+				<button class="toggle-theme-btn" aria-pressed="false">☀️</button>
+			</div>
+
+			<div class="you_overlay" id="you_overlay"></div>
+
+			<div class="mobile you_modal" id="you_modal">
+				<div class="swipe_bar_container">
+					<div class="swipe_bar"></div>
+				</div>
+
+				<div class="you_modal_title">Personal roles</div>
+				<div class="role_coontainer">
+					<div class="role">
+						<div class="role_color" style="background-color: #D60270;"></div>
+						<div class="role_context">My</div>
+					</div>
+					<div class="role">
+						<div class="role_color" style="background-color: #9B4F96;"></div>
+						<div class="role_context">Naughty</div>
+					</div>
+					<div class="role">
+						<div class="role_color" style="background-color: #0038A8;"></div>
+						<div class="role_context">Baby</div>
+					</div>
+				</div>
+
+				<div class="you_modal_title">Favorites users</div>
+
+				<div class="mobile simple_block fav_user_container_mobile">
+					<a href="https://iis-forgetme.github.io/Iris" target="_blank" class="fav_user_mobile">
+						<img src="./src/assets/avatars/アイリス (Iris).webp" class="fav_user_avatar_mobile"
+							onerror="this.onerror=null; this.src='./src/assets/fallback/avatar-fallback.png';">
+						<div class="fav_user_nickname_mobile">アイリス (Iris)</div>
+						<div class="badge website"></div>
+					</a>
+					<div class="separator"></div>
+					<a href="https://dev0xz02.ru" target="_blank" class="fav_user_mobile">
+						<img src="./src/assets/avatars/rainoz.webp" class="fav_user_avatar_mobile"
+							onerror="this.onerror=null; this.src='./src/assets/fallback/avatar-fallback.png';">
+						<div class="fav_user_nickname_mobile">さくら 💖</div>
+						<div class="badge website"></div>
+					</a>
+					<div class="separator"></div>
+					<a href="https://t.me/LinIsBack" target="_blank" class="fav_user_mobile">
+						<img src="./src/assets/avatars/Wolfy.webp" class="fav_user_avatar_mobile"
+							onerror="this.onerror=null; this.src='./src/assets/fallback/avatar-fallback.png';">
+						<div class="fav_user_nickname_mobile">Wolfy</div>
+						<div class="badge telegram"></div>
+					</a>
+					<div class="separator"></div>
+					<a href="https://snowyfl.com" target="_blank" class="fav_user_mobile">
+						<img src="./src/assets/avatars/snowy_fluffy-avatar.webp" class="fav_user_avatar_mobile"
+							onerror="this.onerror=null; this.src='./src/assets/fallback/avatar-fallback.png';">
+						<div class="fav_user_nickname_mobile">Snowy 💖</div>
+						<div class="badge website"></div>
+					</a>
+					<div class="separator"></div>
+					<a href="https://t.me/Raxemus" target="_blank" class="fav_user_mobile">
+						<img src="./src/assets/avatars/Raxemus.webp" class="fav_user_avatar_mobile"
+							onerror="this.onerror=null; this.src='./src/assets/fallback/avatar-fallback.png';">
+						<div class="fav_user_nickname_mobile">Raxemus Fox</div>
+						<div class="badge telegram"></div>
+					</a>
+				</div>
+			</div>
+
+			<div class="dev_visible user_gradient profile_container">
+				<div class="profile_wrapper">
+					<div class="profile_title">(_　_)。゜zｚＺ</div>
+					<div class="dev_change">
+						<div class="developers">
+
+							<div class="member">
+								<div class="nameplated">
+									<video src="./src/assets/profile/nameplate.webm" class="nameplate" autoplay muted
+										loop></video>
+								</div>
+								<img src="src/assets/profile/avatar.webp" class="avatar"
+									onerror="this.onerror=null; this.src='./src/assets/fallback/avatar-fallback.png';">
+								<img class="avatar_frame" src="src/assets/profile/frame.png" alt="Frame"
+									onerror="this.onerror=null; this.src='./src/assets/fallback/frame-fallback.png';">
+								<div class="member_details">
+									<div class="nickname custom_font" id="Diramix">diram1x</div>
+									<div class="status">
+										Gay? <span class="emoji_status">• <img
+												src="https://images.weserv.nl/?url=https://cdn.discordapp.com/emojis/1375662294788472852.webp"
+												width="15" height="15"></span>
+									</div>
+								</div>
+								<div class="upm_wrapper" style="display: none;"></div>
+								<div class="upm" style="display:none;">
+									<div class="upm_title">Personal roles</div>
+									<div class="role_coontainer">
+										<div class="role">
+											<div class="role_color" style="background-color: #D60270;"></div>
+											<div class="role_context">My</div>
+										</div>
+										<div class="role">
+											<div class="role_color" style="background-color: #9B4F96;"></div>
+											<div class="role_context">Naughty</div>
+										</div>
+										<div class="role">
+											<div class="role_color" style="background-color: #0038A8;"></div>
+											<div class="role_context">Baby</div>
+										</div>
+									</div>
+
+									<div class="fav_users_upm">
+										<div class="upm_title">Favorites users</div>
+										<div class="fav_user_container">
+											<a href="https://iis-forgetme.github.io/Iris" target="_blank"
+												class="fav_user">
+												<img src="./src/assets/avatars/アイリス (Iris).webp" class="fav_user_avatar"
+													onerror="this.onerror=null; this.src='./src/assets/fallback/avatar-fallback.png';">
+												<!--<div class="snow_hat"></div>-->
+												<div class="fav_user_nickname">アイリス (Iris)</div>
+												<div class="badge website"></div>
+											</a>
+											<a href="https://dev0xz02.ru" target="_blank" class="fav_user">
+												<img src="./src/assets/avatars/rainoz.webp" class="fav_user_avatar"
+													onerror="this.onerror=null; this.src='./src/assets/fallback/avatar-fallback.png';">
+												<!--<div class="snow_hat"></div>-->
+												<div class="fav_user_nickname">さくら 💖</div>
+												<div class="badge website"></div>
+											</a>
+											<a href="https://t.me/LinIsBack" target="_blank" class="fav_user">
+												<img src="./src/assets/avatars/Wolfy.webp" class="fav_user_avatar"
+													onerror="this.onerror=null; this.src='./src/assets/fallback/avatar-fallback.png';">
+												<!--<div class="snow_hat"></div>-->
+												<div class="fav_user_nickname">Wolfy</div>
+												<div class="badge telegram"></div>
+											</a>
+											<a href="https://snowyfl.com" target="_blank" class="fav_user">
+												<img src="./src/assets/avatars/snowy_fluffy-avatar.webp"
+													class="fav_user_avatar"
+													onerror="this.onerror=null; this.src='./src/assets/fallback/avatar-fallback.png';">
+												<!--<div class="snow_hat"></div>-->
+												<div class="fav_user_nickname">Snowy 💖</div>
+												<div class="badge website"></div>
+											</a>
+											<a href="https://t.me/Raxemus" target="_blank" class="fav_user">
+												<img src="./src/assets/avatars/Raxemus.webp" class="fav_user_avatar"
+													onerror="this.onerror=null; this.src='./src/assets/fallback/avatar-fallback.png';">
+												<!--<div class="snow_hat"></div>-->
+												<div class="fav_user_nickname">Raxemus Fox</div>
+												<div class="badge telegram"></div>
+											</a>
+										</div>
+									</div>
+									<button class="expand_button">
+										<svg class="arrow" width="16" height="16" viewBox="0 0 24 24">
+											<path d="M12 16l-6-6h12z" />
+										</svg>
+									</button>
+								</div>
+
+							</div>
+
+							<div class="desktop mini_title">Pinned track</div>
+							<div class="notForIOS simple_block track_card">
+								<img class="desktop track_cover" src="/src/assets/track/cover-fallback.png" alt="Cover">
+
+								<div class="desktop track_info">
+									<h3 class="track_title">Unknown</h3>
+									<p class="track_artist">Unknown</p>
+								</div>
+
+								<div class="mobile pin_activity">
+									Pinned track
+									<svg fill="#000000" width="800px" height="800px" viewBox="0 0 24 24" version="1.2"
+										baseProfile="tiny" xmlns="http://www.w3.org/2000/svg">
+										<path
+											d="M16.729 4.271c-.389-.391-1.021-.393-1.414-.004-.104.104-.176.227-.225.355-.832 1.736-1.748 2.715-2.904 3.293-1.297.64-2.786 1.085-5.186 1.085-.13 0-.26.025-.382.076-.245.102-.439.297-.541.541-.101.244-.101.52 0 .764.051.123.124.234.217.326l3.243 3.243-4.537 6.05 6.05-4.537 3.242 3.242c.092.094.203.166.326.217.122.051.252.078.382.078s.26-.027.382-.078c.245-.102.44-.295.541-.541.051-.121.077-.252.077-.381 0-2.4.444-3.889 1.083-5.166.577-1.156 1.556-2.072 3.293-2.904.129-.049.251-.121.354-.225.389-.393.387-1.025-.004-1.414l-3.997-4.02z" />
+									</svg>
+								</div>
+								<div class="activity_info">
+									<div class="track_cover_mobile"></div>
+									<div class="mobile activity_container">
+										<div class="activity_title">Unknown</div>
+										<div class="activity_artist">Unknown</div>
+									</div>
+								</div>
+
+								<audio controls class="track-audio">
+									<source src="src/assets/track/track-fallback.mp3" type="audio/mpeg">
+									Your browser does not support audio.
+								</audio>
+							</div>
+						</div>
+
+						<div class="profile_main_blocks">
+							<div class="simple_block profile_content">
+								<!-- <div class="mobile mobile_block_title">About me</div> -->
+								<img id="apngStart" class="discord_profile_decoration" alt="intro" />
+								<div class="description"></div>
+							</div>
+							<div class="simple_block ds_activity">
+								<div class="ds_activity_type">Watching diram1x.ru</div>
+								<div class="ds_activity_content">
+									<a href="pages/main/index.html" class="ds_activity_largeImage"></a>
+									<div class="ds_activity_meta_wrapper">
+										<div class="ds_activity_meta">
+											<div class="ds_activity_meta_detail">Please don’t say “You are lazy”</div>
+											<div class="ds_activity_meta_state">0xISLM-DEVS-0039-NULL-HLAL</div>
+										</div>
+										<div class="ds_activity_meta_timestamp"></div>
+										<a href="pages/inshallah/index.html" class="desktop ds_button">
+											Digital License Signature
+										</a>
+									</div>
+								</div>
+								<a href="pages/inshallah/index.html" class="mobile ds_button">
+									Digital License Signature
+								</a>
+							</div>
+						</div>
+
+						<div class="mobile simple_block mobileLinks_Wrapper">
+							<div class="mobile mobile_block_title">Links</div>
+							<div id="mobileLinks">
+								<a href="https://www.last.fm/user/Diramix" target="_blank" class="mobile_link">
+									<svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+										<title>Last.fm</title>
+										<path
+											d="M10.584 17.21l-.88-2.392s-1.43 1.594-3.573 1.594c-1.897 0-3.244-1.649-3.244-4.288 0-3.382 1.704-4.591 3.381-4.591 2.42 0 3.189 1.567 3.849 3.574l.88 2.749c.88 2.666 2.529 4.81 7.285 4.81 3.409 0 5.718-1.044 5.718-3.793 0-2.227-1.265-3.381-3.63-3.931l-1.758-.385c-1.21-.275-1.567-.77-1.567-1.595 0-.934.742-1.484 1.952-1.484 1.32 0 2.034.495 2.144 1.677l2.749-.33c-.22-2.474-1.924-3.492-4.729-3.492-2.474 0-4.893.935-4.893 3.932 0 1.87.907 3.051 3.189 3.601l1.87.44c1.402.33 1.869.907 1.869 1.704 0 1.017-.99 1.43-2.86 1.43-2.776 0-3.93-1.457-4.59-3.464l-.907-2.75c-1.155-3.573-2.997-4.893-6.653-4.893C2.144 5.333 0 7.89 0 12.233c0 4.18 2.144 6.434 5.993 6.434 3.106 0 4.591-1.457 4.591-1.457z" />
+									</svg>
+									last.fm
+								</a>
+								<div class="separator"></div>
+								<a href="https://pinterest.com/diram1x/" target="_blank" class="mobile_link">
+									<svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+										<path
+											d="M12.017 0C5.396 0 .029 5.367.029 11.987c0 5.079 3.158 9.417 7.618 11.162-.105-.949-.199-2.403.041-3.439.219-.937 1.406-5.957 1.406-5.957s-.359-.72-.359-1.781c0-1.663.967-2.911 2.168-2.911 1.024 0 1.518.769 1.518 1.688 0 1.029-.653 2.567-.992 3.992-.285 1.193.6 2.165 1.775 2.165 2.128 0 3.768-2.245 3.768-5.487 0-2.861-2.063-4.869-5.008-4.869-3.41 0-5.409 2.562-5.409 5.199 0 1.033.394 2.143.889 2.741.099.12.112.225.085.345-.09.375-.293 1.199-.334 1.363-.053.225-.172.271-.401.165-1.495-.69-2.433-2.878-2.433-4.646 0-3.776 2.748-7.252 7.92-7.252 4.158 0 7.392 2.967 7.392 6.923 0 4.135-2.607 7.462-6.233 7.462-1.214 0-2.354-.629-2.758-1.379l-.749 2.848c-.269 1.045-1.004 2.352-1.498 3.146 1.123.345 2.306.535 3.55.535 6.607 0 11.985-5.365 11.985-11.987C23.97 5.39 18.592.026 11.985.026L12.017 0z" />
+									</svg>
+									Pinterest
+								</a>
+								<div class="separator"></div>
+								<a href="https://x.com/Diram1x" target="_blank" class="mobile_link">
+									<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
+										<path
+											d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.31l-5.214-6.817L4.99 21.75H1.68l7.73-8.836L1.214 2.25H8.1l4.713 6.231zm-1.162 17.52h1.833L7.084 4.126H5.117z" />
+									</svg>
+									Twitter
+								</a>
+								<div class="separator"></div>
+								<a href="https://discord.gg/ky6bcdy7KA" target="_blank" class="mobile_link">
+									<svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+										<title>Discord</title>
+										<path
+											d="M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5152.0741.0741 0 00-.0785.0371c-.211.3753-.4447.8648-.6083 1.2495-1.8447-.2762-3.68-.2762-5.4868 0-.1636-.3933-.4058-.8742-.6177-1.2495a.077.077 0 00-.0785-.037 19.7363 19.7363 0 00-4.8852 1.515.0699.0699 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 00.0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 00-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.077.077 0 01-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 01.0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 01.0785.0095c.1202.099.246.1981.3728.2924a.077.077 0 01-.0066.1276 12.2986 12.2986 0 01-1.873.8914.0766.0766 0 00-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 00.0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 00.0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 00-.0312-.0286zM8.02 15.3312c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9555-2.4189 2.157-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.9555 2.4189-2.1569 2.4189zm7.9748 0c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9554-2.4189 2.1569-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.946 2.4189-2.1568 2.4189Z" />
+									</svg>
+									Discord
+								</a>
+								<div class="separator"></div>
+								<a href="https://boosty.to/diramix" target="_blank" class="mobile_link">
+									<svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+										<title>Boosty</title>
+										<path
+											d="M2.661 14.337 6.801 0h6.362L11.88 4.444l-.038.077-3.378 11.733h3.15c-1.321 3.289-2.35 5.867-3.086 7.733-5.816-.063-7.442-4.228-6.02-9.155M8.554 24l7.67-11.035h-3.25l2.83-7.073c4.852.508 7.137 4.33 5.791 8.952C20.16 19.81 14.344 24 8.68 24h-.127z" />
+									</svg>
+									Boosty
+								</a>
+								<div class="separator"></div>
+								<a href="https://github.com/diramix/" target="_blank" class="mobile_link">
+									<svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+										<title>GitHub</title>
+										<path
+											d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12" />
+									</svg>
+									GitHub
+								</a>
+								<div class="separator"></div>
+								<a href="https://open.spotify.com/user/31aorysoanwbjcrfk2ikjfcl6pd4" target="_blank"
+									class="mobile_link">
+									<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
+										<path
+											d="M12 0a12 12 0 1 0 0 24 12 12 0 0 0 0-24zm5.48 17.35a.748.748 0 0 1-1.03.25c-2.82-1.73-6.36-2.13-10.56-1.21a.75.75 0 1 1-.31-1.46c4.58-.99 8.53-.54 11.66 1.34.36.22.48.69.24 1.08zm1.46-3.24a.93.93 0 0 1-1.28.31c-3.23-1.98-8.15-2.56-11.96-1.45a.93.93 0 1 1-.52-1.78c4.3-1.26 9.73-.62 13.4 1.6.45.27.59.86.36 1.32zm.13-3.33c-3.74-2.22-9.91-2.43-13.48-1.38a1.12 1.12 0 1 1-.62-2.15c4.15-1.2 10.92-.95 15.18 1.57a1.12 1.12 0 0 1-1.08 1.96z" />
+									</svg>
+									Spotify
+								</a>
+								<div class="separator"></div>
+								<a href="pages/signal/scan.html" id="signalLink" class="mobile_link">
+									<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" class="bi bi-signal"
+										viewBox="0 0 16 16">
+										<path
+											d="m6.08.234.179.727a7.264 7.264 0 0 0-2.01.832l-.383-.643A7.9 7.9 0 0 1 6.079.234zm3.84 0L9.742.96a7.265 7.265 0 0 1 2.01.832l.388-.643A7.957 7.957 0 0 0 9.92.234zm-8.77 3.63a7.944 7.944 0 0 0-.916 2.215l.727.18a7.264 7.264 0 0 1 .832-2.01l-.643-.386zM.75 8a7.3 7.3 0 0 1 .081-1.086L.091 6.8a8 8 0 0 0 0 2.398l.74-.112A7.262 7.262 0 0 1 .75 8zm11.384 6.848-.384-.64a7.23 7.23 0 0 1-2.007.831l.18.728a7.965 7.965 0 0 0 2.211-.919zM15.251 8c0 .364-.028.727-.082 1.086l.74.112a7.966 7.966 0 0 0 0-2.398l-.74.114c.054.36.082.722.082 1.086zm.516 1.918-.728-.18a7.252 7.252 0 0 1-.832 2.012l.643.387a7.933 7.933 0 0 0 .917-2.219zm-6.68 5.25c-.72.11-1.453.11-2.173 0l-.112.742a7.99 7.99 0 0 0 2.396 0l-.112-.741zm4.75-2.868a7.229 7.229 0 0 1-1.537 1.534l.446.605a8.07 8.07 0 0 0 1.695-1.689l-.604-.45zM12.3 2.163c.587.432 1.105.95 1.537 1.537l.604-.45a8.06 8.06 0 0 0-1.69-1.691l-.45.604zM2.163 3.7A7.242 7.242 0 0 1 3.7 2.163l-.45-.604a8.06 8.06 0 0 0-1.691 1.69l.604.45zm12.688.163-.644.387c.377.623.658 1.3.832 2.007l.728-.18a7.931 7.931 0 0 0-.916-2.214zM6.913.831a7.254 7.254 0 0 1 2.172 0l.112-.74a7.985 7.985 0 0 0-2.396 0l.112.74zM2.547 14.64 1 15l.36-1.549-.729-.17-.361 1.548a.75.75 0 0 0 .9.902l1.548-.357-.17-.734zM.786 12.612l.732.168.25-1.073A7.187 7.187 0 0 1 .96 9.74l-.727.18a8 8 0 0 0 .736 1.902l-.184.79zm3.5 1.623-1.073.25.17.731.79-.184c.6.327 1.239.574 1.902.737l.18-.728a7.197 7.197 0 0 1-1.962-.811l-.007.005zM8 1.5a6.502 6.502 0 0 0-6.498 6.502 6.516 6.516 0 0 0 .998 3.455l-.625 2.668L4.54 13.5a6.502 6.502 0 0 0 6.93-11A6.516 6.516 0 0 0 8 1.5">
+										</path>
+									</svg>
+									Signal
+								</a>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- Scripts -->
+	<script src="src/js/dev-mode.js" async></script>
+	<script src="src/js/toast.js" async></script>
+	<script src="src/js/script.js" async></script>
+	<script src="src/js/snow.js" async></script>
+	<script src="src/js/youtube_embed.js" async></script>
+</body>
+
+</html>
