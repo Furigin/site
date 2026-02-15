@@ -46,6 +46,19 @@
       overflow-x: hidden;
     }
 
+    .bg-video {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: -3;
+      opacity: 0;
+      transition: opacity .8s ease;
+      pointer-events: none;
+    }
+    .bg-video.show { opacity: 1; }
+
     /* снег */
     #particleCanvas {
       position: fixed;
@@ -455,10 +468,44 @@
 
     .player-controls {
       display: flex;
-      flex-direction: column;
+      flex-direction: row;
       align-items: center;
       gap: 8px;
       margin-left: 6px;
+    }
+
+    .player-skip {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      border: 1px solid rgba(148,163,253,0.45);
+      background: rgba(15,23,42,0.75);
+      color: #dbeafe;
+      font-size: 13px;
+      transition: transform .45s cubic-bezier(.2,.9,.2,1), box-shadow .45s ease, border-color .45s ease;
+    }
+    .player-skip:hover {
+      transform: translateY(-2px) scale(1.08);
+      border-color: rgba(191,219,254,0.9);
+      box-shadow: 0 0 12px rgba(147,197,253,.22);
+    }
+
+    .player-shell.is-switching .player-cover img {
+      animation: trackPulse .55s ease;
+    }
+    .player-shell.is-switching .player-title {
+      animation: trackSlide .55s ease;
+    }
+
+    @keyframes trackPulse {
+      0% { transform: scale(1); filter: brightness(1); }
+      45% { transform: scale(1.08); filter: brightness(1.18); }
+      100% { transform: scale(1); filter: brightness(1); }
+    }
+
+    @keyframes trackSlide {
+      0% { opacity: 0; transform: translateY(8px); }
+      100% { opacity: 1; transform: translateY(0); }
     }
 
     .player-button {
@@ -530,50 +577,6 @@
       justify-content: center;
       gap: 6px;
     }
-
-    /* ====== Гирлянда ====== */
-    .garland {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 60px;
-      display: flex;
-      justify-content: center;
-      align-items: flex-end;
-      pointer-events: none;
-      z-index: 9999;
-    }
-    .bulb {
-      width: 18px;
-      height: 18px;
-      border-radius: 50%;
-      margin: 0 20px;
-      position: relative;
-    }
-    .bulb::after {
-      content: "";
-      position: absolute;
-      top: -12px;
-      left: 14px;
-      width: 40px;
-      height: 18px;
-      border-bottom: 2px solid rgba(180,200,255,0.35);
-      border-radius: 50%;
-    }
-    .bulb:last-child::after { display: none; }
-
-    .red    { background: #ff4b4b; animation: glowR 2.2s infinite; }
-    .yellow { background: #ffd84a; animation: glowY 2.2s infinite; }
-    .blue   { background: #54c2ff; animation: glowB 2.2s infinite; }
-    .green  { background: #5aff8c; animation: glowG 2.2s infinite; }
-
-    @keyframes glowR { 0%,100%{ box-shadow:0 0 14px 6px #ff4b4b; } 50%{ box-shadow:0 0 0 0 transparent; } }
-    @keyframes glowY { 0%,100%{ box-shadow:0 0 0 0 transparent; } 50%{ box-shadow:0 0 14px 6px #ffd84a; } }
-    @keyframes glowB { 0%,100%{ box-shadow:0 0 14px 6px #54c2ff; } 50%{ box-shadow:0 0 0 0 transparent; } }
-    @keyframes glowG { 0%,100%{ box-shadow:0 0 0 0 transparent; } 50%{ box-shadow:0 0 14px 6px #5aff8c; } }
-
-    @media (max-width: 700px) { .garland { display:none; } }
 
     /* ====== Кастомный курсор ====== */
     .cursor-dot, .cursor-ring, .cursor-trail { pointer-events: none !important; }
@@ -705,6 +708,9 @@
 </head>
 
 <body>
+  <video id="bgVideo" class="bg-video" autoplay muted loop playsinline aria-hidden="true">
+    <source src="bg.mp4" type="video/mp4">
+  </video>
   <canvas id="particleCanvas"></canvas>
   <div class="bg-overlay"></div>
 
@@ -767,12 +773,12 @@
     </div>
 
     <!-- ===== Плеер ===== -->
-    <div class="player-shell">
+    <div class="player-shell" id="playerShell">
       <div class="player-row">
-        <div class="player-cover"><img src="cover.jpg" alt="cover"></div>
+        <div class="player-cover"><img id="playerCoverImg" src="cover.jpg" alt="cover"></div>
 
         <div class="player-main">
-          <div class="player-title">sxpl — christmas</div>
+          <div class="player-title" id="playerTitle">sxpl — christmas</div>
           <div class="player-time">
             <span id="currentTime">0:00</span>
             <span id="totalTime">0:00</span>
@@ -780,8 +786,14 @@
         </div>
 
         <div class="player-controls">
+          <button id="prevTrack" class="player-skip" aria-label="Предыдущий трек" type="button">
+            <i class="fa-solid fa-backward-step"></i>
+          </button>
           <button id="playPause" class="player-button" aria-label="Play/Pause" type="button">
             <i class="fa-solid fa-play"></i>
+          </button>
+          <button id="nextTrack" class="player-skip" aria-label="Следующий трек" type="button">
+            <i class="fa-solid fa-forward-step"></i>
           </button>
           <button id="volumeBtn" class="volume" aria-label="Mute/Unmute" type="button">
             <i class="fa-solid fa-volume-high"></i>
@@ -799,7 +811,7 @@
       </div>
 
       <!-- ВАЖНО: playsinline помогает мобилкам -->
-      <audio id="audio" src="music.mp3" preload="auto" playsinline></audio>
+      <audio id="audio" preload="auto" playsinline></audio>
     </div>
   </div>
   
@@ -819,12 +831,26 @@
     // ===== elements =====
     const audio       = document.getElementById("audio");
     const playPause   = document.getElementById("playPause");
+    const prevTrack   = document.getElementById("prevTrack");
+    const nextTrack   = document.getElementById("nextTrack");
     const progressEl  = document.getElementById("progressFill");
     const progressBar = document.getElementById("progressBar");
     const ctime       = document.getElementById("currentTime");
     const ttime       = document.getElementById("totalTime");
     const volumeBtn   = document.getElementById("volumeBtn");
     const viewsNum    = document.getElementById("viewsNum");
+    const playerShell = document.getElementById("playerShell");
+    const playerTitle = document.getElementById("playerTitle");
+    const playerCover = document.getElementById("playerCoverImg");
+    const bgVideo     = document.getElementById("bgVideo");
+
+    const tracks = [
+      { title: "sxpl — christmas", src: "music.mp3", cover: "cover.jpg" }
+      // Добавляй другие треки сюда:
+      // { title: "Artist — Track", src: "music-2.mp3", cover: "cover-2.jpg" }
+    ];
+
+    let currentTrackIndex = Math.floor(Math.random() * tracks.length);
 
     function setPlayIcon(isPlaying){
       playPause.innerHTML = isPlaying
@@ -835,6 +861,43 @@
       volumeBtn.innerHTML = isMuted
         ? "<i class='fa-solid fa-volume-xmark'></i>"
         : "<i class='fa-solid fa-volume-high'></i>";
+    }
+    function hideSoundHint() {}
+
+    async function safePlay(){
+      try { await audio.play(); } catch {}
+    }
+
+    function animateTrackSwitch(){
+      playerShell.classList.remove("is-switching");
+      void playerShell.offsetWidth;
+      playerShell.classList.add("is-switching");
+      setTimeout(() => playerShell.classList.remove("is-switching"), 600);
+    }
+
+    function loadTrack(index, shouldPlay = false){
+      currentTrackIndex = (index + tracks.length) % tracks.length;
+      const track = tracks[currentTrackIndex];
+
+      audio.src = track.src;
+      playerTitle.textContent = track.title;
+      playerCover.src = track.cover;
+      progressEl.style.width = "0%";
+      ctime.textContent = "0:00";
+      ttime.textContent = "0:00";
+
+      animateTrackSwitch();
+      if (shouldPlay) safePlay();
+    }
+
+    function switchTrack(step){
+      const shouldPlay = !audio.paused;
+      loadTrack(currentTrackIndex + step, shouldPlay);
+    }
+
+    if (bgVideo) {
+      bgVideo.addEventListener("canplay", () => bgVideo.classList.add("show"), { once: true });
+      bgVideo.addEventListener("error", () => bgVideo.remove());
     }
 
     // ===== player logic =====
@@ -851,16 +914,16 @@
     audio.addEventListener("play", () => setPlayIcon(true));
     audio.addEventListener("pause", () => setPlayIcon(false));
     audio.addEventListener("ended", () => {
-      setPlayIcon(false);
-      audio.currentTime = 0;
+      switchTrack(1);
     });
 
     playPause.addEventListener("click", async () => {
-      try {
-        if (audio.paused) await audio.play();
-        else audio.pause();
-      } catch {}
+      if (audio.paused) await safePlay();
+      else audio.pause();
     });
+
+    prevTrack.addEventListener("click", () => switchTrack(-1));
+    nextTrack.addEventListener("click", () => switchTrack(1));
 
     let muted = false;
     volumeBtn.addEventListener("click", () => {
@@ -893,6 +956,8 @@
     }
     progressBar.addEventListener("pointerup", stopSeek);
     progressBar.addEventListener("pointercancel", stopSeek);
+
+    loadTrack(currentTrackIndex);
 
     // views
     const key = "furigin_views_winter_final";
