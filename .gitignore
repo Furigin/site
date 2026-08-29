@@ -1,0 +1,4 @@
+# служебные файлы — не нужны на сайте
+_trash/
+index.backup-*.html
+start.bat
