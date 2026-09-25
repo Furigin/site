@@ -1,0 +1,2564 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>furigin.exe</title>
+<meta name="description" content="furigin.exe — нейросеть, застрявшая в интернете 2003 года. neural × webcore × glitchcore." />
+<meta name="theme-color" content="#050008" />
+<meta property="og:title" content="furigin.exe" />
+<meta property="og:description" content="neural × webcore × glitchcore · minecraft · music · links" />
+<meta property="og:image" content="avatar.jpg" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=VT323&family=Pixelify+Sans:wght@400;600&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"/>
+
+<style>
+  @font-face{
+    font-family:'Minecraft';
+    src: local('Minecraft'), local('Minecraft Regular'), url('minecraft.ttf') format('truetype');
+    font-style:normal; font-weight:400; font-display:swap;
+  }
+
+  :root{
+    /* палитра: чёрный эфир + кислотный лайм + горячий розовый + циан + ультрафиолет */
+    --void:#050008;
+    --void-2:#0c0415;
+    --lime:#b6ff00;
+    --pink:#ff2bd6;
+    --cyan:#00f0ff;
+    --uv:#7a00ff;
+    --uv-deep:#3a0080;
+    --warn:#ffe600;
+
+    --lime-rgb:182,255,0;
+    --pink-rgb:255,43,214;
+    --cyan-rgb:0,240,255;
+    --uv-rgb:122,0,255;
+
+    --text:#f4f0ff;
+    --text-soft:rgba(244,240,255,.74);
+    --text-faint:rgba(244,240,255,.48);
+
+    --win-bg:rgba(12,4,22,.86);
+    --win-face:#1b1128;
+    --win-face-2:#261838;
+    --line:rgba(var(--uv-rgb),.45);
+
+    /* win98-бевел, но в тёмной гамме */
+    --bevel-out: inset 1px 1px 0 rgba(255,255,255,.30), inset -1px -1px 0 rgba(0,0,0,.95),
+                 inset 2px 2px 0 rgba(255,255,255,.08), inset -2px -2px 0 rgba(0,0,0,.55);
+    --bevel-in:  inset 1px 1px 0 rgba(0,0,0,.95), inset -1px -1px 0 rgba(255,255,255,.26),
+                 inset 2px 2px 0 rgba(0,0,0,.55), inset -2px -2px 0 rgba(255,255,255,.06);
+
+    --f-pixel:'VT323','Pixelify Sans',monospace;
+    --f-pixel-ru:'Pixelify Sans','VT323',monospace;
+    --f-mono:'JetBrains Mono',ui-monospace,monospace;
+    --f-sans:'Space Grotesk','Segoe UI',sans-serif;
+    --f-mc:'Minecraft','Pixelify Sans',monospace;
+
+    --ease:cubic-bezier(.22,.8,.2,1);
+  }
+
+  *{ margin:0; padding:0; box-sizing:border-box; }
+  html,body{ width:100%; min-height:100%; }
+  body{
+    font-family:var(--f-sans);
+    color:var(--text);
+    background:var(--void);
+    min-height:100svh;
+    overflow-x:hidden;
+    -webkit-font-smoothing:antialiased;
+    cursor:crosshair;
+  }
+  a{ color:inherit; }
+  button{ font:inherit; color:inherit; }
+  ::selection{ background:var(--pink); color:var(--void); }
+  :focus-visible{ outline:2px dashed var(--lime); outline-offset:3px; }
+
+  /* ============ СЦЕНА: сетка + нейросеть + шум ============ */
+  .scene{
+    position:fixed; inset:0; z-index:-3; overflow:hidden; pointer-events:none;
+    background:
+      radial-gradient(ellipse at 20% 10%, rgba(var(--uv-rgb),.28), transparent 55%),
+      radial-gradient(ellipse at 85% 90%, rgba(var(--pink-rgb),.16), transparent 50%),
+      linear-gradient(rgba(var(--uv-rgb),.10) 1px, transparent 1px) 0 0/32px 32px,
+      linear-gradient(90deg, rgba(var(--uv-rgb),.10) 1px, transparent 1px) 0 0/32px 32px,
+      var(--void);
+  }
+  #net{ position:absolute; inset:0; width:100%; height:100%; display:block; }
+  #noise{
+    position:absolute; inset:0; width:100%; height:100%; display:block;
+    image-rendering:pixelated; opacity:.07; mix-blend-mode:screen;
+  }
+  .vignette{ position:absolute; inset:0; background:radial-gradient(ellipse at 50% 45%, transparent 45%, rgba(0,0,0,.75) 100%); }
+
+  /* поверх всего — CRT-линии и полосы глитча */
+  .crt{
+    position:fixed; inset:0; z-index:19000; pointer-events:none;
+    background:repeating-linear-gradient(to bottom, rgba(0,0,0,.22) 0 1px, transparent 1px 3px);
+    opacity:.35; mix-blend-mode:multiply;
+  }
+  #slices{ position:fixed; inset:0; z-index:18990; pointer-events:none; overflow:hidden; }
+  .slice{
+    position:absolute; left:0; right:0;
+    transform:translateX(var(--dx,0));
+    -webkit-backdrop-filter:hue-rotate(var(--h,90deg)) saturate(2.6) contrast(1.3);
+    backdrop-filter:hue-rotate(var(--h,90deg)) saturate(2.6) contrast(1.3);
+    background:rgba(var(--pink-rgb),.05);
+  }
+  .slice.inv{ background:#fff; mix-blend-mode:difference; -webkit-backdrop-filter:none; backdrop-filter:none; }
+  .slice.line{ height:2px !important; background:var(--cyan); opacity:.7; }
+
+  html.glitching .desktop{ animation:jitter .26s steps(2) 1; }
+  html.glitching #net{ filter:hue-rotate(110deg) saturate(1.6); }
+  @keyframes jitter{
+    0%{ transform:translate(0,0); }
+    25%{ transform:translate(-4px,1px); }
+    50%{ transform:translate(5px,-1px); }
+    75%{ transform:translate(-2px,0); }
+    100%{ transform:translate(0,0); }
+  }
+
+  /* OVERFIT MODE (Konami) */
+  html.overfit .scene{ animation:hyphue 4s linear infinite; }
+  html.overfit .ticker-track{ animation-duration:9s; }
+  html.overfit .gl{ animation:hyphue 2s linear infinite; }
+  @keyframes hyphue{ to{ filter:hue-rotate(360deg) saturate(1.4); } }
+
+  /* ============ FX-частицы ============ */
+  #fx{ position:fixed; inset:0; z-index:18980; pointer-events:none; }
+
+  /* ============ ТОСТЫ ============ */
+  #toasts{
+    position:fixed; left:50%; bottom:56px; transform:translateX(-50%);
+    z-index:18800; display:flex; flex-direction:column-reverse; gap:8px; align-items:center;
+    pointer-events:none;
+  }
+  .toast{
+    font-family:var(--f-mono); font-size:12px;
+    color:var(--lime); background:rgba(5,0,8,.94);
+    border:1px solid var(--lime);
+    padding:8px 14px;
+    box-shadow:4px 4px 0 rgba(var(--pink-rgb),.55), 0 0 18px rgba(var(--lime-rgb),.2);
+    opacity:0; transform:translateY(10px);
+    transition:opacity .3s var(--ease), transform .3s var(--ease);
+  }
+  .toast::before{ content:"> "; color:var(--pink); }
+  .toast.show{ opacity:1; transform:translateY(0); }
+  .toast.milestone{ color:var(--void); background:var(--lime); font-weight:700; box-shadow:4px 4px 0 var(--pink), 0 0 26px rgba(var(--lime-rgb),.5); }
+  .toast.milestone::before{ color:var(--void); }
+
+  /* ============ BOOT-ЛОАДЕР ============ */
+  .boot{
+    position:fixed; inset:0; z-index:21000;
+    background:#000;
+    display:flex; align-items:flex-start; justify-content:center;
+    padding:max(8vh,40px) 18px 18px;
+    cursor:pointer;
+  }
+  .boot.out{ animation:bootOut .55s steps(6) forwards; }
+  @keyframes bootOut{
+    0%{ opacity:1; clip-path:inset(0 0 0 0); filter:none; }
+    30%{ clip-path:inset(12% 0 40% 0); transform:translateX(-12px); filter:hue-rotate(90deg); }
+    55%{ clip-path:inset(45% 0 20% 0); transform:translateX(16px); filter:invert(1); }
+    80%{ opacity:.6; clip-path:inset(48% 0 48% 0); transform:translateX(0); }
+    100%{ opacity:0; clip-path:inset(50% 0 50% 0); visibility:hidden; }
+  }
+  .boot-inner{ width:min(640px,100%); font-family:var(--f-mono); font-size:13px; line-height:1.7; color:#cfcfcf; }
+  .boot-logo{
+    font-family:var(--f-mc); font-size:clamp(30px,7vw,52px); color:var(--text);
+    margin-bottom:18px; letter-spacing:.02em;
+  }
+  .boot-line{ white-space:pre-wrap; word-break:break-word; }
+  .boot-line .ok{ color:var(--lime); }
+  .boot-line .bad{ color:var(--pink); }
+  .boot-line .hi{ color:var(--cyan); }
+  .boot-bar{
+    margin-top:14px; height:18px; width:100%;
+    border:1px solid #555; padding:2px; background:#000;
+  }
+  .boot-fill{
+    height:100%; width:0%;
+    background:repeating-linear-gradient(90deg, var(--lime) 0 10px, transparent 10px 12px);
+    transition:width .15s linear;
+  }
+  .boot-hint{ margin-top:10px; font-size:11px; color:#666; }
+  .cur{ display:inline-block; width:.6em; background:currentColor; animation:blink 1s steps(1) infinite; }
+  @keyframes blink{ 50%{ opacity:0; } }
+
+  /* ============ БРАУЗЕРНАЯ ПОЛОСА + БЕГУЩАЯ СТРОКА ============ */
+  .chrome{
+    position:relative; z-index:5;
+    display:flex; align-items:center; gap:8px;
+    padding:6px 10px;
+    background:var(--win-face); box-shadow:var(--bevel-out);
+    font-family:var(--f-pixel); font-size:17px;
+  }
+  .chrome .cbtn{
+    width:26px; height:22px; display:grid; place-items:center;
+    background:var(--win-face-2); box-shadow:var(--bevel-out); border:0; cursor:pointer; font-size:11px;
+  }
+  .chrome .cbtn:active{ box-shadow:var(--bevel-in); }
+  .addr{
+    flex:1; min-width:0; display:flex; align-items:center; gap:8px;
+    background:#000; box-shadow:var(--bevel-in); padding:2px 8px; height:24px;
+    white-space:nowrap; overflow:hidden;
+  }
+  .addr-label{ color:var(--text-faint); }
+  .addr-url{ color:var(--lime); overflow:hidden; text-overflow:ellipsis; }
+  .chrome-state{ color:var(--lime); display:flex; align-items:center; gap:6px; white-space:nowrap; }
+  .chrome-state .led{ width:8px; height:8px; background:var(--lime); box-shadow:0 0 8px var(--lime); animation:blink 1.2s steps(1) infinite; }
+
+  .ticker{
+    position:relative; z-index:4; overflow:hidden; white-space:nowrap;
+    background:linear-gradient(90deg, var(--uv-deep), var(--uv) 40%, var(--pink));
+    border-block:1px solid #000;
+    font-family:var(--f-pixel); font-size:19px; line-height:26px; color:#fff;
+    text-shadow:1px 0 var(--cyan), -1px 0 var(--pink);
+  }
+  .ticker-track{ display:inline-block; padding-left:0; animation:tick 38s linear infinite; }
+  .ticker-track span{ padding-right:2.2em; }
+  @keyframes tick{ from{ transform:translateX(0); } to{ transform:translateX(-50%); } }
+
+  /* ============ РАБОЧИЙ СТОЛ ============ */
+  .desktop{
+    max-width:1180px; margin:0 auto;
+    padding:24px 18px 76px;
+    display:grid; grid-template-columns:minmax(0,1.12fr) minmax(0,.88fr); gap:20px;
+    align-items:start;
+  }
+  .col{ display:flex; flex-direction:column; gap:20px; min-width:0; }
+
+  /* ============ ОКНА ============ */
+  .win{
+    position:relative; z-index:1;
+    background:var(--win-bg);
+    -webkit-backdrop-filter:blur(8px); backdrop-filter:blur(8px);
+    box-shadow:var(--bevel-out), 0 0 0 1px #000, 7px 7px 0 rgba(0,0,0,.55), 0 0 34px rgba(var(--uv-rgb),.22);
+    padding:3px;
+    animation:winIn .6s var(--ease) both;
+  }
+  .win.active{ box-shadow:var(--bevel-out), 0 0 0 1px #000, 7px 7px 0 rgba(var(--pink-rgb),.35), 0 0 40px rgba(var(--pink-rgb),.20); }
+  .win.minimized, .win.closed{ display:none; }
+  .win.popin{ animation:winPop .35s var(--ease) both; }
+  @keyframes winIn{ from{ opacity:0; transform:translateY(8px); } to{ opacity:1; transform:none; } }
+  @keyframes winPop{ 0%{ opacity:0; transform:scale(.92); filter:hue-rotate(120deg); } 100%{ opacity:1; transform:none; filter:none; } }
+  .win.maxed{
+    position:fixed; inset:12px 12px 52px 12px; z-index:9000 !important;
+    translate:none !important; overflow:auto;
+  }
+  .win.win-glitch{ animation:winGlitch .26s steps(1) 1; }
+  @keyframes winGlitch{
+    0%{ clip-path:inset(0 0 0 0); transform:none; }
+    20%{ clip-path:inset(8% 0 55% 0); transform:translateX(-7px); }
+    40%{ clip-path:inset(46% 0 18% 0); transform:translateX(6px); filter:hue-rotate(90deg); }
+    60%{ clip-path:inset(22% 0 38% 0); transform:translateX(-3px); filter:invert(1) hue-rotate(180deg); }
+    80%{ clip-path:inset(0 0 0 0); transform:translateX(2px); }
+    100%{ clip-path:none; transform:none; filter:none; }
+  }
+
+  .win-bar{
+    display:flex; align-items:center; gap:7px;
+    height:26px; padding:0 3px 0 6px;
+    background:linear-gradient(90deg,#2b2236,#4a3f58);
+    user-select:none; touch-action:none;
+  }
+  .win.active .win-bar{ background:linear-gradient(90deg, var(--uv-deep), var(--uv) 45%, var(--pink)); }
+  .win-ico{ width:16px; height:16px; display:grid; place-items:center; font-size:11px; color:var(--lime); flex-shrink:0; }
+  .win-title{
+    flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+    font-family:var(--f-pixel); font-size:19px; line-height:1; color:#fff;
+    text-shadow:1px 0 var(--cyan), -1px 0 var(--pink);
+  }
+  .win-btns{ display:flex; gap:2px; }
+  .wb{
+    width:20px; height:18px; display:grid; place-items:center;
+    border:0; background:var(--win-face-2); box-shadow:var(--bevel-out);
+    font-family:var(--f-mono); font-size:11px; font-weight:700; line-height:1; cursor:pointer;
+  }
+  .wb:hover{ color:var(--lime); }
+  .wb:active{ box-shadow:var(--bevel-in); }
+  .wb.close{ margin-left:2px; }
+  .wb.close:hover{ color:var(--void); background:var(--pink); }
+  @media (min-width:900px) and (pointer:fine){ .win-bar{ cursor:grab; } .dragging .win-bar{ cursor:grabbing; } }
+
+  .win-menu{
+    display:flex; gap:14px; padding:3px 8px;
+    font-family:var(--f-pixel); font-size:16px; color:var(--text-faint);
+    border-bottom:1px solid rgba(255,255,255,.06);
+  }
+  .win-menu u{ text-decoration:underline; text-underline-offset:2px; }
+  .win-body{ padding:16px; }
+  .win-status{
+    display:flex; gap:3px; margin-top:2px;
+    font-family:var(--f-pixel); font-size:15px; color:var(--text-faint);
+  }
+  .win-status span{ flex:1; padding:1px 7px; box-shadow:var(--bevel-in); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .win-status span:first-child{ flex:2; }
+
+  .label{
+    font-family:var(--f-pixel); font-size:17px; letter-spacing:.06em;
+    color:var(--pink); margin-bottom:6px;
+  }
+  .label::before{ content:"// "; color:var(--text-faint); }
+
+  /* ============ GLITCH-ТЕКСТ ============ */
+  .gl{ position:relative; display:inline-block; }
+  .gl::before, .gl::after{
+    content:attr(data-text); position:absolute; left:0; top:0; width:100%; height:100%;
+    pointer-events:none; mix-blend-mode:screen;
+  }
+  .gl::before{ color:var(--pink); animation:glA 3.4s infinite steps(1); }
+  .gl::after{ color:var(--cyan); animation:glB 2.9s infinite steps(1); }
+  @keyframes glA{
+    0%,86%,100%{ clip-path:inset(0 0 100% 0); transform:none; }
+    87%{ clip-path:inset(10% 0 55% 0); transform:translate(-3px,0); }
+    90%{ clip-path:inset(60% 0 8% 0); transform:translate(3px,0); }
+    93%{ clip-path:inset(35% 0 40% 0); transform:translate(-2px,0); }
+  }
+  @keyframes glB{
+    0%,80%,100%{ clip-path:inset(0 0 100% 0); transform:none; }
+    81%{ clip-path:inset(50% 0 20% 0); transform:translate(3px,0); }
+    85%{ clip-path:inset(5% 0 70% 0); transform:translate(-3px,0); }
+    88%{ clip-path:inset(75% 0 2% 0); transform:translate(2px,0); }
+  }
+  .gl:hover::before{ animation-duration:.4s; }
+  .gl:hover::after{ animation-duration:.35s; }
+
+  /* ============ PROFILE.EXE ============ */
+  .top{ display:flex; gap:20px; align-items:flex-start; }
+  .avatar{
+    position:relative; flex-shrink:0; width:112px; height:112px;
+    padding:4px; background:var(--win-face); box-shadow:var(--bevel-in);
+    cursor:pointer;
+  }
+  .avatar-img{ position:relative; width:100%; height:100%; overflow:hidden; }
+  .avatar img{ width:100%; height:100%; object-fit:cover; display:block; image-rendering:pixelated; transition:filter .4s var(--ease); }
+  .avatar-img::after{
+    content:""; position:absolute; inset:0; pointer-events:none;
+    background:repeating-linear-gradient(to bottom, rgba(0,0,0,.28) 0 1px, transparent 1px 3px);
+  }
+  .avatar:hover img{ filter:hue-rotate(40deg) saturate(1.4) contrast(1.1); }
+  .avatar.booped{ animation:boop .4s steps(4); }
+  .avatar.boop-big{ animation:boopBig .6s steps(6); }
+  @keyframes boop{ 0%{ transform:none; } 33%{ transform:translate(-3px,1px) scale(.94); filter:hue-rotate(90deg); } 66%{ transform:translate(3px,-1px) scale(1.04); } 100%{ transform:none; } }
+  @keyframes boopBig{
+    0%{ transform:none; filter:none; }
+    20%{ transform:scale(.84) rotate(-6deg); filter:invert(1); }
+    45%{ transform:scale(1.16) rotate(5deg) translateX(4px); filter:hue-rotate(180deg); }
+    70%{ transform:scale(.97) translateX(-3px); filter:saturate(3); }
+    100%{ transform:none; filter:none; }
+  }
+  .boop-badge{
+    position:absolute; right:-10px; bottom:-10px;
+    display:flex; align-items:center; gap:4px;
+    font-family:var(--f-pixel); font-size:16px; line-height:1;
+    color:var(--void); background:var(--lime);
+    padding:3px 7px; box-shadow:3px 3px 0 var(--pink);
+    pointer-events:none;
+  }
+  .boop-badge.pop{ animation:badgePop .45s steps(4); }
+  @keyframes badgePop{ 40%{ transform:scale(1.5) rotate(-8deg); } }
+
+  .info{ min-width:0; display:flex; flex-direction:column; gap:5px; }
+  .name{
+    font-family:var(--f-mc); font-weight:400;
+    font-size:clamp(34px,5.2vw,50px); line-height:1;
+    color:var(--text);
+    text-shadow:0 0 22px rgba(var(--pink-rgb),.45);
+  }
+  .name-ext{ font-family:var(--f-pixel); font-size:.5em; color:var(--lime); text-shadow:none; }
+  .tagline{ color:var(--text-soft); font-size:14px; }
+  .location{ font-family:var(--f-pixel); font-size:17px; color:var(--text-faint); display:flex; align-items:center; gap:7px; }
+  .location i{ color:var(--pink); font-size:12px; }
+
+  .discord-chip{
+    margin-top:8px; width:max-content; max-width:100%;
+    display:flex; align-items:center; gap:8px;
+    padding:5px 10px 5px 5px; border:0; cursor:pointer;
+    background:var(--win-face-2); box-shadow:var(--bevel-out);
+    font-family:var(--f-mono); font-size:12px;
+  }
+  .discord-chip:hover{ color:var(--lime); }
+  .discord-chip:active{ box-shadow:var(--bevel-in); }
+  .discord-chip img{ width:26px; height:26px; object-fit:cover; display:block; }
+  .discord-chip .badge{ font-family:var(--f-pixel); font-size:15px; padding:0 6px; color:var(--void); background:var(--cyan); }
+
+  .chips{ margin-top:16px; display:flex; flex-wrap:wrap; gap:7px; }
+  .chip{
+    font-family:var(--f-pixel); font-size:17px; line-height:1;
+    padding:5px 9px 4px;
+    border:1px solid rgba(var(--uv-rgb),.7);
+    background:rgba(var(--uv-rgb),.14);
+  }
+  .chip.id{ background:var(--lime); color:var(--void); border-color:var(--lime); }
+  .chip.hot{ border-style:dashed; border-color:var(--pink); color:var(--pink); background:rgba(var(--pink-rgb),.08); }
+
+  .about{ margin-top:18px; }
+  .about-text{ font-size:14px; line-height:1.65; color:var(--text-soft); max-width:60ch; }
+  .about-text b{ color:var(--text); font-weight:600; background:linear-gradient(transparent 62%, rgba(var(--pink-rgb),.45) 62%); }
+
+  .stats{ margin-top:16px; display:grid; grid-template-columns:repeat(3,1fr); gap:6px; }
+  .stat{ background:#000; box-shadow:var(--bevel-in); padding:7px 10px 6px; min-width:0; }
+  .stat-k{ font-family:var(--f-pixel); font-size:14px; color:var(--text-faint); letter-spacing:.06em; }
+  .stat-v{ font-family:var(--f-pixel); font-size:20px; line-height:1.1; color:var(--lime); display:flex; align-items:center; gap:6px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .stat-v .dot{ width:8px; height:8px; flex-shrink:0; background:var(--lime); box-shadow:0 0 8px var(--lime); animation:blink 1.4s steps(1) infinite; }
+  #nowStatus{ color:var(--cyan); }
+
+  .cta{
+    margin-top:14px; display:flex; align-items:center; justify-content:space-between; gap:12px;
+    padding:11px 14px; text-decoration:none;
+    background:var(--win-face-2); box-shadow:var(--bevel-out);
+    font-family:var(--f-mono); font-size:12.5px;
+    transition:color .2s, background .2s;
+  }
+  .cta:hover{ color:var(--void); background:var(--lime); }
+  .cta:active{ box-shadow:var(--bevel-in); }
+  .cta .fa-arrow-right{ transition:transform .3s var(--ease); }
+  .cta:hover .fa-arrow-right{ transform:translateX(4px); }
+
+  /* иконки «рабочего стола» */
+  .icons{ margin-top:16px; display:grid; grid-template-columns:repeat(6,1fr); gap:6px; }
+  .dicon{
+    display:flex; flex-direction:column; align-items:center; gap:5px;
+    padding:8px 2px 6px; text-decoration:none; min-width:0;
+    border:1px dotted transparent;
+  }
+  .dicon-img{
+    width:40px; height:40px; display:grid; place-items:center; font-size:19px;
+    background:var(--win-face-2); box-shadow:var(--bevel-out);
+    font-family:var(--f-mc);
+    transition:transform .2s steps(2), color .2s;
+  }
+  .dicon-name{ font-family:var(--f-pixel); font-size:15px; line-height:1; color:var(--text-soft); padding:1px 3px; max-width:100%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .dicon:hover{ border-color:rgba(255,255,255,.5); }
+  .dicon:hover .dicon-img{ color:var(--lime); transform:translate(-1px,-2px); }
+  .dicon:hover .dicon-name{ background:var(--uv); color:#fff; }
+
+  /* ============ MODEL_CARD.JSON ============ */
+  .code{
+    font-family:var(--f-mono); font-size:12px; line-height:1.7;
+    background:#000; box-shadow:var(--bevel-in);
+    padding:12px 14px; overflow-x:auto; white-space:pre;
+    color:var(--text-faint);
+  }
+  .code .k{ color:var(--cyan); }
+  .code .s{ color:var(--lime); }
+  .code .n{ color:var(--pink); }
+  .code .c{ color:#6f6480; font-style:italic; }
+  .train{
+    margin-top:10px; display:flex; align-items:center; gap:10px;
+    font-family:var(--f-pixel); font-size:17px; color:var(--text-soft);
+  }
+  .train-bar{ flex:1; height:14px; background:#000; box-shadow:var(--bevel-in); padding:2px; }
+  .train-fill{ height:100%; width:0%; background:repeating-linear-gradient(90deg, var(--cyan) 0 6px, transparent 6px 8px); }
+  .train-fill.over{ background:repeating-linear-gradient(90deg, var(--pink) 0 6px, transparent 6px 8px); }
+  .train-num{ min-width:3.2em; text-align:right; color:var(--lime); }
+  .train-loss{ margin-top:4px; font-family:var(--f-pixel); font-size:15px; color:var(--text-faint); }
+
+  /* ============ WANDERLUST.LNK ============ */
+  .feat-row{ display:flex; gap:16px; align-items:stretch; }
+  .feat-thumb{
+    position:relative; flex-shrink:0; width:240px; aspect-ratio:16/10;
+    background:#000; box-shadow:var(--bevel-in); padding:3px; display:block;
+  }
+  .feat-canvas{ width:100%; height:100%; display:block; image-rendering:pixelated; }
+  .feat-badge{
+    position:absolute; left:10px; top:10px;
+    font-family:var(--f-pixel); font-size:15px; line-height:1; padding:2px 6px;
+    color:var(--void); background:var(--lime);
+  }
+  .feat-badge::before{ content:"● "; color:#e00; animation:blink 1s steps(1) infinite; }
+  .feat-info{ flex:1; min-width:0; display:flex; flex-direction:column; gap:9px; }
+  .feat-title{ font-family:var(--f-mc); font-size:24px; font-weight:400; line-height:1; }
+  .feat-desc{ font-size:13.5px; line-height:1.55; color:var(--text-soft); }
+  .tags{ display:flex; flex-wrap:wrap; gap:5px; }
+  .tag{ font-family:var(--f-pixel); font-size:15px; line-height:1; padding:3px 7px 2px; color:var(--cyan); border:1px solid rgba(var(--cyan-rgb),.5); }
+  .feat-links{ margin-top:auto; display:flex; gap:8px; flex-wrap:wrap; }
+  .btn98{
+    display:inline-flex; align-items:center; justify-content:center; gap:7px;
+    padding:7px 14px; border:0; cursor:pointer; text-decoration:none;
+    background:var(--win-face-2); box-shadow:var(--bevel-out);
+    font-family:var(--f-pixel); font-size:18px; line-height:1;
+  }
+  .btn98:hover{ color:var(--lime); }
+  .btn98:active{ box-shadow:var(--bevel-in); }
+  .btn98.primary{ background:var(--lime); color:var(--void); }
+  .btn98.primary:hover{ background:var(--pink); color:var(--void); }
+
+  /* ============ NOW_PLAYING.WAV ============ */
+  .amp-top{ display:flex; gap:12px; align-items:stretch; }
+  .cover{
+    position:relative; width:84px; height:84px; flex-shrink:0; padding:3px; border:0; cursor:pointer;
+    background:#000; box-shadow:var(--bevel-in);
+  }
+  .cover img{ width:100%; height:100%; object-fit:cover; display:block; image-rendering:pixelated; }
+  .cover-state{
+    position:absolute; inset:3px; display:grid; place-items:center; font-size:20px; color:#fff;
+    background:rgba(5,0,8,.55); opacity:0; transition:opacity .2s;
+  }
+  .cover:hover .cover-state{ opacity:1; }
+  .player.is-playing .cover img{ animation:coverBreath 2.4s steps(8) infinite; }
+  @keyframes coverBreath{ 50%{ filter:saturate(1.5) hue-rotate(-15deg); } }
+  .player.is-switching .cover img{ animation:coverMosh .55s steps(5) 1; }
+  @keyframes coverMosh{
+    0%{ clip-path:inset(0); filter:none; transform:none; }
+    25%{ clip-path:inset(20% 0 40% 0); transform:translateX(-6px); filter:hue-rotate(120deg); }
+    50%{ clip-path:inset(55% 0 10% 0); transform:translateX(5px); filter:invert(1); }
+    75%{ clip-path:inset(0 0 60% 0); transform:translateX(-2px); filter:saturate(4); }
+    100%{ clip-path:inset(0); filter:none; transform:none; }
+  }
+
+  .lcd{
+    flex:1; min-width:0; background:#000; box-shadow:var(--bevel-in);
+    padding:6px 10px; display:flex; flex-direction:column; justify-content:space-between; gap:2px;
+    font-family:var(--f-pixel); color:var(--lime);
+    text-shadow:0 0 6px rgba(var(--lime-rgb),.55);
+  }
+  .lcd-row{ display:flex; align-items:baseline; justify-content:space-between; gap:10px; }
+  .lcd-time{ font-size:36px; line-height:.9; }
+  .lcd-meta{ display:flex; flex-direction:column; align-items:flex-end; font-size:15px; line-height:1.1; color:var(--cyan); text-shadow:0 0 6px rgba(var(--cyan-rgb),.5); }
+  .lcd-title{ overflow:hidden; white-space:nowrap; font-size:19px; line-height:1.2; }
+  .lcd-title span{ display:inline-block; padding-left:100%; animation:lcdScroll 14s linear infinite; }
+  @keyframes lcdScroll{ from{ transform:translateX(0); } to{ transform:translateX(-100%); } }
+  .lcd-sub{ display:flex; justify-content:space-between; gap:8px; font-size:14px; color:rgba(var(--lime-rgb),.6); text-shadow:none; white-space:nowrap; overflow:hidden; }
+
+  .viz{ margin-top:10px; width:100%; height:46px; display:block; background:#000; box-shadow:var(--bevel-in); }
+
+  .progress{
+    position:relative; margin-top:8px; width:100%; height:16px; cursor:pointer; touch-action:none;
+    background:#000; box-shadow:var(--bevel-in); padding:3px;
+  }
+  .progress-fill{
+    position:relative; height:100%; width:0%;
+    background:repeating-linear-gradient(90deg, var(--pink) 0 5px, transparent 5px 7px);
+    transition:width .12s linear;
+  }
+  .progress-thumb{
+    position:absolute; right:-3px; top:-5px; width:6px; height:20px;
+    background:var(--lime); box-shadow:0 0 8px var(--lime); opacity:0; transition:opacity .2s;
+  }
+  .progress:hover .progress-thumb{ opacity:1; }
+  .progress-tip{
+    position:absolute; bottom:calc(100% + 6px); transform:translateX(-50%);
+    font-family:var(--f-pixel); font-size:15px; line-height:1; color:var(--void); background:var(--lime);
+    padding:2px 5px; pointer-events:none; opacity:0; white-space:nowrap;
+  }
+  .progress:hover .progress-tip{ opacity:1; }
+
+  .amp-ctrl{ margin-top:10px; display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap; }
+  .controls{ display:flex; gap:4px; }
+  .pbtn{
+    width:36px; height:30px; display:grid; place-items:center; border:0; cursor:pointer; font-size:12px;
+    background:var(--win-face-2); box-shadow:var(--bevel-out);
+  }
+  .pbtn:hover{ color:var(--lime); }
+  .pbtn:active{ box-shadow:var(--bevel-in); }
+  .pbtn.big{ width:46px; background:var(--lime); color:var(--void); }
+  .pbtn.big:hover{ background:var(--pink); color:var(--void); }
+  .pbtn.toggle-on{ box-shadow:var(--bevel-in); color:var(--lime); background:#000; }
+  .pbtn.repeat-one{ position:relative; }
+  .pbtn.repeat-one::after{ content:"1"; position:absolute; top:1px; right:4px; font-family:var(--f-pixel); font-size:13px; color:var(--pink); }
+
+  .vol{ display:flex; align-items:center; gap:7px; }
+  .vol-slider{
+    -webkit-appearance:none; appearance:none; width:96px; height:10px; margin:0; cursor:pointer; outline:none;
+    background:linear-gradient(90deg, var(--cyan) 0 var(--vol,15%), #000 var(--vol,15%));
+    box-shadow:var(--bevel-in);
+  }
+  .vol-slider::-webkit-slider-thumb{
+    -webkit-appearance:none; appearance:none; width:12px; height:20px; cursor:pointer;
+    background:var(--win-face-2); box-shadow:var(--bevel-out), 0 0 0 1px #000;
+  }
+  .vol-slider::-moz-range-thumb{ width:12px; height:20px; border:1px solid #000; border-radius:0; background:var(--win-face-2); cursor:pointer; }
+  .vol-num{ font-family:var(--f-pixel); font-size:17px; color:var(--cyan); width:24px; text-align:right; }
+
+  .playlist{ margin-top:12px; background:#000; box-shadow:var(--bevel-in); padding:4px; display:flex; flex-direction:column; }
+  .pl-item{
+    display:flex; align-items:center; gap:10px; padding:5px 8px; cursor:pointer;
+    font-family:var(--f-pixel); font-size:18px; line-height:1.1; color:rgba(var(--lime-rgb),.7);
+  }
+  .pl-item:hover{ background:rgba(var(--uv-rgb),.35); color:#fff; }
+  .pl-item.active{ background:var(--uv); color:#fff; }
+  .pl-idx{ width:18px; text-align:center; flex-shrink:0; }
+  .pl-idx .fa-solid{ font-size:10px; }
+  .pl-title{ flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .pl-dur{ flex-shrink:0; }
+
+  /* ============ PROMPT.BAT ============ */
+  .term{
+    background:#000; box-shadow:var(--bevel-in); padding:10px 12px;
+    font-family:var(--f-mono); font-size:12.5px; line-height:1.55; color:#d0d0d0;
+    cursor:text;
+  }
+  .term-out{ max-height:230px; overflow-y:auto; }
+  .term-out::-webkit-scrollbar, .gb-list::-webkit-scrollbar{ width:12px; }
+  .term-out::-webkit-scrollbar-thumb, .gb-list::-webkit-scrollbar-thumb{ background:var(--win-face-2); box-shadow:var(--bevel-out); }
+  .term-out::-webkit-scrollbar-track, .gb-list::-webkit-scrollbar-track{ background:repeating-conic-gradient(#1b1128 0 25%, #000 0 50%) 0 0/4px 4px; }
+  .t-line{ white-space:pre-wrap; word-break:break-word; }
+  .t-line.cmd{ color:#fff; }
+  .t-line.ok{ color:var(--lime); }
+  .t-line.err{ color:var(--pink); }
+  .t-line.info{ color:var(--cyan); }
+  .term-in-row{ display:flex; align-items:center; gap:0; }
+  .term-ps{ color:var(--lime); white-space:nowrap; }
+  .term-in{
+    flex:1; min-width:0; background:transparent; border:0; outline:none;
+    font:inherit; color:#fff; caret-color:var(--lime);
+  }
+
+  /* ============ GUESTBOOK.TXT ============ */
+  .gb-head{ display:flex; align-items:center; justify-content:space-between; gap:10px; }
+  .gb-mode{ font-family:var(--f-pixel); font-size:15px; line-height:1; padding:2px 7px; color:var(--text-faint); box-shadow:var(--bevel-in); background:#000; }
+  .gb-mode.live{ color:var(--lime); }
+  .gb-mode.live::before{ content:"● "; animation:blink 1.2s steps(1) infinite; }
+  .gb-form{ margin-top:8px; display:flex; flex-direction:column; gap:8px; }
+  .gb-inputs{ display:flex; gap:6px; }
+  .gb-name{ flex:0 0 130px; }
+  .gb-msg{ flex:1; min-width:0; }
+  .gb-name, .gb-msg{
+    font-family:var(--f-mono); font-size:12.5px; color:#fff;
+    background:#000; box-shadow:var(--bevel-in); border:0; outline:none;
+    padding:9px 11px;
+  }
+  .gb-name::placeholder, .gb-msg::placeholder{ color:var(--text-faint); }
+  .gb-name:focus, .gb-msg:focus{ box-shadow:var(--bevel-in), 0 0 0 1px var(--lime); }
+  .gb-send{ align-self:flex-end; }
+  .gb-list{
+    margin-top:12px; max-height:300px; overflow-y:auto;
+    background:#000; box-shadow:var(--bevel-in); padding:8px 10px;
+    font-family:var(--f-mono); font-size:12.5px; line-height:1.55;
+  }
+  .gb-empty{ color:var(--text-faint); text-align:center; padding:12px 0; }
+  .gb-item{ padding:3px 0; border-bottom:1px dashed rgba(255,255,255,.07); word-break:break-word; animation:gbIn .4s steps(4) both; }
+  .gb-item:last-child{ border-bottom:0; }
+  @keyframes gbIn{ from{ opacity:0; transform:translateX(-6px); } to{ opacity:1; transform:none; } }
+  .gb-time{ color:var(--text-faint); }
+  .gb-nick{ color:var(--pink); font-weight:700; }
+  .gb-text{ color:#e8e4f0; }
+
+  /* ============ WEBRING.HTM ============ */
+  .construction{
+    display:flex; align-items:center; justify-content:center; gap:10px;
+    padding:6px 10px; margin-bottom:12px;
+    background:repeating-linear-gradient(-45deg, var(--warn) 0 12px, #111 12px 24px);
+    background-size:34px 34px; animation:stripes 1.2s linear infinite;
+  }
+  .construction span{
+    font-family:var(--f-pixel-ru); font-size:15px; font-weight:600; line-height:1;
+    color:#000; background:var(--warn); padding:3px 8px; border:2px solid #000;
+  }
+  @keyframes stripes{ to{ background-position:34px 0; } }
+  .badges{ display:flex; flex-wrap:wrap; gap:6px; justify-content:center; }
+  .b88{
+    width:88px; height:31px; flex-shrink:0; overflow:hidden; position:relative;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    font-family:var(--f-pixel); font-size:13px; line-height:.95; text-align:center; text-decoration:none;
+    border:1px solid #000; box-shadow:inset 1px 1px 0 rgba(255,255,255,.5), inset -1px -1px 0 rgba(0,0,0,.6);
+    image-rendering:pixelated;
+    transition:transform .15s steps(2);
+  }
+  .b88:hover{ transform:translate(-1px,-2px); }
+  .b88 small{ font-size:10px; opacity:.85; }
+  .b88.a{ background:linear-gradient(180deg,#000 0 50%, #1a0033 50%); color:var(--lime); }
+  .b88.b{ background:linear-gradient(90deg, var(--uv), var(--pink)); color:#fff; text-shadow:1px 1px 0 #000; }
+  .b88.c{ background:#fff; color:#000; }
+  .b88.c b{ color:#e00; }
+  .b88.d{ background:#000; color:var(--cyan); border-color:var(--cyan); }
+  .b88.e{ background:repeating-linear-gradient(90deg,#5b3a1a 0 6px,#6b4a22 6px 12px); color:#9cff5a; text-shadow:1px 1px 0 #000; }
+  .b88.f{ background:var(--lime); color:#000; }
+  .b88.g{ background:linear-gradient(180deg,#0000aa,#000055); color:#fff; }
+  .b88.h{ background:#111; color:var(--pink); }
+  .b88 .blinky{ animation:blink .8s steps(1) infinite; color:var(--warn); }
+  .ring{
+    margin-top:12px; display:flex; align-items:center; justify-content:center; gap:10px; flex-wrap:wrap;
+    font-family:var(--f-pixel); font-size:18px;
+  }
+  .ring a{ color:var(--cyan); text-decoration:underline; text-underline-offset:3px; }
+  .ring a:hover{ color:var(--lime); background:var(--uv); }
+  .hits{
+    margin-top:12px; display:flex; align-items:center; justify-content:center; gap:10px; flex-wrap:wrap;
+    font-family:var(--f-pixel); font-size:17px; color:var(--text-soft);
+  }
+  .hit-digits{ display:flex; gap:2px; }
+  .hit-digits span{
+    width:18px; height:26px; display:grid; place-items:center;
+    background:#000; color:#ff3b3b; font-size:24px; line-height:1;
+    text-shadow:0 0 6px rgba(255,59,59,.7);
+    box-shadow:var(--bevel-in);
+  }
+  .foot{ margin-top:10px; text-align:center; font-family:var(--f-pixel); font-size:15px; color:var(--text-faint); }
+
+  /* ============ ПАНЕЛЬ ЗАДАЧ ============ */
+  .taskbar{
+    position:fixed; left:0; right:0; bottom:0; height:40px; z-index:12400;
+    display:flex; align-items:center; gap:6px; padding:4px;
+    background:var(--win-face); box-shadow:inset 0 1px 0 rgba(255,255,255,.3), 0 -1px 0 #000, 0 -8px 24px rgba(0,0,0,.5);
+  }
+  .start{
+    height:30px; display:flex; align-items:center; gap:7px; padding:0 10px 0 7px; border:0; cursor:pointer;
+    background:var(--win-face-2); box-shadow:var(--bevel-out);
+    font-family:var(--f-pixel); font-size:21px; line-height:1; font-weight:400;
+  }
+  .start .logo{ color:var(--lime); font-size:15px; text-shadow:1px 0 var(--pink), -1px 0 var(--cyan); }
+  .start.open, .start:active{ box-shadow:var(--bevel-in); }
+  .task-list{ flex:1; min-width:0; display:flex; gap:4px; overflow:hidden; }
+  .task-btn{
+    height:30px; min-width:0; flex:0 1 160px; display:flex; align-items:center; gap:6px; padding:0 8px;
+    border:0; cursor:pointer; background:var(--win-face-2); box-shadow:var(--bevel-out);
+    font-family:var(--f-pixel); font-size:16px; line-height:1;
+  }
+  .task-btn i{ color:var(--lime); font-size:10px; }
+  .task-btn span{ overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .task-btn.pressed{ box-shadow:var(--bevel-in); background:repeating-conic-gradient(#2c1d3f 0 25%, #1b1128 0 50%) 0 0/4px 4px; }
+  .task-btn.gone{ display:none; }
+  .tray{
+    height:30px; display:flex; align-items:center; gap:10px; padding:0 10px;
+    box-shadow:var(--bevel-in); font-family:var(--f-pixel); font-size:17px; white-space:nowrap;
+  }
+  .tray .fa-solid{ font-size:11px; }
+  .tray-online{ color:var(--lime); }
+
+  .start-menu{
+    position:fixed; left:4px; bottom:40px; z-index:12500;
+    width:280px; display:none;
+    background:var(--win-face); box-shadow:var(--bevel-out), 0 0 0 1px #000, 6px 6px 0 rgba(0,0,0,.5);
+    padding:3px;
+  }
+  .start-menu.open{ display:flex; animation:winPop .2s steps(3) both; }
+  .sm-side{
+    width:28px; flex-shrink:0; display:flex; align-items:flex-end; justify-content:center;
+    background:linear-gradient(0deg, var(--uv-deep), var(--uv) 50%, var(--pink));
+    padding-bottom:8px;
+  }
+  .sm-side span{
+    writing-mode:vertical-rl; transform:rotate(180deg);
+    font-family:var(--f-mc); font-size:17px; color:#fff; letter-spacing:.04em;
+  }
+  .sm-side b{ color:var(--lime); font-weight:400; }
+  .sm-list{ flex:1; display:flex; flex-direction:column; padding:2px 0; min-width:0; }
+  .sm-item{
+    display:flex; align-items:center; gap:10px; padding:6px 10px; border:0; background:none; cursor:pointer;
+    text-align:left; text-decoration:none; font-family:var(--f-pixel); font-size:18px; line-height:1;
+  }
+  .sm-item i{ width:16px; text-align:center; font-size:13px; color:var(--lime); }
+  .sm-item:hover{ background:var(--uv); color:#fff; }
+  .sm-item:hover i{ color:#fff; }
+  .sm-sep{ height:0; margin:4px 4px; border-top:1px solid rgba(0,0,0,.8); border-bottom:1px solid rgba(255,255,255,.14); }
+  .sm-head{ padding:4px 10px 2px; font-family:var(--f-pixel); font-size:14px; color:var(--text-faint); letter-spacing:.08em; }
+
+  /* ============ ДИАЛОГИ-ОШИБКИ ============ */
+  .dialog{
+    position:fixed; z-index:12300; width:min(320px, calc(100vw - 32px));
+    background:var(--win-face); padding:3px;
+    box-shadow:var(--bevel-out), 0 0 0 1px #000, 6px 6px 0 rgba(0,0,0,.6), 0 0 30px rgba(var(--pink-rgb),.3);
+    animation:winPop .25s steps(3) both;
+  }
+  .dialog .win-bar{ background:linear-gradient(90deg, var(--uv-deep), var(--uv) 45%, var(--pink)); cursor:default; }
+  .dialog-body{ display:flex; gap:12px; align-items:flex-start; padding:14px 12px 10px; }
+  .dialog-ico{ font-size:28px; color:var(--warn); flex-shrink:0; }
+  .dialog-ico.x{ color:var(--pink); }
+  .dialog-text{ font-size:13.5px; line-height:1.5; }
+  .dialog-btns{ display:flex; justify-content:center; gap:8px; padding:4px 0 10px; }
+  .dialog-btns .btn98{ min-width:78px; font-size:17px; }
+
+  /* ============ BSOD / SHUTDOWN ============ */
+  .bsod, .shutdown{
+    position:fixed; inset:0; z-index:20000; display:none; cursor:pointer;
+    align-items:center; justify-content:center; padding:24px; text-align:center;
+  }
+  .bsod{ background:#0000aa; color:#fff; font-family:var(--f-mono); }
+  .bsod.show, .shutdown.show{ display:flex; }
+  .bsod-inner{ max-width:620px; text-align:left; font-size:14px; line-height:1.7; }
+  .bsod-title{ display:table; margin:0 auto 22px; background:#aaa; color:#0000aa; padding:0 10px; font-weight:700; }
+  .bsod p{ margin-bottom:14px; }
+  .bsod-cont{ text-align:center; margin-top:22px; }
+  .shutdown{ background:#000; color:#ff8a00; flex-direction:column; gap:14px; }
+  .shutdown-big{ font-family:var(--f-pixel-ru); font-size:clamp(22px,4vw,34px); }
+  .shutdown-small{ font-family:var(--f-mono); font-size:12px; color:#7a4a10; }
+
+  /* ============ АДАПТИВ ============ */
+  @media (max-width:900px){
+    .desktop{ grid-template-columns:minmax(0,1fr); padding:14px 12px 70px; gap:16px; }
+    .col{ display:contents; }
+    #w-profile{ order:1; } #w-player{ order:2; } #w-model{ order:3; } #w-feat{ order:4; }
+    #w-prompt{ order:5; } #w-guest{ order:6; } #w-ring{ order:7; }
+    .wb.max{ display:none; }
+  }
+  @media (max-width:640px){
+    .chrome .cbtn, .addr-label, .chrome-state span{ display:none; }
+    .top{ flex-direction:column; align-items:center; text-align:center; gap:16px; }
+    .info{ align-items:center; }
+    .chips{ justify-content:center; }
+    .about-text{ text-align:center; margin-inline:auto; }
+    .icons{ grid-template-columns:repeat(3,1fr); }
+    .feat-row{ flex-direction:column; }
+    .feat-thumb{ width:100%; }
+    .win-body{ padding:13px; }
+    .task-list{ display:none; }
+    .tray-online{ display:none; }
+    .gb-inputs{ flex-direction:column; }
+    .gb-name{ flex:1; }
+  }
+  @media (max-width:420px){
+    .stats{ grid-template-columns:1fr; }
+    .amp-top{ flex-direction:column; }
+    .cover{ width:100%; height:auto; aspect-ratio:1/1; max-width:170px; margin:0 auto; }
+    .amp-ctrl{ justify-content:center; }
+  }
+
+  @media (prefers-reduced-motion:reduce){
+    *{ animation-duration:.01ms !important; animation-iteration-count:1 !important; transition-duration:.01ms !important; }
+    .ticker-track, .lcd-title span{ animation:none !important; }
+    .gl::before, .gl::after{ display:none; }
+  }
+</style>
+</head>
+
+<body>
+
+  <!-- ===== BOOT ===== -->
+  <div class="boot" id="boot" aria-hidden="true">
+    <div class="boot-inner">
+      <div class="boot-logo">furigin<span style="color:var(--lime)">.exe</span></div>
+      <div id="bootLines"></div>
+      <div class="boot-bar"><div class="boot-fill" id="bootFill"></div></div>
+      <div class="boot-hint">нажми любую клавишу, чтобы пропустить<span class="cur">&nbsp;</span></div>
+    </div>
+  </div>
+
+  <!-- ===== СЦЕНА ===== -->
+  <div class="scene" aria-hidden="true">
+    <canvas id="net"></canvas>
+    <canvas id="noise" width="160" height="90"></canvas>
+    <div class="vignette"></div>
+  </div>
+  <div id="slices" aria-hidden="true"></div>
+  <canvas id="fx" aria-hidden="true"></canvas>
+  <div class="crt" aria-hidden="true"></div>
+  <div id="toasts" aria-live="polite"></div>
+
+  <!-- ===== БРАУЗЕРНАЯ ПОЛОСА + БЕГУЩАЯ СТРОКА ===== -->
+  <header>
+    <div class="chrome">
+      <button class="cbtn" type="button" aria-label="назад" data-say="назад дороги нет"><i class="fa-solid fa-caret-left"></i></button>
+      <button class="cbtn" type="button" aria-label="вперёд" data-say="будущее ещё не загружено"><i class="fa-solid fa-caret-right"></i></button>
+      <button class="cbtn" type="button" aria-label="обновить" data-say="glitch" ><i class="fa-solid fa-rotate-right"></i></button>
+      <div class="addr"><span class="addr-label">Адрес</span><span class="addr-url">http://www.furigin.net/~neural/glitch.htm</span></div>
+      <div class="chrome-state"><i class="led"></i><span>neural link</span></div>
+    </div>
+    <div class="ticker" aria-hidden="true">
+      <div class="ticker-track" id="tickerTrack"></div>
+    </div>
+  </header>
+
+  <!-- ===== РАБОЧИЙ СТОЛ ===== -->
+  <main class="desktop">
+
+    <div class="col">
+
+      <!-- PROFILE.EXE -->
+      <section class="win" id="w-profile" data-title="profile.exe" data-icon="fa-solid fa-user-astronaut">
+        <div class="win-bar">
+          <span class="win-ico"><i class="fa-solid fa-user-astronaut"></i></span>
+          <span class="win-title">profile.exe</span>
+          <div class="win-btns"><button class="wb min" type="button" aria-label="свернуть">_</button><button class="wb max" type="button" aria-label="развернуть">□</button><button class="wb close" type="button" aria-label="закрыть">×</button></div>
+        </div>
+        <div class="win-menu" aria-hidden="true"><span><u>Ф</u>айл</span><span><u>П</u>равка</span><span><u>В</u>ид</span><span><u>Н</u>ейросеть</span><span><u>?</u></span></div>
+        <div class="win-body">
+          <div class="top">
+            <div class="avatar" id="boopArea" title="активировать нейрон">
+              <div class="avatar-img"><img src="avatar.jpg" alt="avatar" width="112" height="112" fetchpriority="high"/></div>
+              <span class="boop-badge" aria-hidden="true"><i class="fa-solid fa-bolt"></i><span id="boopCount">0</span></span>
+            </div>
+            <div class="info">
+              <h1 class="name"><span class="gl" data-text="furigin">furigin</span><span class="name-ext">.exe</span></h1>
+              <p class="tagline">нейросеть, которая научилась играть в майнкрафт и слушать музыку (＾▽＾)</p>
+              <p class="location"><i class="fa-solid fa-location-dot"></i><span>Russia · сервер: мозг</span></p>
+              <button class="discord-chip" id="discordChip" type="button" title="скопировать">
+                <img src="discord-avatar.jpg" alt="discord avatar" width="26" height="26" loading="lazy"/>
+                <span>megocat0_0</span>
+                <span class="badge">discord</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="chips">
+            <span class="chip id">Ruslan</span>
+            <span class="chip id">17</span>
+            <span class="chip">Love PvP</span>
+            <span class="chip">Beginner Developer</span>
+            <span class="chip">Vibecode</span>
+            <span class="chip">Minecraft</span>
+            <span class="chip hot">neural × webcore × glitchcore</span>
+          </div>
+
+          <div class="about">
+            <div class="label">about</div>
+            <p class="about-text">Привет. Я — furigin. Наполовину человек, наполовину нейросеть, на 100% застрял в интернете 2003 года. Люблю <b>Minecraft PvP</b>, учусь <b>прогать</b> по чуть-чуть, но с кайфом, и собираю свой стиль — <b>нейросети × webcore × glitchcore</b>.</p>
+          </div>
+
+          <div class="stats">
+            <div class="stat"><div class="stat-k">local time</div><div class="stat-v" id="localTime">--:--</div></div>
+            <div class="stat"><div class="stat-k">status</div><div class="stat-v"><i class="dot"></i>online</div></div>
+            <div class="stat"><div class="stat-k">thinking</div><div class="stat-v" id="nowStatus">booting…</div></div>
+          </div>
+
+          <a class="cta" href="https://github.com/Furigin" target="_blank" rel="noopener">
+            <span><i class="fa-solid fa-code"></i>&nbsp; мои проекты на github — пока пусто, но нейросеть уже учится</span>
+            <i class="fa-solid fa-arrow-right"></i>
+          </a>
+
+          <div class="icons">
+            <a class="dicon" href="https://t.me/MegoCat" target="_blank" rel="noopener" title="Telegram"><span class="dicon-img"><i class="fa-brands fa-telegram"></i></span><span class="dicon-name">telegram</span></a>
+            <a class="dicon" href="https://tiktok.com/@furigin_" target="_blank" rel="noopener" title="TikTok"><span class="dicon-img"><i class="fa-brands fa-tiktok"></i></span><span class="dicon-name">tiktok</span></a>
+            <a class="dicon" href="https://github.com/Furigin" target="_blank" rel="noopener" title="GitHub"><span class="dicon-img"><i class="fa-brands fa-github"></i></span><span class="dicon-name">github</span></a>
+            <a class="dicon" href="https://steamcommunity.com/id/furigin/" target="_blank" rel="noopener" title="Steam"><span class="dicon-img"><i class="fa-brands fa-steam"></i></span><span class="dicon-name">steam</span></a>
+            <a class="dicon" href="https://ru.namemc.com/profile/furigin.1" target="_blank" rel="noopener" title="NameMC"><span class="dicon-img">N</span><span class="dicon-name">namemc</span></a>
+            <a class="dicon" href="https://www.last.fm/user/furigin" target="_blank" rel="noopener" title="Last.fm"><span class="dicon-img"><i class="fa-brands fa-lastfm"></i></span><span class="dicon-name">last.fm</span></a>
+          </div>
+        </div>
+        <div class="win-status"><span>готово — нейрон ждёт клика по аватарке</span><span>vibe: 147%</span></div>
+      </section>
+
+      <!-- WANDERLUST.LNK -->
+      <section class="win" id="w-feat" data-title="wanderlust.lnk" data-icon="fa-solid fa-cube">
+        <div class="win-bar">
+          <span class="win-ico"><i class="fa-solid fa-cube"></i></span>
+          <span class="win-title">wanderlust.lnk</span>
+          <div class="win-btns"><button class="wb min" type="button" aria-label="свернуть">_</button><button class="wb max" type="button" aria-label="развернуть">□</button><button class="wb close" type="button" aria-label="закрыть">×</button></div>
+        </div>
+        <div class="win-body">
+          <div class="label">featured project</div>
+          <div class="feat-row">
+            <a class="feat-thumb" href="https://furigin.github.io/site/" target="_blank" rel="noopener" aria-label="открыть проект">
+              <canvas class="feat-canvas" id="featCanvas"></canvas>
+              <span class="feat-badge">live</span>
+            </a>
+            <div class="feat-info">
+              <h2 class="feat-title"><span class="gl" data-text="WanderLust">WanderLust</span></h2>
+              <p class="feat-desc">Мой проект по разработке серверов для Minecraft с идеей — мир, который хочется исследовать, а не просто фармить.</p>
+              <div class="tags"><span class="tag">Java</span><span class="tag">C++</span><span class="tag">JavaScript</span><span class="tag">HTML</span></div>
+              <div class="feat-links">
+                <a class="btn98 primary" href="https://furigin.github.io/site/" target="_blank" rel="noopener"><i class="fa-solid fa-play"></i> live</a>
+                <a class="btn98" href="https://github.com/Furigin" target="_blank" rel="noopener"><i class="fa-brands fa-github"></i> code</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- GUESTBOOK.TXT -->
+      <section class="win" id="w-guest" data-title="guestbook.txt" data-icon="fa-solid fa-book">
+        <div class="win-bar">
+          <span class="win-ico"><i class="fa-solid fa-book"></i></span>
+          <span class="win-title">guestbook.txt — Блокнот</span>
+          <div class="win-btns"><button class="wb min" type="button" aria-label="свернуть">_</button><button class="wb max" type="button" aria-label="развернуть">□</button><button class="wb close" type="button" aria-label="закрыть">×</button></div>
+        </div>
+        <div class="win-body">
+          <div class="gb-head">
+            <div class="label">guestbook — оставь след в датасете</div>
+            <span class="gb-mode" id="gbMode">demo</span>
+          </div>
+          <form class="gb-form" id="gbForm" autocomplete="off">
+            <div class="gb-inputs">
+              <input class="gb-name" id="gbName" maxlength="24" placeholder="ник" />
+              <input class="gb-msg" id="gbMsg" maxlength="140" placeholder="напиши что-нибудь в обучающую выборку…" />
+            </div>
+            <button class="btn98 primary gb-send" type="submit"><i class="fa-solid fa-paper-plane"></i> отправить</button>
+          </form>
+          <div class="gb-list" id="gbList"></div>
+        </div>
+      </section>
+
+    </div>
+
+    <div class="col">
+
+      <!-- NOW_PLAYING.WAV -->
+      <section class="win player" id="w-player" data-title="now_playing.wav" data-icon="fa-solid fa-music">
+        <div class="win-bar">
+          <span class="win-ico"><i class="fa-solid fa-music"></i></span>
+          <span class="win-title">now_playing.wav</span>
+          <div class="win-btns"><button class="wb min" type="button" aria-label="свернуть">_</button><button class="wb max" type="button" aria-label="развернуть">□</button><button class="wb close" type="button" aria-label="закрыть">×</button></div>
+        </div>
+        <div class="win-body">
+          <div class="amp-top">
+            <button class="cover" id="coverBtn" type="button" aria-label="play / pause">
+              <img id="playerCoverImg" src="cover.png" alt="cover" width="84" height="84" loading="lazy"/>
+              <span class="cover-state" id="coverState"><i class="fa-solid fa-play"></i></span>
+            </button>
+            <div class="lcd">
+              <div class="lcd-row">
+                <span class="lcd-time" id="currentTime">0:00</span>
+                <span class="lcd-meta"><span id="lcdState">■ STOP</span><span id="totalTime">0:00</span></span>
+              </div>
+              <div class="lcd-title"><span id="playerTitle">Sloe — fears</span></div>
+              <div class="lcd-sub"><span id="playerSub">track 1 / 3</span><span>128kbps · 44khz</span></div>
+            </div>
+          </div>
+
+          <canvas class="viz" id="viz" aria-hidden="true"></canvas>
+
+          <div class="progress" id="progressBar" aria-label="Seek">
+            <div class="progress-fill" id="progressFill"><span class="progress-thumb"></span></div>
+            <div class="progress-tip" id="progressTip">0:00</div>
+          </div>
+
+          <div class="amp-ctrl">
+            <div class="controls">
+              <button id="shuffleBtn" class="pbtn" aria-label="Shuffle" type="button"><i class="fa-solid fa-shuffle"></i></button>
+              <button id="prevTrack" class="pbtn" aria-label="Previous track" type="button"><i class="fa-solid fa-backward-step"></i></button>
+              <button id="playPause" class="pbtn big" aria-label="Play" type="button"><i class="fa-solid fa-play"></i></button>
+              <button id="nextTrack" class="pbtn" aria-label="Next track" type="button"><i class="fa-solid fa-forward-step"></i></button>
+              <button id="repeatBtn" class="pbtn" aria-label="Repeat" type="button"><i class="fa-solid fa-repeat"></i></button>
+            </div>
+            <div class="vol">
+              <button id="volumeBtn" class="pbtn" aria-label="Mute" type="button"><i class="fa-solid fa-volume-high"></i></button>
+              <input type="range" id="volumeSlider" class="vol-slider" min="0" max="100" value="15" aria-label="Volume"/>
+              <span class="vol-num" id="volNum">15</span>
+            </div>
+          </div>
+
+          <div class="playlist" id="playlist"></div>
+        </div>
+        <div class="win-status"><span id="trackIndex">Track 1 / 3</span><span>space ⏯ · M 🔇 · ← →</span></div>
+      </section>
+
+      <!-- MODEL_CARD.JSON -->
+      <section class="win" id="w-model" data-title="model_card.json" data-icon="fa-solid fa-brain">
+        <div class="win-bar">
+          <span class="win-ico"><i class="fa-solid fa-brain"></i></span>
+          <span class="win-title">model_card.json</span>
+          <div class="win-btns"><button class="wb min" type="button" aria-label="свернуть">_</button><button class="wb max" type="button" aria-label="развернуть">□</button><button class="wb close" type="button" aria-label="закрыть">×</button></div>
+        </div>
+        <div class="win-body">
+          <div class="label">model card</div>
+<pre class="code">{
+  <span class="k">"name"</span>: <span class="s">"furigin"</span>,
+  <span class="k">"version"</span>: <span class="s">"v17.0"</span>,
+  <span class="k">"base_model"</span>: <span class="s">"Ruslan"</span>,
+  <span class="k">"params"</span>: <span class="s">"17 лет обучения"</span>,
+  <span class="k">"training_data"</span>: [<span class="s">"minecraft pvp"</span>, <span class="s">"vibecode"</span>,
+                    <span class="s">"музыка из плеера выше"</span>],
+  <span class="k">"skills"</span>: [<span class="s">"java"</span>, <span class="s">"c++"</span>, <span class="s">"js"</span>, <span class="s">"html"</span>],
+  <span class="k">"temperature"</span>: <span class="n">1.47</span>,  <span class="c">// слишком креативный</span>
+  <span class="k">"known_bugs"</span>: [<span class="s">"ложится спать в 4 утра"</span>,
+                 <span class="s">"не умеет в тайминги"</span>],
+  <span class="k">"license"</span>: <span class="s">"MIT (Mega Interesting Teenager)"</span>,
+  <span class="k">"status"</span>: <span class="s">"still training…"</span>
+}</pre>
+          <div class="train">
+            <span>training</span>
+            <div class="train-bar"><div class="train-fill" id="trainFill"></div></div>
+            <span class="train-num" id="trainNum">0%</span>
+          </div>
+          <div class="train-loss" id="trainLoss">epoch 1 · loss: 0.9000</div>
+        </div>
+      </section>
+
+      <!-- PROMPT.BAT -->
+      <section class="win" id="w-prompt" data-title="prompt.bat" data-icon="fa-solid fa-terminal">
+        <div class="win-bar">
+          <span class="win-ico"><i class="fa-solid fa-terminal"></i></span>
+          <span class="win-title">C:\FURIGIN\prompt.bat</span>
+          <div class="win-btns"><button class="wb min" type="button" aria-label="свернуть">_</button><button class="wb max" type="button" aria-label="развернуть">□</button><button class="wb close" type="button" aria-label="закрыть">×</button></div>
+        </div>
+        <div class="win-body">
+          <div class="term" id="term">
+            <div class="term-out" id="termOut"></div>
+            <div class="term-in-row">
+              <label class="term-ps" for="termIn">C:\FURIGIN&gt;&nbsp;</label>
+              <input class="term-in" id="termIn" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="команда" />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- WEBRING.HTM -->
+      <section class="win" id="w-ring" data-title="webring.htm" data-icon="fa-solid fa-globe">
+        <div class="win-bar">
+          <span class="win-ico"><i class="fa-solid fa-globe"></i></span>
+          <span class="win-title">webring.htm</span>
+          <div class="win-btns"><button class="wb min" type="button" aria-label="свернуть">_</button><button class="wb max" type="button" aria-label="развернуть">□</button><button class="wb close" type="button" aria-label="закрыть">×</button></div>
+        </div>
+        <div class="win-body">
+          <div class="construction"><span>UNDER CONSTRUCTION — навсегда</span></div>
+          <div class="badges">
+            <a class="b88 a" href="index.html" title="классическая версия">furigin.net<small class="blinky">NEW!</small></a>
+            <span class="b88 b">NEURAL<small>inside</small></span>
+            <span class="b88 c">made with<b>notepad</b></span>
+            <span class="b88 d">glitch<small>approved ✓</small></span>
+            <span class="b88 e">minecraft<small>forever</small></span>
+            <span class="b88 f">vibecode<small>powered</small></span>
+            <span class="b88 g">best viewed<small>800×600</small></span>
+            <span class="b88 h">no AI was<small>harmed ♥</small></span>
+          </div>
+          <div class="ring">
+            <a href="index.html">← prev</a>
+            <span>✦ glitchring ✦</span>
+            <a href="#" id="ringRandom">random</a>
+            <a href="https://github.com/Furigin" target="_blank" rel="noopener">next →</a>
+          </div>
+          <div class="hits">
+            <span>ты посетитель №</span>
+            <span class="hit-digits" id="hitDigits"></span>
+          </div>
+          <div class="foot">© 2003–2026 furigin.net · сделано в блокноте и нейросети · не нажимай Ctrl+W</div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- ===== ПАНЕЛЬ ЗАДАЧ ===== -->
+  <div class="start-menu" id="startMenu" role="menu">
+    <div class="sm-side"><span>furigin<b>98</b></span></div>
+    <div class="sm-list">
+      <div class="sm-head">ПРОГРАММЫ</div>
+      <div id="smPrograms"></div>
+      <div class="sm-sep"></div>
+      <a class="sm-item" href="https://t.me/MegoCat" target="_blank" rel="noopener"><i class="fa-brands fa-telegram"></i>telegram</a>
+      <a class="sm-item" href="https://www.last.fm/user/furigin" target="_blank" rel="noopener"><i class="fa-brands fa-lastfm"></i>last.fm</a>
+      <a class="sm-item" href="index.html"><i class="fa-solid fa-clock-rotate-left"></i>старая версия сайта</a>
+      <div class="sm-sep"></div>
+      <button class="sm-item" type="button" id="smGlitch"><i class="fa-solid fa-bolt"></i>сломать реальность</button>
+      <button class="sm-item" type="button" id="smShutdown"><i class="fa-solid fa-power-off"></i>завершение работы…</button>
+    </div>
+  </div>
+
+  <nav class="taskbar" aria-label="панель задач">
+    <button class="start" id="startBtn" type="button" aria-haspopup="menu" aria-expanded="false"><span class="logo">✦</span>start</button>
+    <div class="task-list" id="taskList"></div>
+    <div class="tray">
+      <span class="tray-online"><i class="fa-solid fa-circle"></i> online</span>
+      <span id="trayClock">--:--</span>
+    </div>
+  </nav>
+
+  <!-- ===== BSOD / SHUTDOWN ===== -->
+  <div class="bsod" id="bsod" role="alertdialog" aria-label="синий экран">
+    <div class="bsod-inner">
+      <div class="bsod-title">FURIGIN</div>
+      <p>A fatal exception 0E has occurred at 0028:C0FFEE17 in VXD NEURAL(01) + 00001337. The current application will be terminated.</p>
+      <p>* Нажми любую клавишу, чтобы продолжить.<br>* Нажми CTRL+ALT+DEL, чтобы потерять весь несохранённый вайб.</p>
+      <div class="bsod-cont">Press any key to continue <span class="cur">&nbsp;</span></div>
+    </div>
+  </div>
+  <div class="shutdown" id="shutdown" role="alertdialog" aria-label="завершение работы">
+    <div class="shutdown-big">Теперь питание компьютера можно отключить.</div>
+    <div class="shutdown-small">(или кликни, чтобы вернуться в интернет)</div>
+  </div>
+
+  <audio id="audio" preload="auto" playsinline></audio>
+
+<script>
+  /* ============================================================
+     Тот же Firebase-проект, что и у основного сайта (index.html):
+     гостевая и счётчик просмотров — общие для обеих версий.
+     ============================================================ */
+  window.GUESTBOOK_FIREBASE = {
+    apiKey: "AIzaSyDggxQ4vw5KaH1VZWompguGELKwdzTkxVI",
+    authDomain: "furigin-4cd33.firebaseapp.com",
+    projectId: "furigin-4cd33",
+    storageBucket: "furigin-4cd33.firebasestorage.app",
+    messagingSenderId: "391729904609",
+    appId: "1:391729904609:web:fa2cee2defda7ae632b0a0"
+  };
+
+  /* ===== Общий доступ к Firebase ===== */
+  let _firebasePromise = null;
+  function getFirebase(){
+    if (_firebasePromise) return _firebasePromise;
+    const cfg = window.GUESTBOOK_FIREBASE || null;
+    if (!cfg){ _firebasePromise = Promise.resolve(null); return _firebasePromise; }
+    _firebasePromise = (async () => {
+      const [appMod, fs] = await Promise.all([
+        import("https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js"),
+        import("https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js")
+      ]);
+      const app = appMod.initializeApp(cfg);
+      const db = fs.getFirestore(app);
+      return { db, fs };
+    })().catch((err) => { console.warn("Firebase init failed", err); return null; });
+    return _firebasePromise;
+  }
+
+  const prefersReducedMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const finePointer = window.matchMedia && window.matchMedia("(pointer: fine)").matches;
+  const PALETTE = { lime:"#b6ff00", pink:"#ff2bd6", cyan:"#00f0ff", uv:"#7a00ff", white:"#ffffff" };
+
+  /* ===== Helpers ===== */
+  function fmt(t){
+    if (!isFinite(t) || t < 0) return "0:00";
+    const m = Math.floor(t / 60), s = Math.floor(t % 60);
+    return `${m}:${String(s).padStart(2,"0")}`;
+  }
+  function clamp(n,a,b){ return Math.max(a, Math.min(b,n)); }
+  function pick(arr){ return arr[Math.random() * arr.length | 0]; }
+  function isTyping(){
+    const tag = (document.activeElement && document.activeElement.tagName) || "";
+    return tag === "INPUT" || tag === "TEXTAREA";
+  }
+
+  /* ===== Toast ===== */
+  function toast(msg, opts){
+    opts = opts || {};
+    const wrap = document.getElementById("toasts");
+    if (!wrap) return;
+    const t = document.createElement("div");
+    t.className = "toast" + (opts.cls ? " " + opts.cls : "");
+    t.textContent = msg;
+    wrap.appendChild(t);
+    requestAnimationFrame(() => t.classList.add("show"));
+    setTimeout(() => { t.classList.remove("show"); setTimeout(() => t.remove(), 350); }, opts.dur || 2400);
+    while (wrap.children.length > 4) wrap.removeChild(wrap.firstChild);
+  }
+
+  /* ===== Бегущая строка ===== */
+  (function ticker(){
+    const el = document.getElementById("tickerTrack");
+    const items = [
+      "★ welcome to furigin.net ★", "best viewed in 800×600", "neural link established",
+      "не выключайте компьютер", "✦ loss: 0.0042 ✦", "сейчас играет: что-то хорошее",
+      "подпишись на мой telegram", "эта страница никогда не будет достроена",
+      "обнаружено 1 новое чувство", "✦ glitchcore is not a bug, it's a feature ✦", "minecraft pvp forever"
+    ];
+    const html = items.map((s) => "<span></span>").join("");
+    el.innerHTML = html + html;
+    const spans = el.querySelectorAll("span");
+    spans.forEach((s, i) => { s.textContent = items[i % items.length]; });
+  })();
+
+  /* ===== FX: частицы + символы от кликов, шлейф за курсором ===== */
+  (function fx(){
+    const canvas = document.getElementById("fx");
+    const ctx = canvas.getContext("2d");
+    const COLORS = [PALETTE.lime, PALETTE.pink, PALETTE.cyan, PALETTE.uv, PALETTE.white];
+    const CHARS = ["0", "1", "✦", "▓", "░", "×"];
+    let parts = [], raf = 0, running = false;
+
+    function resize(){ canvas.width = innerWidth; canvas.height = innerHeight; }
+    resize();
+    window.addEventListener("resize", resize);
+
+    function loop(){
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      for (let i = parts.length - 1; i >= 0; i--){
+        const p = parts[i];
+        p.vy += (p.g == null ? 0.16 : p.g);
+        p.vx *= 0.99;
+        p.x += p.vx; p.y += p.vy;
+        p.life--;
+        if (p.life <= 0 || p.y > canvas.height + 20){ parts.splice(i, 1); continue; }
+        ctx.globalAlpha = Math.max(0, Math.min(1, p.life / p.max));
+        ctx.fillStyle = p.color;
+        if (p.ch){
+          ctx.font = (8 + p.s * 3) + "px VT323, monospace";
+          ctx.fillText(p.ch, p.x | 0, p.y | 0);
+        } else {
+          ctx.fillRect(p.x | 0, p.y | 0, p.s, p.s);
+        }
+      }
+      ctx.globalAlpha = 1;
+      if (parts.length){ raf = requestAnimationFrame(loop); }
+      else { running = false; cancelAnimationFrame(raf); }
+    }
+    function kick(){ if (!running){ running = true; raf = requestAnimationFrame(loop); } }
+
+    window.fxBurst = function(x, y, n, opts){
+      if (prefersReducedMotion) return;
+      opts = opts || {};
+      const power = opts.power || 4;
+      const spread = opts.spread || Math.PI * 2;
+      const dir = opts.dir != null ? opts.dir : -Math.PI / 2;
+      if (parts.length > 600) return;
+      for (let k = 0; k < n; k++){
+        const a = dir + (Math.random() - 0.5) * spread;
+        const sp = power * (0.4 + Math.random());
+        const life = 32 + (Math.random() * 26 | 0);
+        parts.push({
+          x, y,
+          vx: Math.cos(a) * sp + (opts.vx || 0),
+          vy: Math.sin(a) * sp + (opts.vy || 0),
+          s: 2 + (Math.random() * 3 | 0),
+          ch: Math.random() < 0.22 ? pick(CHARS) : null,
+          color: pick(COLORS),
+          life, max: life
+        });
+      }
+      kick();
+    };
+
+    document.addEventListener("pointerdown", (e) => window.fxBurst(e.clientX, e.clientY, 26, { power: 6 }));
+
+    if (finePointer && !prefersReducedMotion){
+      let lx = 0, ly = 0, has = false;
+      window.addEventListener("pointermove", (e) => {
+        if (!has){ lx = e.clientX; ly = e.clientY; has = true; return; }
+        const dist = Math.hypot(e.clientX - lx, e.clientY - ly);
+        if (dist < 8 || parts.length > 600) return;
+        lx = e.clientX; ly = e.clientY;
+        const n = dist > 45 ? 2 : 1;
+        for (let k = 0; k < n; k++){
+          const life = 22 + (Math.random() * 24 | 0);
+          parts.push({
+            x: e.clientX + (Math.random() - 0.5) * 6, y: e.clientY + (Math.random() - 0.5) * 6,
+            vx: (Math.random() - 0.5) * 0.9, vy: (Math.random() - 0.5) * 0.9 - 0.15,
+            s: 1 + (Math.random() * 2 | 0),
+            ch: Math.random() < 0.12 ? pick(["✦", "0", "1"]) : null,
+            color: pick(COLORS), life, max: life, g: 0.012
+          });
+        }
+        kick();
+      }, { passive: true });
+    }
+  })();
+
+  /* ===== Фон: нейросеть — слои узлов, по рёбрам бегут импульсы ===== */
+  (function neuralNet(){
+    const canvas = document.getElementById("net");
+    const ctx = canvas.getContext("2d");
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    const NODE_COLORS = [PALETTE.lime, PALETTE.pink, PALETTE.cyan];
+    let W = 0, H = 0, nodes = [], edges = [], pulses = [];
+    let mx = -9999, my = -9999, lastHover = 0, lastSpont = 0;
+
+    function build(){
+      W = canvas.offsetWidth; H = canvas.offsetHeight;
+      if (!W || !H) return;
+      canvas.width = W * dpr; canvas.height = H * dpr;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      nodes = []; edges = []; pulses = [];
+      const mobile = W < 700;
+      const layers = mobile ? 5 : clamp(Math.round(W / 190), 6, 10);
+      const byLayer = [];
+      for (let l = 0; l < layers; l++){
+        const n = (mobile ? 5 : 5) + (Math.random() * (mobile ? 4 : 6) | 0);
+        const arr = [];
+        for (let k = 0; k < n; k++){
+          const bx = W * (0.03 + 0.94 * l / (layers - 1)) + (Math.random() - 0.5) * W * 0.05;
+          const by = H * ((k + 0.5) / n) + (Math.random() - 0.5) * (H / n) * 0.7;
+          const node = { x: bx, y: by, bx, by, ph: Math.random() * 6.28, act: 0, out: [], col: pick(NODE_COLORS) };
+          nodes.push(node); arr.push(node);
+        }
+        byLayer.push(arr);
+      }
+      for (let l = 0; l < layers - 1; l++){
+        for (const a of byLayer[l]){
+          const next = byLayer[l + 1].slice().sort((p, q) => Math.abs(p.by - a.by) - Math.abs(q.by - a.by));
+          const k = 2 + (Math.random() < 0.5 ? 1 : 0);
+          for (let i = 0; i < Math.min(k, next.length); i++){
+            const e = { a, b: next[i], heat: 0 };
+            edges.push(e); a.out.push(e);
+          }
+        }
+      }
+    }
+
+    function fire(node, s){
+      node.act = 1;
+      if (!node.out.length || pulses.length > 160) return;
+      const e = pick(node.out);
+      pulses.push({ e, t: 0, sp: 0.010 + Math.random() * 0.018, s });
+      if (s > 0.7 && Math.random() < 0.35 && node.out.length > 1){
+        pulses.push({ e: pick(node.out), t: 0, sp: 0.010 + Math.random() * 0.018, s: s * 0.8 });
+      }
+    }
+    function nearest(x, y){
+      let best = null, bd = Infinity;
+      for (const n of nodes){ const d = (n.x - x) ** 2 + (n.y - y) ** 2; if (d < bd){ bd = d; best = n; } }
+      return best;
+    }
+
+    function draw(ms){
+      const overfit = !!window.__overfit;
+      ctx.clearRect(0, 0, W, H);
+      const t = ms || 0;
+      for (const n of nodes){
+        n.x = n.bx + Math.sin(t * 0.0004 + n.ph) * 9;
+        n.y = n.by + Math.cos(t * 0.00033 + n.ph * 1.3) * 9;
+        if (mx > -999){
+          const d = Math.hypot(n.x - mx, n.y - my);
+          if (d < 140) n.act = Math.max(n.act, (1 - d / 140) * 0.8);
+        }
+      }
+      // холодные рёбра — одним путём
+      ctx.lineWidth = 1;
+      ctx.strokeStyle = "rgba(122,0,255,0.16)";
+      ctx.beginPath();
+      for (const e of edges){ if (e.heat < 0.05){ ctx.moveTo(e.a.x, e.a.y); ctx.lineTo(e.b.x, e.b.y); } }
+      ctx.stroke();
+      // горячие рёбра
+      for (const e of edges){
+        if (e.heat >= 0.05){
+          ctx.strokeStyle = "rgba(255,43,214," + (0.12 + e.heat * 0.55).toFixed(3) + ")";
+          ctx.beginPath(); ctx.moveTo(e.a.x, e.a.y); ctx.lineTo(e.b.x, e.b.y); ctx.stroke();
+        }
+        e.heat *= 0.94;
+      }
+      // импульсы
+      for (let i = pulses.length - 1; i >= 0; i--){
+        const p = pulses[i];
+        p.t += p.sp * (overfit ? 2.2 : 1);
+        const a = p.e.a, b = p.e.b;
+        p.e.heat = Math.max(p.e.heat, p.s);
+        if (p.t >= 1){
+          pulses.splice(i, 1);
+          if (p.s > 0.25 && Math.random() < 0.88) fire(b, p.s * 0.9);
+          else b.act = Math.max(b.act, p.s);
+          continue;
+        }
+        const x = a.x + (b.x - a.x) * p.t, y = a.y + (b.y - a.y) * p.t;
+        const t0 = Math.max(0, p.t - 0.09);
+        const x0 = a.x + (b.x - a.x) * t0, y0 = a.y + (b.y - a.y) * t0;
+        ctx.strokeStyle = "rgba(182,255,0,0.55)";
+        ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.moveTo(x0, y0); ctx.lineTo(x, y); ctx.stroke();
+        ctx.lineWidth = 1;
+        ctx.fillStyle = overfit ? pick(NODE_COLORS) : PALETTE.lime;
+        ctx.fillRect(x - 2, y - 2, 4, 4);
+      }
+      // узлы
+      for (const n of nodes){
+        const s = 3 + n.act * 5;
+        if (n.act > 0.05){
+          ctx.globalAlpha = n.act * 0.25;
+          ctx.fillStyle = n.col;
+          ctx.fillRect(n.x - s * 2, n.y - s * 2, s * 4, s * 4);
+          ctx.globalAlpha = 1;
+          ctx.fillStyle = n.col;
+        } else {
+          ctx.fillStyle = "rgba(210,180,255,0.45)";
+        }
+        ctx.fillRect(n.x - s / 2, n.y - s / 2, s, s);
+        n.act *= 0.95;
+      }
+      // спонтанная активность
+      if (t - lastSpont > (overfit ? 70 : 260)){
+        lastSpont = t;
+        const pool = nodes.filter((n) => n.out.length);
+        if (pool.length) fire(pick(pool), 0.6 + Math.random() * 0.4);
+      }
+    }
+
+    function loop(ms){ draw(ms); requestAnimationFrame(loop); }
+
+    build();
+    let rt = 0;
+    window.addEventListener("resize", () => { clearTimeout(rt); rt = setTimeout(() => { build(); if (prefersReducedMotion) draw(0); }, 150); });
+
+    if (prefersReducedMotion){ draw(0); return; }
+    requestAnimationFrame(loop);
+
+    window.addEventListener("pointermove", (e) => {
+      mx = e.clientX; my = e.clientY;
+      const now = performance.now();
+      if (now - lastHover > 110){
+        lastHover = now;
+        const n = nearest(mx, my);
+        if (n && Math.hypot(n.x - mx, n.y - my) < 160) fire(n, 0.9);
+      }
+    }, { passive: true });
+    document.documentElement.addEventListener("pointerleave", () => { mx = my = -9999; });
+    document.addEventListener("pointerdown", (e) => {
+      const n = nearest(e.clientX, e.clientY);
+      if (n){ fire(n, 1); fire(n, 1); }
+    });
+    window.__netFireAll = function(){ nodes.slice(0, 20).forEach((n) => fire(n, 1)); };
+  })();
+
+  /* ===== VHS-шум (маленький канвас, растянутый на весь экран) ===== */
+  (function noise(){
+    if (prefersReducedMotion) return;
+    const c = document.getElementById("noise");
+    const ctx = c.getContext("2d");
+    const img = ctx.createImageData(c.width, c.height);
+    const d = img.data;
+    setInterval(() => {
+      for (let i = 0; i < d.length; i += 4){
+        const v = Math.random() * 255 | 0;
+        d[i] = v; d[i + 1] = v; d[i + 2] = v; d[i + 3] = 255;
+      }
+      ctx.putImageData(img, 0, 0);
+    }, 90);
+  })();
+
+  /* ===== Мини-превью проекта: «датамош» ===== */
+  (function mosh(){
+    const canvas = document.getElementById("featCanvas");
+    const ctx = canvas.getContext("2d");
+    const BANDS = ["#050008", "#3a0080", "#7a00ff", "#ff2bd6", "#00f0ff", "#b6ff00"];
+    let w = 0, h = 0, frame = 0;
+    function size(){
+      w = canvas.offsetWidth; h = canvas.offsetHeight;
+      canvas.width = Math.max(1, w); canvas.height = Math.max(1, h);
+    }
+    function draw(){
+      if (!w || !h) return;
+      frame++;
+      const t = frame * 0.08;
+      // пиксельный рельеф «мира» в палитре
+      const cell = 8;
+      for (let y = 0; y < h; y += cell){
+        for (let x = 0; x < w; x += cell){
+          const v = Math.sin(x * 0.03 + t) * 0.5 + Math.sin(y * 0.05 - t * 0.7) * 0.5 + Math.sin((x + y) * 0.02 + t * 0.4);
+          const idx = clamp(Math.floor(((v + 2) / 4) * BANDS.length), 0, BANDS.length - 1);
+          ctx.fillStyle = BANDS[idx];
+          ctx.fillRect(x, y, cell - 1, cell - 1);
+        }
+      }
+      // заголовок с RGB-сплитом
+      const fs = Math.max(18, Math.round(w / 9));
+      ctx.font = fs + "px Minecraft, 'Pixelify Sans', monospace";
+      ctx.textAlign = "center"; ctx.textBaseline = "middle";
+      const off = 2 + (Math.random() < 0.15 ? 5 : 0);
+      ctx.fillStyle = "rgba(0,0,0,.55)"; ctx.fillRect(0, h / 2 - fs * 0.8, w, fs * 1.6);
+      ctx.fillStyle = PALETTE.pink; ctx.fillText("WANDERLUST", w / 2 - off, h / 2);
+      ctx.fillStyle = PALETTE.cyan; ctx.fillText("WANDERLUST", w / 2 + off, h / 2);
+      ctx.fillStyle = "#fff"; ctx.fillText("WANDERLUST", w / 2, h / 2);
+      // срезы
+      const n = Math.random() < 0.3 ? 4 : 1;
+      for (let k = 0; k < n; k++){
+        const sy = Math.random() * h | 0, sh = 2 + (Math.random() * 14 | 0);
+        const dx = ((Math.random() - 0.5) * 30) | 0;
+        ctx.drawImage(canvas, 0, sy, w, sh, dx, sy, w, sh);
+      }
+      // скан-линии
+      ctx.fillStyle = "rgba(0,0,0,.22)";
+      for (let y = 0; y < h; y += 3) ctx.fillRect(0, y, w, 1);
+    }
+    size();
+    if (typeof ResizeObserver !== "undefined") new ResizeObserver(() => { size(); draw(); }).observe(canvas);
+    if (document.fonts && document.fonts.load) document.fonts.load("20px Minecraft").then(draw).catch(() => {});
+    if (prefersReducedMotion){ draw(); return; }
+    setInterval(draw, 110);
+  })();
+
+  /* ===== ГЛИТЧ-СОБЫТИЯ ===== */
+  const GLYPHS = "▓▒░█▚▞#%&@$01ﾊﾐﾋｰｳ";
+  function scramble(el, ms){
+    if (!el || el.dataset.scr) return;
+    const orig = el.textContent;
+    el.dataset.scr = "1";
+    let out = "";
+    for (const ch of orig) out += (ch !== " " && Math.random() < 0.4) ? GLYPHS[Math.random() * GLYPHS.length | 0] : ch;
+    el.textContent = out;
+    setTimeout(() => { el.textContent = orig; delete el.dataset.scr; }, ms || 110);
+  }
+  function glitchPulse(power){
+    if (prefersReducedMotion) return;
+    power = power || 1;
+    const root = document.documentElement;
+    const layer = document.getElementById("slices");
+    root.classList.add("glitching");
+    layer.innerHTML = "";
+    const n = Math.round((3 + Math.random() * 4) * power);
+    for (let i = 0; i < n; i++){
+      const s = document.createElement("div");
+      const r = Math.random();
+      s.className = "slice" + (r < 0.25 ? " inv" : r < 0.45 ? " line" : "");
+      s.style.top = (Math.random() * 100) + "%";
+      s.style.height = (3 + Math.random() * 70) + "px";
+      s.style.setProperty("--dx", ((Math.random() - 0.5) * 50) + "px");
+      s.style.setProperty("--h", (Math.random() * 360 | 0) + "deg");
+      layer.appendChild(s);
+    }
+    const wins = Array.from(document.querySelectorAll(".win:not(.minimized):not(.closed)"));
+    const victim = wins.length ? pick(wins) : null;
+    if (victim){ victim.classList.remove("win-glitch"); void victim.offsetWidth; victim.classList.add("win-glitch"); }
+    document.querySelectorAll(".win-title").forEach((t) => { if (Math.random() < 0.5) scramble(t, 140); });
+    setTimeout(() => {
+      root.classList.remove("glitching");
+      layer.innerHTML = "";
+      if (victim) victim.classList.remove("win-glitch");
+    }, 180 + power * 110);
+  }
+  window.glitchPulse = glitchPulse;
+  (function scheduleGlitch(){
+    if (prefersReducedMotion) return;
+    function next(){
+      const delay = window.__overfit ? 500 + Math.random() * 900 : 4500 + Math.random() * 6000;
+      setTimeout(() => { if (!document.hidden) glitchPulse(window.__overfit ? 1.4 : 1); next(); }, delay);
+    }
+    next();
+  })();
+
+  /* ===== ОКНА: фокус, перетаскивание, свернуть / развернуть / закрыть ===== */
+  const WM = (function windows(){
+    const wins = Array.from(document.querySelectorAll(".win"));
+    const taskList = document.getElementById("taskList");
+    const smPrograms = document.getElementById("smPrograms");
+    const dragMQ = window.matchMedia("(min-width: 901px) and (pointer: fine)");
+    let zTop = 10;
+
+    function focusWin(w){
+      wins.forEach((o) => { o.classList.toggle("active", o === w); o._tb.classList.toggle("pressed", o === w && !o.classList.contains("minimized")); });
+      w.style.zIndex = ++zTop;
+    }
+    function openWin(w){
+      const wasHidden = w.classList.contains("minimized") || w.classList.contains("closed");
+      w.classList.remove("minimized", "closed");
+      w._tb.classList.remove("gone");
+      if (wasHidden){ w.classList.remove("popin"); void w.offsetWidth; w.classList.add("popin"); }
+      focusWin(w);
+      if (!w.classList.contains("maxed")) w.scrollIntoView({ behavior: prefersReducedMotion ? "auto" : "smooth", block: "nearest" });
+    }
+    function minimizeWin(w){
+      w.classList.add("minimized"); w.classList.remove("active");
+      w._tb.classList.remove("pressed");
+    }
+    function closeWin(w){
+      w.classList.add("closed"); w.classList.remove("active", "maxed");
+      w._tb.classList.add("gone"); w._tb.classList.remove("pressed");
+      toast(w.dataset.title + " завершил работу");
+      if (Math.random() < 0.08) setTimeout(() => window.showBSOD && window.showBSOD(), 250);
+    }
+    function toggleMax(w){
+      w.classList.toggle("maxed");
+      focusWin(w);
+    }
+
+    wins.forEach((w) => {
+      const title = w.dataset.title, icon = w.dataset.icon;
+      // кнопка на панели задач
+      const tb = document.createElement("button");
+      tb.type = "button"; tb.className = "task-btn";
+      tb.innerHTML = '<i></i><span></span>';
+      tb.querySelector("i").className = icon;
+      tb.querySelector("span").textContent = title;
+      tb.addEventListener("click", () => {
+        if (w.classList.contains("minimized") || w.classList.contains("closed")) openWin(w);
+        else if (w.classList.contains("active")) minimizeWin(w);
+        else openWin(w);
+      });
+      w._tb = tb; taskList.appendChild(tb);
+      // пункт в меню «пуск»
+      const mi = document.createElement("button");
+      mi.type = "button"; mi.className = "sm-item";
+      mi.innerHTML = '<i></i><span></span>';
+      mi.querySelector("i").className = icon;
+      mi.querySelector("span").textContent = title;
+      mi.addEventListener("click", () => { window.closeStartMenu && window.closeStartMenu(); openWin(w); });
+      smPrograms.appendChild(mi);
+
+      w.addEventListener("pointerdown", () => focusWin(w));
+      w.querySelector(".wb.min").addEventListener("click", (e) => { e.stopPropagation(); minimizeWin(w); });
+      w.querySelector(".wb.max").addEventListener("click", (e) => { e.stopPropagation(); toggleMax(w); });
+      w.querySelector(".wb.close").addEventListener("click", (e) => { e.stopPropagation(); closeWin(w); });
+
+      // перетаскивание за заголовок (только десктоп)
+      const bar = w.querySelector(".win-bar");
+      let dx = 0, dy = 0, sx = 0, sy = 0, ox = 0, oy = 0, dragging = false;
+      bar.addEventListener("pointerdown", (e) => {
+        if (!dragMQ.matches || e.button !== 0 || e.target.closest(".wb") || w.classList.contains("maxed")) return;
+        dragging = true; sx = e.clientX; sy = e.clientY; ox = dx; oy = dy;
+        bar.setPointerCapture(e.pointerId);
+        w.classList.add("dragging");
+      });
+      bar.addEventListener("pointermove", (e) => {
+        if (!dragging) return;
+        dx = ox + e.clientX - sx; dy = oy + e.clientY - sy;
+        w.style.translate = dx + "px " + dy + "px";
+      });
+      function stop(e){ if (!dragging) return; dragging = false; w.classList.remove("dragging"); try { bar.releasePointerCapture(e.pointerId); } catch {} }
+      bar.addEventListener("pointerup", stop);
+      bar.addEventListener("pointercancel", stop);
+      bar.addEventListener("dblclick", (e) => { if (!e.target.closest(".wb") && dragMQ.matches) toggleMax(w); });
+      w._resetDrag = () => { dx = dy = 0; w.style.translate = ""; };
+    });
+    dragMQ.addEventListener && dragMQ.addEventListener("change", () => { if (!dragMQ.matches) wins.forEach((w) => w._resetDrag()); });
+
+    function byId(id){ return document.getElementById(id); }
+    return { wins, openWin, focusWin, byId };
+  })();
+
+  /* ===== Меню «пуск» ===== */
+  (function startMenu(){
+    const btn = document.getElementById("startBtn");
+    const menu = document.getElementById("startMenu");
+    function close(){ menu.classList.remove("open"); btn.classList.remove("open"); btn.setAttribute("aria-expanded", "false"); }
+    window.closeStartMenu = close;
+    btn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const open = !menu.classList.contains("open");
+      menu.classList.toggle("open", open); btn.classList.toggle("open", open);
+      btn.setAttribute("aria-expanded", String(open));
+    });
+    document.addEventListener("click", (e) => { if (!menu.contains(e.target) && e.target !== btn) close(); });
+    document.addEventListener("keydown", (e) => { if (e.key === "Escape") close(); });
+    document.getElementById("smGlitch").addEventListener("click", () => { close(); glitchPulse(2); window.__netFireAll && window.__netFireAll(); toast("реальность сломана ✦"); });
+    document.getElementById("smShutdown").addEventListener("click", () => { close(); window.showShutdown(); });
+  })();
+
+  /* ===== Кнопки браузерной полосы ===== */
+  document.querySelectorAll(".chrome .cbtn").forEach((b) => {
+    b.addEventListener("click", () => {
+      if (b.dataset.say === "glitch"){ glitchPulse(1.6); toast("обновление реальности…"); }
+      else toast(b.dataset.say);
+    });
+  });
+
+  /* ===== BSOD и «завершение работы» ===== */
+  (function screens(){
+    const bsod = document.getElementById("bsod");
+    const sd = document.getElementById("shutdown");
+    function dismiss(el, msg){
+      if (!el.classList.contains("show")) return;
+      el.classList.remove("show");
+      glitchPulse(1.8);
+      if (msg) toast(msg, { cls: "milestone", dur: 3000 });
+    }
+    window.showBSOD = function(){
+      bsod.classList.add("show");
+      audio.pause();
+    };
+    window.showShutdown = function(){
+      glitchPulse(1.5);
+      setTimeout(() => sd.classList.add("show"), 180);
+    };
+    bsod.addEventListener("click", () => dismiss(bsod, "шутка. всё работает ✦"));
+    sd.addEventListener("click", () => dismiss(sd, "с возвращением в интернет ✦"));
+    window.addEventListener("keydown", (e) => {
+      if (bsod.classList.contains("show")){ e.preventDefault(); dismiss(bsod, "шутка. всё работает ✦"); }
+      else if (sd.classList.contains("show")){ e.preventDefault(); dismiss(sd, "с возвращением в интернет ✦"); }
+    }, true);
+  })();
+
+  /* ===== Всплывающие «ошибки» ===== */
+  (function popups(){
+    if (prefersReducedMotion || !finePointer) return;
+    const MSGS = [
+      { t: "Ошибка: слишком много вайба. Уменьшите громкость жизни и повторите попытку.", ico: "x" },
+      { t: "Внимание: нейросеть начала чувствовать. Продолжить?", ico: "w", b: ["да", "ДА"] },
+      { t: "furigin.exe не отвечает. Подождать?", ico: "w", b: ["ждать", "тоже ждать"] },
+      { t: "Обнаружен новый трек в плеере. Послушать?", ico: "w", b: ["▶ play", "позже"], play: true },
+      { t: "Недостаточно памяти для запоминания всех твоих бупов.", ico: "x" },
+      { t: "Ошибка 404: сон не найден.", ico: "x" },
+      { t: "Эта страница использует cookies. Шучу, тут только нейроны.", ico: "w" }
+    ];
+    let open = null;
+    function show(){
+      if (open || document.hidden) return;
+      const m = pick(MSGS);
+      const d = document.createElement("div");
+      d.className = "dialog"; d.setAttribute("role", "alertdialog");
+      d.innerHTML =
+        '<div class="win-bar"><span class="win-ico"><i class="fa-solid fa-triangle-exclamation"></i></span><span class="win-title">system_error.exe</span>' +
+        '<div class="win-btns"><button class="wb close" type="button" aria-label="закрыть">×</button></div></div>' +
+        '<div class="dialog-body"><i class="dialog-ico fa-solid"></i><div class="dialog-text"></div></div><div class="dialog-btns"></div>';
+      d.querySelector(".dialog-ico").classList.add(m.ico === "x" ? "fa-circle-xmark" : "fa-triangle-exclamation");
+      if (m.ico === "x") d.querySelector(".dialog-ico").classList.add("x");
+      d.querySelector(".dialog-text").textContent = m.t;
+      const btns = d.querySelector(".dialog-btns");
+      (m.b || ["OK"]).forEach((label, i) => {
+        const b = document.createElement("button");
+        b.type = "button"; b.className = "btn98" + (i === 0 ? " primary" : "");
+        b.textContent = label;
+        b.addEventListener("click", () => { if (m.play && i === 0) safePlay(); close(); });
+        btns.appendChild(b);
+      });
+      d.querySelector(".wb.close").addEventListener("click", close);
+      const vw = innerWidth, vh = innerHeight;
+      d.style.left = Math.round(16 + Math.random() * Math.max(0, vw - 360)) + "px";
+      d.style.top = Math.round(60 + Math.random() * Math.max(0, vh - 300)) + "px";
+      document.body.appendChild(d);
+      open = d;
+      function close(){ if (!open) return; open.remove(); open = null; }
+    }
+    function next(){ setTimeout(() => { show(); next(); }, 45000 + Math.random() * 35000); }
+    setTimeout(() => { show(); next(); }, 28000);
+  })();
+
+  /* ===== Boop = активация нейрона ===== */
+  (function boop(){
+    const area = document.getElementById("boopArea");
+    const badge = document.getElementById("boopCount");
+    const badgeWrap = area.querySelector(".boop-badge");
+    let n = 0;
+    try { n = parseInt(localStorage.getItem("furigin_boops") || "0", 10) || 0; } catch {}
+    badge.textContent = n;
+    const SPECIAL = {
+      1:"первый нейрон активирован ⚡", 10:"разминка сети 🔥", 25:"ну ты и тыкала 😳",
+      42:"главный ответ на всё 🌌", 50:"полтинник! 💜", 69:"nice 😏",
+      100:"СОТКА!!! сеть переобучилась 🎉", 150:"не отпускает 👀", 200:"двести?! серьёзно 🤯",
+      250:"четверть тысячи 💪", 300:"боже, хватит уже 😭", 333:"третинка ✨",
+      404:"палец not found 🫠", 420:"blaze it 🌿", 500:"пятьсот — ты легенда 👑",
+      666:"дьявольски 😈", 777:"джекпот 🎰", 1000:"ТЫСЯЧА. я в шоке 🚀"
+    };
+    function milestoneMsg(v){
+      if (SPECIAL[v]) return SPECIAL[v];
+      if (v % 500 === 0) return v + "!!! это уже клиника 🚑";
+      if (v % 100 === 0) return v + " — перебор 🤯";
+      if (v % 50 === 0)  return v + " активаций 💥";
+      return null;
+    }
+    area.addEventListener("click", () => {
+      n++;
+      try { localStorage.setItem("furigin_boops", String(n)); } catch {}
+      badge.textContent = n;
+      const r = area.getBoundingClientRect();
+      const cx = r.left + r.width / 2, cy = r.top + r.height / 2;
+      const msg = milestoneMsg(n);
+      area.classList.remove("booped", "boop-big"); void area.offsetWidth;
+      if (msg){
+        area.classList.add("boop-big");
+        badgeWrap.classList.remove("pop"); void badgeWrap.offsetWidth; badgeWrap.classList.add("pop");
+        window.fxBurst(cx, cy, 46, { power: 8, spread: 1 });
+        glitchPulse(1.3);
+        toast(msg, { cls: "milestone", dur: 3200 });
+      } else {
+        area.classList.add("booped");
+        window.fxBurst(cx, cy, 16, { power: 5 });
+        toast("нейрон активирован ×" + n);
+      }
+    });
+  })();
+
+  /* ===== Konami → OVERFIT MODE ===== */
+  function toggleOverfit(){
+    const on = document.documentElement.classList.toggle("overfit");
+    window.__overfit = on;
+    toast(on ? "⚡ OVERFIT MODE ON" : "overfit off — веса откатились", { cls: on ? "milestone" : "" });
+    glitchPulse(2);
+    if (on){
+      window.__netFireAll && window.__netFireAll();
+      for (let k = 0; k < 60; k++){
+        setTimeout(() => window.fxBurst(Math.random() * innerWidth, -10, 1, { power: 2, vy: 2 + Math.random() * 2, spread: 0.6 }), k * 18);
+      }
+    }
+    return on;
+  }
+  (function konami(){
+    const seq = ["ArrowUp","ArrowUp","ArrowDown","ArrowDown","ArrowLeft","ArrowRight","ArrowLeft","ArrowRight","b","a"];
+    let i = 0;
+    window.addEventListener("keydown", (e) => {
+      if (isTyping()) return;
+      const k = e.key.length === 1 ? e.key.toLowerCase() : e.key;
+      if (k === seq[i]){ i++; if (i === seq.length){ i = 0; toggleOverfit(); } }
+      else i = (k === seq[0]) ? 1 : 0;
+    });
+  })();
+
+  /* ===== Discord ===== */
+  function copyDiscord(){
+    const nick = "megocat0_0";
+    if (navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(nick).then(() => toast("discord скопирован ✓")).catch(() => toast(nick));
+    } else toast(nick);
+  }
+  document.getElementById("discordChip").addEventListener("click", copyDiscord);
+
+  /* ===== Часы ===== */
+  (function clocks(){
+    const a = document.getElementById("localTime"), b = document.getElementById("trayClock");
+    function upd(){
+      const d = new Date();
+      const s = String(d.getHours()).padStart(2,"0") + ":" + String(d.getMinutes()).padStart(2,"0");
+      a.textContent = s; b.textContent = s;
+    }
+    upd(); setInterval(upd, 10000);
+  })();
+
+  /* ===== «Мысли» нейросети в статусе ===== */
+  (function thoughts(){
+    const el = document.getElementById("nowStatus");
+    const list = ["thinking…", "hallucinating ✦", "retraining on pvp", "404: sleep", "vibing", "loss ↓", "dreaming in pixels", "chill", "overthinking", "buffering…"];
+    if (prefersReducedMotion){ el.textContent = "chill"; return; }
+    let word = pick(list), i = 0, del = false;
+    function tick(){
+      if (!del){
+        i++; el.textContent = word.slice(0, i) + "_";
+        if (i >= word.length){ el.textContent = word; del = true; return setTimeout(tick, 2600); }
+        setTimeout(tick, 70);
+      } else {
+        i--; el.textContent = word.slice(0, Math.max(0, i)) + "_";
+        if (i <= 0){ del = false; let nw; do { nw = pick(list); } while (nw === word); word = nw; return setTimeout(tick, 250); }
+        setTimeout(tick, 35);
+      }
+    }
+    tick();
+  })();
+
+  /* ===== Обучение модели в model_card ===== */
+  (function training(){
+    const fill = document.getElementById("trainFill"), num = document.getElementById("trainNum"), lossEl = document.getElementById("trainLoss");
+    let p = 0, epoch = 1, holding = false;
+    function render(){
+      fill.style.width = p + "%";
+      num.textContent = Math.floor(p) + "%";
+      const loss = 0.9 * Math.exp(-p / 22) + 0.0042;
+      lossEl.textContent = "epoch " + epoch + " · loss: " + loss.toFixed(4);
+    }
+    render();
+    setInterval(() => {
+      if (holding) return;
+      p = Math.min(100, p + 0.6 + Math.random() * 2.2);
+      render();
+      if (p >= 100){
+        holding = true;
+        fill.classList.add("over");
+        lossEl.textContent = "overfitted. откатываю веса…";
+        setTimeout(() => { p = 0; epoch++; fill.classList.remove("over"); holding = false; render(); }, 1800);
+      }
+    }, 450);
+  })();
+
+  /* ===== Гостевая (демо localStorage + общий Firebase) ===== */
+  (function guestbook(){
+    const form = document.getElementById("gbForm");
+    const nameEl = document.getElementById("gbName");
+    const msgEl = document.getElementById("gbMsg");
+    const listEl = document.getElementById("gbList");
+    const modeEl = document.getElementById("gbMode");
+    const LKEY = "furigin_guestbook";
+    let lastSend = 0;
+
+    function fmtTime(ts){
+      const diff = (Date.now() - ts) / 1000;
+      if (diff < 60) return "только что";
+      if (diff < 3600) return Math.floor(diff / 60) + " мин назад";
+      if (diff < 86400) return Math.floor(diff / 3600) + " ч назад";
+      return new Date(ts).toLocaleDateString();
+    }
+    function render(items){
+      listEl.innerHTML = "";
+      if (!items || !items.length){
+        const e = document.createElement("div");
+        e.className = "gb-empty"; e.textContent = "пока пусто — будь первым в датасете ✦";
+        listEl.appendChild(e); return;
+      }
+      items.slice(0, 40).forEach((it) => {
+        const row = document.createElement("div"); row.className = "gb-item";
+        const tm = document.createElement("span"); tm.className = "gb-time"; tm.textContent = "[" + fmtTime(it.ts) + "] ";
+        const nm = document.createElement("span"); nm.className = "gb-nick"; nm.textContent = "<" + (it.name || "аноним") + "> ";
+        const tx = document.createElement("span"); tx.className = "gb-text"; tx.textContent = it.text;
+        row.appendChild(tm); row.appendChild(nm); row.appendChild(tx);
+        listEl.appendChild(row);
+      });
+    }
+    function localBackend(){
+      function read(){ try { return JSON.parse(localStorage.getItem(LKEY) || "[]"); } catch { return []; } }
+      render(read());
+      return {
+        add(entry){
+          const arr = read(); arr.unshift(entry);
+          try { localStorage.setItem(LKEY, JSON.stringify(arr.slice(0, 60))); } catch {}
+          render(arr);
+        }
+      };
+    }
+    async function firebaseBackend(){
+      const fb = await getFirebase();
+      if (!fb) return null;
+      const { db, fs } = fb;
+      const col = fs.collection(db, "guestbook");
+      const q = fs.query(col, fs.orderBy("ts", "desc"), fs.limit(60));
+      fs.onSnapshot(q, (snap) => {
+        const items = []; snap.forEach((d) => items.push(d.data()));
+        render(items);
+      });
+      return { add(entry){ return fs.addDoc(col, entry); } };
+    }
+
+    let backend = localBackend();
+    if (window.GUESTBOOK_FIREBASE){
+      modeEl.textContent = "…";
+      firebaseBackend()
+        .then((b) => {
+          if (b){ backend = b; modeEl.textContent = "live"; modeEl.classList.add("live"); }
+          else modeEl.textContent = "demo";
+        })
+        .catch((err) => { console.warn("guestbook: Firebase не поднялся, демо-режим", err); modeEl.textContent = "demo"; });
+    }
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const name = nameEl.value.trim().slice(0, 24);
+      const text = msgEl.value.trim().slice(0, 140);
+      if (!text){ toast("напиши сообщение"); return; }
+      if (Date.now() - lastSend < 4000){ toast("не так быстро :)"); return; }
+      lastSend = Date.now();
+      const entry = { name: name || "аноним", text: text, ts: Date.now() };
+      try {
+        await backend.add(entry);
+        msgEl.value = "";
+        toast("добавлено в обучающую выборку ✦");
+        const r = form.getBoundingClientRect();
+        window.fxBurst(r.right - 60, r.bottom - 16, 20, { power: 5 });
+      } catch (err){
+        console.warn(err); toast("не удалось отправить");
+      }
+    });
+  })();
+
+  /* ===== Счётчик посетителей (общий Firebase, иначе локальный) ===== */
+  function setHits(n){
+    const el = document.getElementById("hitDigits");
+    const s = String(Math.max(0, n | 0)).padStart(6, "0");
+    el.innerHTML = "";
+    for (const ch of s){ const sp = document.createElement("span"); sp.textContent = ch; el.appendChild(sp); }
+  }
+  setHits(0);
+  (function views(){
+    let fellBack = false;
+    function localFallback(){
+      if (fellBack) return; fellBack = true;
+      let v = 0;
+      try {
+        v = parseInt(localStorage.getItem("furigin_views_pixel") || "0", 10) || 0;
+        v += 1; localStorage.setItem("furigin_views_pixel", String(v));
+      } catch { v = 1; }
+      setHits(v);
+    }
+    if (!window.GUESTBOOK_FIREBASE){ localFallback(); return; }
+    getFirebase().then(async (fb) => {
+      if (!fb){ localFallback(); return; }
+      const { db, fs } = fb;
+      const ref = fs.doc(db, "meta", "views");
+      try {
+        let first = true;
+        try { first = !sessionStorage.getItem("furigin_viewed"); } catch {}
+        if (first){
+          try { sessionStorage.setItem("furigin_viewed", "1"); } catch {}
+          await fs.setDoc(ref, { count: fs.increment(1) }, { merge: true });
+        }
+      } catch (err){
+        console.warn("views: запись не прошла", err);
+        localFallback(); return;
+      }
+      fs.onSnapshot(ref, (snap) => {
+        setHits(snap.exists() ? (snap.data().count || 0) : 0);
+      }, (err) => { console.warn("views: чтение не прошло", err); localFallback(); });
+    }).catch(() => localFallback());
+  })();
+
+  /* ===================== ПЛЕЕР ===================== */
+  const audio = document.getElementById("audio");
+  const playPause = document.getElementById("playPause");
+  const prevTrack = document.getElementById("prevTrack");
+  const nextTrack = document.getElementById("nextTrack");
+  const shuffleBtn = document.getElementById("shuffleBtn");
+  const repeatBtn = document.getElementById("repeatBtn");
+  const volumeBtn = document.getElementById("volumeBtn");
+  const volumeSlider = document.getElementById("volumeSlider");
+  const volNum = document.getElementById("volNum");
+  const coverBtn = document.getElementById("coverBtn");
+  const coverState = document.getElementById("coverState");
+  const progressBar = document.getElementById("progressBar");
+  const progressFill = document.getElementById("progressFill");
+  const progressTip = document.getElementById("progressTip");
+  const currentTimeEl = document.getElementById("currentTime");
+  const totalTimeEl = document.getElementById("totalTime");
+  const playerShell = document.getElementById("w-player");
+  const playerTitle = document.getElementById("playerTitle");
+  const playerSub = document.getElementById("playerSub");
+  const lcdState = document.getElementById("lcdState");
+  const trackIndex = document.getElementById("trackIndex");
+  const playerCover = document.getElementById("playerCoverImg");
+  const playlistEl = document.getElementById("playlist");
+  const vizCanvas = document.getElementById("viz");
+
+  const tracks = [
+    { title:"Sloe — fears", src:"music.mp3", cover:"cover.png", dur:0 },
+    { title:"pyatno — hardcore", src:"music2.mp3", cover:"cover2.png", dur:0 },
+    { title:"nyan.mp3 — Takoyaki", src:"music3.mp3", cover:"cover3.png", dur:0 }
+  ];
+  let currentTrackIndex = Math.floor(Math.random() * tracks.length);
+  let seeking = false, shuffle = false, repeat = "off";
+
+  function setPlayIcon(isPlaying){
+    const html = isPlaying ? "<i class='fa-solid fa-pause'></i>" : "<i class='fa-solid fa-play'></i>";
+    playPause.innerHTML = html;
+    coverState.innerHTML = html;
+    lcdState.textContent = isPlaying ? "▶ PLAY" : (audio.currentTime > 0 ? "❚❚ PAUSE" : "■ STOP");
+  }
+  function setVolumeIcon(){
+    const v = audio.muted ? 0 : audio.volume;
+    let icon = "fa-volume-high";
+    if (v === 0) icon = "fa-volume-xmark";
+    else if (v < 0.5) icon = "fa-volume-low";
+    volumeBtn.innerHTML = "<i class='fa-solid " + icon + "'></i>";
+  }
+  function applyVolume(v01){
+    v01 = clamp(v01, 0, 1);
+    audio.volume = v01;
+    if (v01 > 0 && audio.muted) audio.muted = false;
+    const pct = Math.round(v01 * 100);
+    volumeSlider.value = pct;
+    volumeSlider.style.setProperty("--vol", pct + "%");
+    volNum.textContent = String(pct);
+    setVolumeIcon();
+  }
+  volumeSlider.addEventListener("input", () => applyVolume(volumeSlider.value / 100));
+  volumeBtn.addEventListener("click", () => { audio.muted = !audio.muted; setVolumeIcon(); });
+
+  function updateModeButtons(){
+    shuffleBtn.classList.toggle("toggle-on", shuffle);
+    repeatBtn.classList.toggle("toggle-on", repeat !== "off");
+    repeatBtn.classList.toggle("repeat-one", repeat === "one");
+  }
+  shuffleBtn.addEventListener("click", () => { shuffle = !shuffle; updateModeButtons(); toast(shuffle ? "shuffle on" : "shuffle off"); });
+  repeatBtn.addEventListener("click", () => {
+    repeat = repeat === "off" ? "all" : repeat === "all" ? "one" : "off";
+    updateModeButtons(); toast("repeat: " + repeat);
+  });
+  function randomOtherIndex(){
+    if (tracks.length < 2) return currentTrackIndex;
+    let r; do { r = Math.floor(Math.random() * tracks.length); } while (r === currentTrackIndex);
+    return r;
+  }
+  function animateTrackSwitch(){
+    playerShell.classList.remove("is-switching");
+    void playerShell.offsetWidth;
+    playerShell.classList.add("is-switching");
+    setTimeout(() => playerShell.classList.remove("is-switching"), 600);
+  }
+  async function safePlay(){ try { await audio.play(); } catch {} }
+  function togglePlay(){ if (audio.paused) safePlay(); else audio.pause(); }
+
+  function renderPlaylist(){
+    playlistEl.innerHTML = "";
+    tracks.forEach((t, i) => {
+      const row = document.createElement("div");
+      row.className = "pl-item";
+      const idx = document.createElement("span"); idx.className = "pl-idx";
+      const title = document.createElement("span"); title.className = "pl-title"; title.textContent = t.title;
+      const dur = document.createElement("span"); dur.className = "pl-dur"; dur.textContent = t.dur ? fmt(t.dur) : "—";
+      row.appendChild(idx); row.appendChild(title); row.appendChild(dur);
+      row.addEventListener("click", () => { if (i === currentTrackIndex) togglePlay(); else loadTrack(i, true); });
+      playlistEl.appendChild(row);
+    });
+    renderPlaylistActive();
+  }
+  function renderPlaylistActive(){
+    Array.prototype.forEach.call(playlistEl.children, (row, i) => {
+      row.classList.toggle("active", i === currentTrackIndex);
+      const idx = row.querySelector(".pl-idx");
+      if (idx) idx.innerHTML = (i === currentTrackIndex && !audio.paused) ? "<i class='fa-solid fa-volume-high'></i>" : String(i + 1) + ".";
+      const d = row.querySelector(".pl-dur");
+      if (d) d.textContent = tracks[i].dur ? fmt(tracks[i].dur) : "—";
+    });
+  }
+  function updateMediaSession(){
+    if (!("mediaSession" in navigator)) return;
+    try {
+      navigator.mediaSession.metadata = new MediaMetadata({
+        title: tracks[currentTrackIndex].title, artist: "furigin", album: "furigin.exe",
+        artwork: [{ src: tracks[currentTrackIndex].cover, sizes: "512x512", type: "image/png" }]
+      });
+    } catch {}
+  }
+  function loadTrack(index, shouldPlay){
+    currentTrackIndex = (index + tracks.length) % tracks.length;
+    const track = tracks[currentTrackIndex];
+    audio.src = track.src;
+    playerTitle.textContent = "*** " + track.title + " ***";
+    playerSub.textContent = "track " + (currentTrackIndex + 1) + " / " + tracks.length;
+    trackIndex.textContent = "Track " + (currentTrackIndex + 1) + " / " + tracks.length + " — " + track.title;
+    playerCover.src = track.cover;
+    progressFill.style.width = "0%";
+    currentTimeEl.textContent = "0:00";
+    totalTimeEl.textContent = track.dur ? fmt(track.dur) : "0:00";
+    animateTrackSwitch();
+    renderPlaylistActive();
+    updateMediaSession();
+    if (shouldPlay) safePlay();
+  }
+
+  playPause.addEventListener("click", togglePlay);
+  coverBtn.addEventListener("click", togglePlay);
+  prevTrack.addEventListener("click", () => {
+    if (audio.currentTime > 3) audio.currentTime = 0;
+    else loadTrack(currentTrackIndex - 1, !audio.paused);
+  });
+  nextTrack.addEventListener("click", () => loadTrack(shuffle ? randomOtherIndex() : currentTrackIndex + 1, !audio.paused));
+
+  /* --- визуализатор: бары в духе Winamp + пики --- */
+  let audioCtx = null, analyser = null, freqData = null, audioGraphFailed = false, vizRaf = 0;
+  const vctx = vizCanvas.getContext("2d");
+  const VDPR = Math.min(window.devicePixelRatio || 1, 2);
+  let vizW = 0, vizH = 0, vizLevels = null, vizPeaks = null;
+  function sizeViz(){
+    vizW = vizCanvas.offsetWidth; vizH = vizCanvas.offsetHeight;
+    vizCanvas.width = Math.max(1, vizW * VDPR); vizCanvas.height = Math.max(1, vizH * VDPR);
+    vctx.setTransform(VDPR, 0, 0, VDPR, 0, 0);
+  }
+  sizeViz();
+  window.addEventListener("resize", sizeViz);
+  if (typeof ResizeObserver !== "undefined") new ResizeObserver(sizeViz).observe(vizCanvas);
+
+  function ensureAudioGraph(){
+    if (audioCtx || audioGraphFailed) return;
+    // на file:// граф Web Audio глушит локальные mp3 — там рисуем «фейковый» эквалайзер
+    const httpOk = location.protocol === "http:" || location.protocol === "https:";
+    const AC = window.AudioContext || window.webkitAudioContext;
+    if (!httpOk || !AC){ audioGraphFailed = true; return; }
+    try {
+      audioCtx = new AC();
+      const src = audioCtx.createMediaElementSource(audio);
+      analyser = audioCtx.createAnalyser();
+      analyser.fftSize = 128;
+      analyser.smoothingTimeConstant = 0.78;
+      src.connect(analyser);
+      analyser.connect(audioCtx.destination);
+      freqData = new Uint8Array(analyser.frequencyBinCount);
+    } catch (e){ audioGraphFailed = true; audioCtx = null; analyser = null; }
+  }
+  const VIZ_COLORS = ["#3a0080", "#7a00ff", "#b300ff", "#ff2bd6", "#00f0ff", "#b6ff00"];
+  function fakeBar(b, bars, t){
+    const base = 0.5 + 0.5 * Math.sin(t * 3.1 + b * 0.5);
+    const fast = 0.5 + 0.5 * Math.sin(t * 8.3 + b * 1.3);
+    const env  = 0.35 + 0.65 * Math.abs(Math.sin(t * 1.7 + b * 0.05));
+    let v = (0.6 * base + 0.4 * fast) * env;
+    v *= 0.45 + 0.55 * Math.sin((b / bars) * Math.PI);
+    return clamp(v, 0, 1);
+  }
+  function drawViz(){
+    const bars = Math.max(16, Math.min(40, Math.floor(vizW / 11)));
+    if (!vizLevels || vizLevels.length !== bars){ vizLevels = new Array(bars).fill(0); vizPeaks = new Array(bars).fill(0); }
+    const pad = 4, bw = (vizW - pad * 2) / bars, blockH = 3, gap = 1;
+    const innerH = vizH - pad * 2;
+    const totalBlocks = Math.max(1, Math.floor(innerH / (blockH + gap)));
+    vctx.clearRect(0, 0, vizW, vizH);
+    const playing = !audio.paused;
+    const real = analyser && !audioGraphFailed;
+    if (real && playing) analyser.getByteFrequencyData(freqData);
+    const t = performance.now() / 1000;
+    let anyLit = false;
+    for (let b = 0; b < bars; b++){
+      let target = 0;
+      if (playing){
+        if (real){
+          const bin = Math.floor((b / bars) * (freqData.length * 0.7));
+          target = Math.pow((freqData[bin] || 0) / 255, 0.9);
+        } else target = fakeBar(b, bars, t);
+      }
+      vizLevels[b] += (target - vizLevels[b]) * (target > vizLevels[b] ? 0.5 : 0.12);
+      vizPeaks[b] = Math.max(vizPeaks[b] - 0.012, vizLevels[b]);
+      if (vizLevels[b] > 0.02 || vizPeaks[b] > 0.02) anyLit = true;
+      const lit = Math.round(vizLevels[b] * totalBlocks);
+      const x = pad + b * bw;
+      for (let k = 0; k < lit; k++){
+        vctx.fillStyle = VIZ_COLORS[Math.min(VIZ_COLORS.length - 1, Math.floor((k / totalBlocks) * VIZ_COLORS.length))];
+        vctx.fillRect(x, vizH - pad - (k + 1) * (blockH + gap), Math.max(1, bw - 2), blockH);
+      }
+      const pk = Math.round(vizPeaks[b] * totalBlocks);
+      if (pk > 0){
+        vctx.fillStyle = "#ffffff";
+        vctx.fillRect(x, vizH - pad - (pk + 1) * (blockH + gap), Math.max(1, bw - 2), 2);
+      }
+    }
+    if (playing || anyLit) vizRaf = requestAnimationFrame(drawViz);
+    else { cancelAnimationFrame(vizRaf); vizRaf = 0; }
+  }
+  function startViz(){ if (!vizRaf && !prefersReducedMotion) vizRaf = requestAnimationFrame(drawViz); }
+
+  audio.addEventListener("loadedmetadata", () => {
+    if (isFinite(audio.duration)){
+      totalTimeEl.textContent = fmt(audio.duration);
+      tracks[currentTrackIndex].dur = audio.duration;
+      renderPlaylistActive();
+    }
+  });
+  audio.addEventListener("timeupdate", () => {
+    const dur = audio.duration || 0;
+    progressFill.style.width = dur > 0 ? ((audio.currentTime / dur) * 100) + "%" : "0%";
+    currentTimeEl.textContent = fmt(audio.currentTime);
+    if (("mediaSession" in navigator) && navigator.mediaSession.setPositionState && dur > 0){
+      try { navigator.mediaSession.setPositionState({ duration: dur, position: Math.min(audio.currentTime, dur), playbackRate: 1 }); } catch {}
+    }
+  });
+  audio.addEventListener("play", () => {
+    setPlayIcon(true); playerShell.classList.add("is-playing"); renderPlaylistActive();
+    ensureAudioGraph();
+    if (audioCtx && audioCtx.state === "suspended") audioCtx.resume();
+    startViz();
+    if ("mediaSession" in navigator) navigator.mediaSession.playbackState = "playing";
+  });
+  audio.addEventListener("pause", () => {
+    setPlayIcon(false); playerShell.classList.remove("is-playing"); renderPlaylistActive();
+    if ("mediaSession" in navigator) navigator.mediaSession.playbackState = "paused";
+  });
+  audio.addEventListener("ended", () => {
+    if (repeat === "one"){ audio.currentTime = 0; safePlay(); return; }
+    if (shuffle){ loadTrack(randomOtherIndex(), true); return; }
+    if (currentTrackIndex === tracks.length - 1 && repeat === "off"){ loadTrack(0, false); return; }
+    loadTrack(currentTrackIndex + 1, true);
+  });
+
+  /* --- перемотка --- */
+  function ratioAt(clientX){
+    const r = progressBar.getBoundingClientRect();
+    return { r, ratio: r.width ? clamp(clientX - r.left, 0, r.width) / r.width : 0 };
+  }
+  function seekByClientX(clientX){
+    const dur = audio.duration || 0;
+    if (dur > 0) audio.currentTime = ratioAt(clientX).ratio * dur;
+  }
+  progressBar.addEventListener("pointerdown", (e) => {
+    if (!isFinite(audio.duration) || audio.duration <= 0) return;
+    seeking = true; progressBar.setPointerCapture(e.pointerId); seekByClientX(e.clientX);
+  });
+  progressBar.addEventListener("pointermove", (e) => {
+    const { r, ratio } = ratioAt(e.clientX);
+    const dur = audio.duration || 0;
+    if (dur > 0){ progressTip.textContent = fmt(ratio * dur); progressTip.style.left = (e.clientX - r.left) + "px"; }
+    if (seeking) seekByClientX(e.clientX);
+  });
+  function stopSeek(e){ if (!seeking) return; seeking = false; try { progressBar.releasePointerCapture(e.pointerId); } catch {} }
+  progressBar.addEventListener("pointerup", stopSeek);
+  progressBar.addEventListener("pointercancel", stopSeek);
+
+  if ("mediaSession" in navigator){
+    try {
+      navigator.mediaSession.setActionHandler("play", () => safePlay());
+      navigator.mediaSession.setActionHandler("pause", () => audio.pause());
+      navigator.mediaSession.setActionHandler("previoustrack", () => loadTrack(currentTrackIndex - 1, true));
+      navigator.mediaSession.setActionHandler("nexttrack", () => loadTrack(shuffle ? randomOtherIndex() : currentTrackIndex + 1, true));
+    } catch {}
+  }
+
+  /* --- горячие клавиши --- */
+  let playerHover = false;
+  playerShell.addEventListener("pointerenter", () => playerHover = true);
+  playerShell.addEventListener("pointerleave", () => playerHover = false);
+  window.addEventListener("keydown", (e) => {
+    const tag = (document.activeElement && document.activeElement.tagName) || "";
+    if (tag === "INPUT" || tag === "TEXTAREA" || tag === "BUTTON" || tag === "A") return;
+    if (e.code === "Space"){ e.preventDefault(); togglePlay(); return; }
+    if (e.key === "m" || e.key === "M" || e.key === "ь" || e.key === "Ь"){ audio.muted = !audio.muted; setVolumeIcon(); return; }
+    if (!playerHover) return;
+    if (e.key === "ArrowLeft"){ e.preventDefault(); audio.currentTime = Math.max(0, audio.currentTime - 5); }
+    else if (e.key === "ArrowRight"){ e.preventDefault(); if (audio.duration) audio.currentTime = Math.min(audio.duration, audio.currentTime + 5); }
+    else if (e.key === "ArrowUp"){ e.preventDefault(); applyVolume(audio.volume + 0.05); }
+    else if (e.key === "ArrowDown"){ e.preventDefault(); applyVolume(audio.volume - 0.05); }
+  });
+
+  tracks.forEach((t, i) => {
+    const probe = new Audio();
+    probe.preload = "metadata";
+    probe.src = t.src;
+    probe.addEventListener("loadedmetadata", () => {
+      t.dur = probe.duration || 0;
+      renderPlaylistActive();
+      if (i === currentTrackIndex && (!isFinite(audio.duration) || !audio.duration)) totalTimeEl.textContent = fmt(t.dur);
+    });
+  });
+
+  renderPlaylist();
+  updateModeButtons();
+  applyVolume(0.15);
+
+  /* ===================== ТЕРМИНАЛ ===================== */
+  (function terminal(){
+    const term = document.getElementById("term");
+    const out = document.getElementById("termOut");
+    const inp = document.getElementById("termIn");
+    const history = []; let hIdx = 0, unknownCount = 0;
+
+    function print(text, cls){
+      String(text).split("\n").forEach((line) => {
+        const d = document.createElement("div");
+        d.className = "t-line" + (cls ? " " + cls : "");
+        d.textContent = line;
+        out.appendChild(d);
+      });
+      while (out.children.length > 200) out.removeChild(out.firstChild);
+      out.scrollTop = out.scrollHeight;
+    }
+    function winByName(name){
+      name = (name || "").toLowerCase();
+      return WM.wins.find((w) => w.dataset.title.toLowerCase().startsWith(name));
+    }
+
+    const CMDS = {
+      help(){
+        print([
+          "доступные команды:",
+          "  whoami     — кто я",
+          "  ls         — файлы на рабочем столе",
+          "  open <имя> — открыть окно (open player, open guestbook…)",
+          "  neofetch   — инфа о системе",
+          "  play / pause / next / prev — управление плеером",
+          "  discord    — скопировать ник",
+          "  glitch     — сломать реальность",
+          "  overfit    — режим переобучения",
+          "  bsod       — не надо",
+          "  date · echo · clear · exit"
+        ].join("\n"), "info");
+      },
+      whoami(){ print("furigin — Ruslan, 17. человек? нейросеть? пока не решили.", "ok"); },
+      ls(){
+        print([
+          " Том в устройстве C имеет метку FURIGIN",
+          " profile.exe        1 337 байт",
+          " now_playing.wav    3 трека",
+          " model_card.json    v17.0",
+          " wanderlust.lnk     → minecraft",
+          " prompt.bat         ← ты здесь",
+          " guestbook.txt      твой след",
+          " webring.htm        88×31",
+          " soul.dll           0 байт  (не найден)"
+        ].join("\n"));
+      },
+      dir(){ CMDS.ls(); },
+      neofetch(){
+        print([
+          "   ▄▀▀▀▀▄     furigin@neural",
+          "  █ ▓▓▓▓ █    -------------",
+          "  █ ▓▀▀▓ █    OS: furigin 98 (glitch edition)",
+          "   ▀▄▄▄▄▀     Kernel: 17.0-neural",
+          "   ▄█▀▀█▄     Uptime: 17 лет",
+          "  ▀      ▀    Shell: prompt.bat",
+          "              Style: neural × webcore × glitchcore",
+          "              CPU: мозг @ 4.20 GHz (перегрет)",
+          "              GPU: воображение RTX",
+          "              Memory: 147% vibe"
+        ].join("\n"), "ok");
+      },
+      open(arg){
+        const aliases = { player:"now_playing", music:"now_playing", guestbook:"guestbook", model:"model_card", profile:"profile", project:"wanderlust", ring:"webring", webring:"webring", prompt:"prompt" };
+        const w = winByName(aliases[(arg || "").toLowerCase()] || arg);
+        if (!arg){ print("использование: open <имя окна>", "err"); return; }
+        if (!w){ print("файл «" + arg + "» не найден. попробуй ls", "err"); return; }
+        WM.openWin(w); print("открываю " + w.dataset.title + "…", "ok");
+      },
+      play(){ safePlay(); print("▶ " + tracks[currentTrackIndex].title, "ok"); },
+      pause(){ audio.pause(); print("❚❚ пауза", "ok"); },
+      next(){ loadTrack(shuffle ? randomOtherIndex() : currentTrackIndex + 1, true); print("▶ " + tracks[currentTrackIndex].title, "ok"); },
+      prev(){ loadTrack(currentTrackIndex - 1, true); print("▶ " + tracks[currentTrackIndex].title, "ok"); },
+      discord(){ copyDiscord(); print("megocat0_0 → буфер обмена", "ok"); },
+      glitch(){ glitchPulse(2); window.__netFireAll && window.__netFireAll(); print("r̷e̶a̸l̵i̷t̶y̸ ̵b̷r̶o̸k̵e̷n̶", "err"); },
+      overfit(){ const on = toggleOverfit(); print(on ? "OVERFIT MODE: ON — всё запомнил, ничего не понял" : "OVERFIT MODE: OFF", on ? "err" : "ok"); },
+      bsod(){ print("я же сказал не надо", "err"); setTimeout(() => window.showBSOD(), 400); },
+      date(){ print(new Date().toLocaleString("ru-RU"), "info"); },
+      echo(arg){ print(arg || ""); },
+      clear(){ out.innerHTML = ""; },
+      cls(){ out.innerHTML = ""; },
+      exit(){ print("нельзя выйти из интернета.", "err"); },
+      sudo(arg){ print("permission denied: нужна любовь администратора ♥", "err"); if (/love/i.test(arg || "")) setTimeout(() => print("…ладно. ♥ выдано.", "ok"), 700); },
+      hello(){ print("привет, человек ✦", "ok"); },
+      привет(){ print("привет, человек ✦", "ok"); }
+    };
+
+    function run(raw){
+      const line = raw.trim();
+      print("C:\\FURIGIN> " + line, "cmd");
+      if (!line) return;
+      history.push(line); hIdx = history.length;
+      const sp = line.indexOf(" ");
+      const cmd = (sp < 0 ? line : line.slice(0, sp)).toLowerCase();
+      const arg = sp < 0 ? "" : line.slice(sp + 1).trim();
+      if (Object.prototype.hasOwnProperty.call(CMDS, cmd)) CMDS[cmd](arg);
+      else {
+        unknownCount++;
+        print("«" + cmd + "» не является внутренней или внешней командой.\n…но я запомню. (галлюцинация #" + unknownCount + ") — попробуй help", "err");
+      }
+    }
+
+    inp.addEventListener("keydown", (e) => {
+      if (e.key === "Enter"){ e.preventDefault(); run(inp.value); inp.value = ""; }
+      else if (e.key === "ArrowUp"){ if (history.length){ e.preventDefault(); hIdx = Math.max(0, hIdx - 1); inp.value = history[hIdx]; } }
+      else if (e.key === "ArrowDown"){ if (history.length){ e.preventDefault(); hIdx = Math.min(history.length, hIdx + 1); inp.value = history[hIdx] || ""; } }
+    });
+    term.addEventListener("click", (e) => { if (!window.getSelection().toString()) inp.focus({ preventScroll: true }); });
+
+    print("furigin 98 [Версия 17.0.2026]\n(c) furigin labs. Все нейроны защищены.", "info");
+    print("напиши help, чтобы увидеть команды.");
+  })();
+
+  /* ===== «Random» в вебринге ===== */
+  document.getElementById("ringRandom").addEventListener("click", (e) => {
+    e.preventDefault();
+    const w = pick(WM.wins);
+    WM.openWin(w);
+    glitchPulse(1);
+  });
+
+  /* ===== Заголовок вкладки ===== */
+  (function titleTypewriter(){
+    const variants = ["furigin.exe ", "neural link ", "glitchcore ", "webcore ", "hallucinating ✦ ", "loss: 0.0042 "];
+    const typeSpeed = 420, deleteSpeed = 240, holdAfterType = 1100, holdAfterDelete = 220, blinkSpeed = 450;
+    let wordIndex = Math.floor(Math.random() * variants.length);
+    let charIndex = 0, deleting = false, cursorOn = true, shown = "";
+    function setTitle(){ document.title = shown + (cursorOn ? "_" : ""); }
+    setInterval(() => { cursorOn = !cursorOn; setTitle(); }, blinkSpeed);
+    function nextWord(){
+      let n = Math.floor(Math.random() * variants.length);
+      if (n === wordIndex) n = (n + 1) % variants.length;
+      wordIndex = n;
+    }
+    function tick(){
+      const word = variants[wordIndex];
+      if (!deleting){
+        charIndex++; shown = word.slice(0, charIndex); setTitle();
+        if (charIndex >= word.length){ deleting = true; setTimeout(tick, holdAfterType); return; }
+        setTimeout(tick, typeSpeed);
+      } else {
+        charIndex--; shown = word.slice(0, Math.max(0, charIndex)); setTitle();
+        if (charIndex <= 0){ deleting = false; nextWord(); setTimeout(tick, holdAfterDelete); return; }
+        setTimeout(tick, deleteSpeed);
+      }
+    }
+    tick();
+  })();
+
+  /* ===================== BOOT ===================== */
+  (function boot(){
+    const el = document.getElementById("boot");
+    const linesEl = document.getElementById("bootLines");
+    const fill = document.getElementById("bootFill");
+    const LINES = [
+      'FURIGIN BIOS v17.0   (c) 2009–2026 furigin labs',
+      'CPU: neural core @ 4.20 GHz ............ <span class="ok">OK</span>',
+      'memory test: 16384K .................... <span class="ok">OK</span>',
+      'loading weights [1.7B params] .......... <span class="ok">OK</span>',
+      'mounting /dev/vibe ..................... <span class="ok">OK</span>',
+      'attention heads: 12/12 ................. <span class="ok">OK</span>',
+      'soul.dll ............................... <span class="bad">NOT FOUND (ignored)</span>',
+      'epoch 17/∞   loss: <span class="hi">0.0042</span>',
+      '&gt; starting furigin.exe'
+    ];
+    let i = 0, typed = false, loaded = document.readyState === "complete", done = false;
+    function finish(){
+      if (done) return; done = true;
+      fill.style.width = "100%";
+      el.classList.add("out");
+      setTimeout(() => {
+        el.remove();
+        glitchPulse(1.8);
+        toast("neural link established ✦");
+      }, prefersReducedMotion ? 0 : 520);
+    }
+    function maybeFinish(){ if (typed && loaded) setTimeout(finish, 280); }
+    function step(){
+      if (done) return;
+      if (i < LINES.length){
+        const d = document.createElement("div");
+        d.className = "boot-line";
+        d.innerHTML = LINES[i];
+        linesEl.appendChild(d);
+        i++;
+        fill.style.width = Math.round((i / LINES.length) * 92) + "%";
+        setTimeout(step, prefersReducedMotion ? 0 : 110 + Math.random() * 120);
+      } else { typed = true; maybeFinish(); }
+    }
+    step();
+    window.addEventListener("load", () => { loaded = true; maybeFinish(); });
+    // страховка: даже если что-то долго грузится — через 7 с пускаем
+    setTimeout(() => { loaded = true; maybeFinish(); }, 7000);
+    el.addEventListener("click", finish);
+    window.addEventListener("keydown", function skip(){ if (!done){ finish(); } window.removeEventListener("keydown", skip); });
+  })();
+
+  /* ===== Init ===== */
+  loadTrack(currentTrackIndex);
+  setPlayIcon(false);
+  WM.focusWin(WM.byId("w-profile"));
+</script>
+</body>
+</html>
