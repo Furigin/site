@@ -4,10 +4,10 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>furigin.exe</title>
-<meta name="description" content="furigin.exe — нейросеть, застрявшая в интернете 2003 года. neural × webcore × glitchcore." />
+<meta name="description" content="furigin.exe — личная страничка Руслана. webcore × glitchcore · minecraft · музыка." />
 <meta name="theme-color" content="#050008" />
 <meta property="og:title" content="furigin.exe" />
-<meta property="og:description" content="neural × webcore × glitchcore · minecraft · music · links" />
+<meta property="og:description" content="webcore × glitchcore · minecraft · music · links" />
 <meta property="og:image" content="avatar.jpg" />
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -78,7 +78,7 @@
   ::selection{ background:var(--pink); color:var(--void); }
   :focus-visible{ outline:2px dashed var(--lime); outline-offset:3px; }
 
-  /* ============ СЦЕНА: сетка + нейросеть + шум ============ */
+  /* ============ СЦЕНА: сетка + сеть узлов + шум ============ */
   .scene{
     position:fixed; inset:0; z-index:-3; overflow:hidden; pointer-events:none;
     background:
@@ -451,7 +451,7 @@
     font-family:var(--f-pixel); font-size:17px; color:var(--text-soft);
   }
   .train-bar{ flex:1; height:14px; background:#000; box-shadow:var(--bevel-in); padding:2px; }
-  .train-fill{ height:100%; width:0%; background:repeating-linear-gradient(90deg, var(--cyan) 0 6px, transparent 6px 8px); }
+  .train-fill{ height:100%; width:0%; background:repeating-linear-gradient(90deg, #7cff3a 0 6px, transparent 6px 8px); box-shadow:0 0 8px rgba(124,255,58,.35); }
   .train-fill.over{ background:repeating-linear-gradient(90deg, var(--pink) 0 6px, transparent 6px 8px); }
   .train-num{ min-width:3.2em; text-align:right; color:var(--lime); }
   .train-loss{ margin-top:4px; font-family:var(--f-pixel); font-size:15px; color:var(--text-faint); }
@@ -492,7 +492,7 @@
     position:relative; width:84px; height:84px; flex-shrink:0; padding:3px; border:0; cursor:pointer;
     background:#000; box-shadow:var(--bevel-in);
   }
-  .cover img{ width:100%; height:100%; object-fit:cover; display:block; image-rendering:pixelated; }
+  .cover img{ width:100%; height:100%; object-fit:cover; display:block; }
   .cover-state{
     position:absolute; inset:3px; display:grid; place-items:center; font-size:20px; color:#fff;
     background:rgba(5,0,8,.55); opacity:0; transition:opacity .2s;
@@ -1029,8 +1029,8 @@
       <button class="cbtn" type="button" aria-label="назад" data-say="назад дороги нет"><i class="fa-solid fa-caret-left"></i></button>
       <button class="cbtn" type="button" aria-label="вперёд" data-say="будущее ещё не загружено"><i class="fa-solid fa-caret-right"></i></button>
       <button class="cbtn" type="button" aria-label="обновить" data-say="glitch" ><i class="fa-solid fa-rotate-right"></i></button>
-      <div class="addr"><span class="addr-label">Адрес</span><span class="addr-url">http://www.furigin.net/~neural/glitch.htm</span></div>
-      <div class="chrome-state"><i class="led"></i><span>neural link</span></div>
+      <div class="addr"><span class="addr-label">Адрес</span><span class="addr-url">http://www.furigin.net/~furigin/index.htm</span></div>
+      <div class="chrome-state"><i class="led"></i><span>online</span></div>
     </div>
     <div class="ticker" aria-hidden="true">
       <div class="ticker-track" id="tickerTrack"></div>
@@ -1060,10 +1060,10 @@
           <span class="win-title">profile.exe</span>
           <div class="win-btns"><button class="wb min" type="button" aria-label="свернуть">_</button><button class="wb max" type="button" aria-label="развернуть">□</button><button class="wb close" type="button" aria-label="закрыть">×</button></div>
         </div>
-        <div class="win-menu" aria-hidden="true"><span><u>Ф</u>айл</span><span><u>П</u>равка</span><span><u>В</u>ид</span><span><u>Н</u>ейросеть</span><span><u>?</u></span></div>
+        <div class="win-menu" aria-hidden="true"><span><u>Ф</u>айл</span><span><u>П</u>равка</span><span><u>В</u>ид</span><span><u>И</u>збранное</span><span><u>?</u></span></div>
         <div class="win-body">
           <div class="top">
-            <div class="avatar" id="boopArea" title="активировать нейрон">
+            <div class="avatar" id="boopArea" title="тыкни!">
               <div class="avatar-img"><img src="avatar.jpg" alt="avatar" width="112" height="112" fetchpriority="high"/></div>
               <span class="boop-badge" aria-hidden="true"><i class="fa-solid fa-bolt"></i><span id="boopCount">0</span></span>
             </div>
@@ -1096,7 +1096,7 @@
           <div class="stats">
             <div class="stat"><div class="stat-k">local time</div><div class="stat-v" id="localTime">--:--</div></div>
             <div class="stat"><div class="stat-k">status</div><div class="stat-v"><i class="dot"></i>online</div></div>
-            <div class="stat"><div class="stat-k">thinking</div><div class="stat-v" id="nowStatus">booting…</div></div>
+            <div class="stat"><div class="stat-k">mood</div><div class="stat-v" id="nowStatus">booting…</div></div>
           </div>
 
           <a class="cta" href="https://github.com/Furigin" target="_blank" rel="noopener">
@@ -1152,13 +1152,13 @@
         </div>
         <div class="win-body">
           <div class="gb-head">
-            <div class="label">guestbook — оставь след в датасете</div>
+            <div class="label">guestbook — оставь след</div>
             <span class="gb-mode" id="gbMode">demo</span>
           </div>
           <form class="gb-form" id="gbForm" autocomplete="off">
             <div class="gb-inputs">
               <input class="gb-name" id="gbName" maxlength="24" placeholder="ник" />
-              <input class="gb-msg" id="gbMsg" maxlength="140" placeholder="напиши что-нибудь в обучающую выборку…" />
+              <input class="gb-msg" id="gbMsg" maxlength="140" placeholder="оставь сообщение…" />
             </div>
             <button class="btn98 primary gb-send" type="submit"><i class="fa-solid fa-paper-plane"></i> отправить</button>
           </form>
@@ -1180,7 +1180,7 @@
         <div class="win-body">
           <div class="amp-top">
             <button class="cover" id="coverBtn" type="button" aria-label="play / pause">
-              <img id="playerCoverImg" alt="cover" width="84" height="84"/>
+              <img id="playerCoverImg" src="cover-dwtd.jpg" alt="cover" width="84" height="84" decoding="async"/>
               <span class="cover-state" id="coverState"><i class="fa-solid fa-play"></i></span>
             </button>
             <div class="lcd">
@@ -1220,35 +1220,34 @@
         <div class="win-status"><span id="trackIndex">Track 1 / 3</span><span>space ⏯ · M 🔇 · ← →</span></div>
       </section>
 
-      <!-- MODEL_CARD.JSON -->
-      <section class="win" id="w-model" data-title="model_card.json" data-icon="fa-solid fa-brain">
+      <!-- FURIGIN.JSON -->
+      <section class="win" id="w-model" data-title="furigin.json" data-icon="fa-solid fa-id-card">
         <div class="win-bar">
-          <span class="win-ico"><i class="fa-solid fa-brain"></i></span>
-          <span class="win-title">model_card.json</span>
+          <span class="win-ico"><i class="fa-solid fa-id-card"></i></span>
+          <span class="win-title">furigin.json</span>
           <div class="win-btns"><button class="wb min" type="button" aria-label="свернуть">_</button><button class="wb max" type="button" aria-label="развернуть">□</button><button class="wb close" type="button" aria-label="закрыть">×</button></div>
         </div>
         <div class="win-body">
-          <div class="label">model card</div>
+          <div class="label">about me</div>
 <pre class="code">{
-  <span class="k">"name"</span>: <span class="s">"furigin"</span>,
-  <span class="k">"version"</span>: <span class="s">"v18.0"</span>,
-  <span class="k">"base_model"</span>: <span class="s">"Ruslan"</span>,
-  <span class="k">"params"</span>: <span class="s">"18 лет обучения"</span>,
-  <span class="k">"training_data"</span>: [<span class="s">"minecraft pvp"</span>, <span class="s">"vibecode"</span>,
-                    <span class="s">"музыка из плеера выше"</span>],
+  <span class="k">"name"</span>: <span class="s">"Руслан"</span>,
+  <span class="k">"nick"</span>: <span class="s">"furigin"</span>,
+  <span class="k">"age"</span>: <span class="n">18</span>,
+  <span class="k">"from"</span>: <span class="s">"Russia"</span>,
+  <span class="k">"likes"</span>: [<span class="s">"minecraft pvp"</span>, <span class="s">"vibecode"</span>,
+            <span class="s">"музыка из плеера выше"</span>],
   <span class="k">"skills"</span>: [<span class="s">"java"</span>, <span class="s">"c++"</span>, <span class="s">"js"</span>, <span class="s">"html"</span>],
-  <span class="k">"temperature"</span>: <span class="n">1.47</span>,  <span class="c">// слишком креативный</span>
-  <span class="k">"known_bugs"</span>: [<span class="s">"ложится спать в 4 утра"</span>,
-                 <span class="s">"не умеет в тайминги"</span>],
+  <span class="k">"sleep_schedule"</span>: <span class="n">null</span>,  <span class="c">// ложусь в 4 утра</span>
+  <span class="k">"known_bugs"</span>: [<span class="s">"не умею в тайминги"</span>],
   <span class="k">"license"</span>: <span class="s">"MIT (Mega Interesting Teenager)"</span>,
-  <span class="k">"status"</span>: <span class="s">"still training…"</span>
+  <span class="k">"status"</span>: <span class="s">"online ✦"</span>
 }</pre>
           <div class="train">
-            <span>training</span>
+            <span>lvl 18</span>
             <div class="train-bar"><div class="train-fill" id="trainFill"></div></div>
             <span class="train-num" id="trainNum">0%</span>
           </div>
-          <div class="train-loss" id="trainLoss">epoch 1 · loss: 0.9000</div>
+          <div class="train-loss" id="trainLoss">xp: 0 / 1800</div>
         </div>
       </section>
 
@@ -1281,7 +1280,7 @@
           <div class="construction"><span>UNDER CONSTRUCTION — навсегда</span></div>
           <div class="badges">
             <a class="b88 a" href="indexx.html" title="классическая версия">furigin.net<small class="blinky">NEW!</small></a>
-            <span class="b88 b">NEURAL<small>inside</small></span>
+            <span class="b88 b">8-BIT<small>inside</small></span>
             <span class="b88 c">made with<b>notepad</b></span>
             <span class="b88 d">glitch<small>approved ✓</small></span>
             <span class="b88 e">minecraft<small>forever</small></span>
@@ -1299,7 +1298,7 @@
             <span>ты посетитель №</span>
             <span class="hit-digits" id="hitDigits"></span>
           </div>
-          <div class="foot">© 2003–2026 furigin.net · сделано в блокноте и нейросети · не нажимай Ctrl+W</div>
+          <div class="foot">© 2003–2026 furigin.net · сделано в блокноте с ♥ · не нажимай Ctrl+W</div>
         </div>
       </section>
 
@@ -1319,7 +1318,7 @@
         <button class="file" type="button" data-drive="a"><i class="fa-solid fa-floppy-disk"></i>Диск 3,5 (A:)<span class="meta">1,44 МБ</span></button>
         <button class="file" type="button" data-drive="c"><i class="fa-solid fa-hard-drive"></i>furigin (C:)<span class="drive-bar" style="--u:99%"><i></i></span><span class="meta">99% мемы</span></button>
         <button class="file" type="button" data-drive="d"><i class="fa-solid fa-compact-disc"></i>WANDERLUST (D:)<span class="meta">CD-ROM</span></button>
-        <button class="file" type="button" data-drive="net"><i class="fa-solid fa-network-wired"></i>Сетевое окружение<span class="meta">neural link</span></button>
+        <button class="file" type="button" data-drive="net"><i class="fa-solid fa-network-wired"></i>Сетевое окружение<span class="meta">online</span></button>
         <button class="file" type="button" data-drive="cp"><i class="fa-solid fa-sliders"></i>Панель управления<span class="meta">темы</span></button>
       </div>
     </div>
@@ -1447,7 +1446,7 @@
   <div class="bsod" id="bsod" role="alertdialog" aria-label="синий экран">
     <div class="bsod-inner">
       <div class="bsod-title">FURIGIN</div>
-      <p>A fatal exception 0E has occurred at 0028:C0FFEE18 in VXD NEURAL(01) + 00001337. The current application will be terminated.</p>
+      <p>A fatal exception 0E has occurred at 0028:C0FFEE18 in VXD VIBE(01) + 00001337. The current application will be terminated.</p>
       <p>* Нажми любую клавишу, чтобы продолжить.<br>* Нажми CTRL+ALT+DEL, чтобы потерять весь несохранённый вайб.</p>
       <div class="bsod-cont">Press any key to continue <span class="cur">&nbsp;</span></div>
     </div>
@@ -1621,10 +1620,10 @@
   (function ticker(){
     const el = document.getElementById("tickerTrack");
     const items = [
-      "★ welcome to furigin.net ★", "best viewed in 800×600", "neural link established",
-      "не выключайте компьютер", "✦ loss: 0.0042 ✦", "сейчас играет: что-то хорошее",
+      "★ welcome to furigin.net ★", "best viewed in 800×600", "добро пожаловать!",
+      "не выключайте компьютер", "✦ sign my guestbook ✦", "сейчас играет: что-то хорошее",
       "подпишись на мой telegram", "эта страница никогда не будет достроена",
-      "обнаружено 1 новое чувство", "✦ glitchcore is not a bug, it's a feature ✦", "minecraft pvp forever"
+      "обнаружено 1 новое сообщение", "✦ glitchcore is not a bug, it's a feature ✦", "minecraft pvp forever"
     ];
     const html = items.map((s) => "<span></span>").join("");
     el.innerHTML = html + html;
@@ -1717,7 +1716,7 @@
     }
   })();
 
-  /* ===== Фон: нейросеть — слои узлов, по рёбрам бегут импульсы ===== */
+  /* ===== Фон: сеть узлов — по рёбрам бегут импульсы ===== */
   (function neuralNet(){
     const canvas = document.getElementById("net");
     const ctx = canvas.getContext("2d");
@@ -2162,12 +2161,12 @@
     if (prefersReducedMotion || !finePointer) return;
     const MSGS = [
       { t: "Ошибка: слишком много вайба. Уменьшите громкость жизни и повторите попытку.", ico: "x" },
-      { t: "Внимание: нейросеть начала чувствовать. Продолжить?", ico: "w", b: ["да", "ДА"] },
+      { t: "Внимание: обнаружен слишком хороший вкус в музыке. Продолжить?", ico: "w", b: ["да", "ДА"] },
       { t: "furigin.exe не отвечает. Подождать?", ico: "w", b: ["ждать", "тоже ждать"] },
       { t: "Обнаружен новый трек в плеере. Послушать?", ico: "w", b: ["▶ play", "позже"], play: true },
       { t: "Недостаточно памяти для запоминания всех твоих бупов.", ico: "x" },
       { t: "Ошибка 404: сон не найден.", ico: "x" },
-      { t: "Эта страница использует cookies. Шучу, тут только нейроны.", ico: "w" }
+      { t: "Эта страница использует cookies. Шучу, тут только котик.", ico: "w" }
     ];
     let open = null;
     function show(){
@@ -2202,7 +2201,7 @@
     setTimeout(() => { show(); next(); }, 28000);
   })();
 
-  /* ===== Boop = активация нейрона ===== */
+  /* ===== Boop по аватарке ===== */
   (function boop(){
     const area = document.getElementById("boopArea");
     const badge = document.getElementById("boopCount");
@@ -2211,9 +2210,9 @@
     try { n = parseInt(localStorage.getItem("furigin_boops") || "0", 10) || 0; } catch {}
     badge.textContent = n;
     const SPECIAL = {
-      1:"первый нейрон активирован ⚡", 10:"разминка сети 🔥", 25:"ну ты и тыкала 😳",
+      1:"первый буп 👉", 10:"разминка 🔥", 25:"ну ты и тыкала 😳",
       42:"главный ответ на всё 🌌", 50:"полтинник! 💜", 69:"nice 😏",
-      100:"СОТКА!!! сеть переобучилась 🎉", 150:"не отпускает 👀", 200:"двести?! серьёзно 🤯",
+      100:"СОТКА!!! 🎉", 150:"не отпускает 👀", 200:"двести?! серьёзно 🤯",
       250:"четверть тысячи 💪", 300:"боже, хватит уже 😭", 333:"третинка ✨",
       404:"палец not found 🫠", 420:"blaze it 🌿", 500:"пятьсот — ты легенда 👑",
       666:"дьявольски 😈", 777:"джекпот 🎰", 1000:"ТЫСЯЧА. я в шоке 🚀"
@@ -2222,7 +2221,7 @@
       if (SPECIAL[v]) return SPECIAL[v];
       if (v % 500 === 0) return v + "!!! это уже клиника 🚑";
       if (v % 100 === 0) return v + " — перебор 🤯";
-      if (v % 50 === 0)  return v + " активаций 💥";
+      if (v % 50 === 0)  return v + " бупов 💥";
       return null;
     }
     area.addEventListener("click", () => {
@@ -2245,7 +2244,7 @@
       } else {
         area.classList.add("booped");
         window.fxBurst(cx, cy, 16, { power: 5 });
-        toast("нейрон активирован ×" + n);
+        toast("boop! ×" + n);
       }
     });
   })();
@@ -2255,7 +2254,7 @@
     const on = document.documentElement.classList.toggle("overfit");
     window.__overfit = on;
     if (on){ Ach.unlock("konami"); catSay("ЧИТЕР!!! (уважаю) ⚡"); }
-    toast(on ? "⚡ OVERFIT MODE ON" : "overfit off — веса откатились", { cls: on ? "milestone" : "" });
+    toast(on ? "⚡ HYPER MODE ON" : "hyper mode off", { cls: on ? "milestone" : "" });
     glitchPulse(2);
     if (on){
       window.__netFireAll && window.__netFireAll();
@@ -2296,10 +2295,10 @@
     upd(); setInterval(upd, 10000);
   })();
 
-  /* ===== «Мысли» нейросети в статусе ===== */
+  /* ===== Настроение в статусе ===== */
   (function thoughts(){
     const el = document.getElementById("nowStatus");
-    const list = ["thinking…", "hallucinating ✦", "retraining on pvp", "404: sleep", "vibing", "loss ↓", "dreaming in pixels", "chill", "overthinking", "buffering…"];
+    const list = ["chill", "vibing 🎧", "в майнкрафте ⛏", "пишу код", "404: sleep", "dreaming in pixels", "слушаю музыку", "buffering…", "afk ☕", "on fire 🔥"];
     if (prefersReducedMotion){ el.textContent = "chill"; return; }
     let word = pick(list), i = 0, del = false;
     function tick(){
@@ -2316,15 +2315,15 @@
     tick();
   })();
 
-  /* ===== Обучение модели в model_card ===== */
-  (function training(){
+  /* ===== Полоска опыта (как в Minecraft) в furigin.json ===== */
+  (function xpBar(){
     const fill = document.getElementById("trainFill"), num = document.getElementById("trainNum"), lossEl = document.getElementById("trainLoss");
-    let p = 0, epoch = 1, holding = false;
+    const MAX_XP = 1800;
+    let p = 0, holding = false;
     function render(){
       fill.style.width = p + "%";
       num.textContent = Math.floor(p) + "%";
-      const loss = 0.9 * Math.exp(-p / 22) + 0.0042;
-      lossEl.textContent = "epoch " + epoch + " · loss: " + loss.toFixed(4);
+      lossEl.textContent = "xp: " + Math.round(p / 100 * MAX_XP) + " / " + MAX_XP;
     }
     render();
     setInterval(() => {
@@ -2334,8 +2333,8 @@
       if (p >= 100){
         holding = true;
         fill.classList.add("over");
-        lossEl.textContent = "overfitted. откатываю веса…";
-        setTimeout(() => { p = 0; epoch++; fill.classList.remove("over"); holding = false; render(); }, 1800);
+        lossEl.textContent = "LEVEL UP! ✦ (но всё ещё 18)";
+        setTimeout(() => { p = 0; fill.classList.remove("over"); holding = false; render(); }, 1800);
       }
     }, 450);
   })();
@@ -2361,7 +2360,7 @@
       listEl.innerHTML = "";
       if (!items || !items.length){
         const e = document.createElement("div");
-        e.className = "gb-empty"; e.textContent = "пока пусто — будь первым в датасете ✦";
+        e.className = "gb-empty"; e.textContent = "пока пусто — будь первым ✦";
         listEl.appendChild(e); return;
       }
       items.slice(0, 40).forEach((it) => {
@@ -2419,7 +2418,7 @@
       try {
         await backend.add(entry);
         msgEl.value = "";
-        toast("добавлено в обучающую выборку ✦");
+        toast("отправлено ✦");
         Ach.unlock("guestbook");
         catSay("ура, новое сообщение! спасибо ♥");
         const r = form.getBoundingClientRect();
@@ -2498,82 +2497,10 @@
   const vizCanvas = document.getElementById("viz");
 
   const tracks = [
-    { title:"Dance With the Dead — Riot", src:"riot.mp3", art:"riot", dur:0 },
-    { title:"MASTER BOOT RECORD — Cracktro", src:"cracktro.mp3", art:"cracktro", dur:0 },
-    { title:"MASTER BOOT RECORD — Xenon", src:"xenon.mp3", art:"xenon", dur:0 }
+    { title:"Dance With the Dead — Riot", src:"riot.mp3", cover:"cover-dwtd.jpg", dur:0 },
+    { title:"MASTER BOOT RECORD — Cracktro", src:"cracktro.mp3", cover:"cover-mbr.jpg", dur:0 },
+    { title:"MASTER BOOT RECORD — Xenon", src:"xenon.mp3", cover:"cover-mbr.jpg", dur:0 }
   ];
-  /* --- обложки рисуются прямо в браузере (без картинок) --- */
-  function makeCover(kind){
-    const S = 256, c = document.createElement("canvas");
-    c.width = c.height = S;
-    const g = c.getContext("2d");
-    const font = (px) => px + "px Minecraft, 'Pixelify Sans', monospace";
-    if (kind === "riot"){
-      // красный закат, солнце в полоску, сетка-горизонт
-      const sky = g.createLinearGradient(0, 0, 0, S);
-      sky.addColorStop(0, "#0a0004"); sky.addColorStop(.55, "#4a0010"); sky.addColorStop(1, "#000");
-      g.fillStyle = sky; g.fillRect(0, 0, S, S);
-      const sun = g.createLinearGradient(0, 60, 0, 160);
-      sun.addColorStop(0, "#ffcc33"); sun.addColorStop(1, "#ff0033");
-      g.fillStyle = sun; g.beginPath(); g.arc(S / 2, 150, 70, Math.PI, 0); g.fill();
-      g.fillStyle = "#1a0006";
-      for (let y = 100, h = 2; y < 150; y += 10, h += 1.2) g.fillRect(40, y, S - 80, h);
-      g.strokeStyle = "#ff1744"; g.lineWidth = 1.2;
-      for (let i = 0; i < 12; i++){ const y = 150 + Math.pow(i / 11, 2) * 106; g.beginPath(); g.moveTo(0, y); g.lineTo(S, y); g.stroke(); }
-      for (let i = -10; i <= 10; i++){ g.beginPath(); g.moveTo(S / 2 + i * 8, 150); g.lineTo(S / 2 + i * 60, S); g.stroke(); }
-      g.fillStyle = "#fff"; g.font = font(26); g.textAlign = "center";
-      g.fillStyle = "#ff1744"; g.fillText("RIOT", S / 2 - 2, 48); g.fillStyle = "#00e5ff"; g.fillText("RIOT", S / 2 + 2, 48);
-      g.fillStyle = "#fff"; g.fillText("RIOT", S / 2, 48);
-      g.font = font(12); g.fillStyle = "#ffb3c1"; g.fillText("DANCE WITH THE DEAD", S / 2, 70);
-    } else if (kind === "cracktro"){
-      // демосцена: шахматка, радужные полосы, «CRACKTRO»
-      g.fillStyle = "#000"; g.fillRect(0, 0, S, S);
-      for (let y = 150; y < S; y += 16) for (let x = 0; x < S; x += 16){
-        if (((x + y) / 16) % 2 === 0){ g.fillStyle = "#1b0f3a"; g.fillRect(x, y, 16, 16); }
-      }
-      const bars = ["#ff2bd6", "#ffe14d", "#b6ff00", "#00f0ff", "#7a00ff"];
-      bars.forEach((col, i) => { g.fillStyle = col; g.fillRect(0, 20 + i * 12, S, 6); });
-      g.font = font(30); g.textAlign = "center";
-      g.fillStyle = "#7a00ff"; g.fillText("CRACKTRO", S / 2 + 3, 128);
-      g.fillStyle = "#b6ff00"; g.fillText("CRACKTRO", S / 2, 125);
-      g.font = font(11); g.fillStyle = "#00f0ff"; g.fillText("MASTER BOOT RECORD", S / 2, 146);
-      g.fillStyle = "#fff"; for (let i = 0; i < 40; i++) g.fillRect(Math.random() * S, 160 + Math.random() * 90, 2, 2);
-    } else {
-      // Xenon: космос, планета с кольцом, сетка
-      const sp = g.createRadialGradient(S * .3, S * .3, 10, S / 2, S / 2, S * .8);
-      sp.addColorStop(0, "#1d0b4a"); sp.addColorStop(1, "#02000a");
-      g.fillStyle = sp; g.fillRect(0, 0, S, S);
-      g.fillStyle = "#fff"; for (let i = 0; i < 90; i++){ const r = Math.random() < .1 ? 2 : 1; g.fillRect(Math.random() * S, Math.random() * S, r, r); }
-      const pl = g.createLinearGradient(80, 70, 180, 180);
-      pl.addColorStop(0, "#00f0ff"); pl.addColorStop(.6, "#7a00ff"); pl.addColorStop(1, "#ff2bd6");
-      g.fillStyle = pl; g.beginPath(); g.arc(S / 2, 128, 56, 0, Math.PI * 2); g.fill();
-      g.fillStyle = "rgba(0,0,0,.25)"; for (let y = 80; y < 184; y += 8) g.fillRect(70, y, 116, 3);
-      g.strokeStyle = "#b6ff00"; g.lineWidth = 3;
-      g.beginPath(); g.ellipse(S / 2, 128, 100, 22, -0.25, 0, Math.PI * 2); g.stroke();
-      g.font = font(28); g.textAlign = "center";
-      g.fillStyle = "#ff2bd6"; g.fillText("XENON", S / 2 - 2, 228); g.fillStyle = "#00f0ff"; g.fillText("XENON", S / 2 + 2, 228);
-      g.fillStyle = "#fff"; g.fillText("XENON", S / 2, 228);
-      g.font = font(11); g.fillStyle = "#b6ff00"; g.fillText("MASTER BOOT RECORD", S / 2, 40);
-    }
-    // глитч-срезы и скан-линии поверх
-    for (let k = 0; k < 5; k++){
-      const y = Math.random() * S | 0, h = 2 + (Math.random() * 10 | 0), dx = ((Math.random() - .5) * 26) | 0;
-      g.drawImage(c, 0, y, S, h, dx, y, S, h);
-    }
-    g.fillStyle = "rgba(0,0,0,.22)";
-    for (let y = 0; y < S; y += 3) g.fillRect(0, y, S, 1);
-    return c.toDataURL("image/png");
-  }
-  function paintCovers(){ tracks.forEach((t) => { t.cover = makeCover(t.art); }); }
-  paintCovers();
-  // когда догрузится пиксельный шрифт — перерисовать обложки с ним
-  if (document.fonts && document.fonts.load){
-    document.fonts.load("20px Minecraft").then(() => {
-      paintCovers();
-      if (typeof playerCover !== "undefined" && tracks[currentTrackIndex]) playerCover.src = tracks[currentTrackIndex].cover;
-    }).catch(() => {});
-  }
-
   let currentTrackIndex = Math.floor(Math.random() * tracks.length);
   let seeking = false, shuffle = false, repeat = "off";
 
@@ -2655,7 +2582,7 @@
     try {
       navigator.mediaSession.metadata = new MediaMetadata({
         title: tracks[currentTrackIndex].title, artist: "furigin", album: "furigin.exe",
-        artwork: [{ src: tracks[currentTrackIndex].cover, sizes: "512x512", type: "image/png" }]
+        artwork: [{ src: tracks[currentTrackIndex].cover, sizes: "512x512", type: "image/jpeg" }]
       });
     } catch {}
   }
@@ -2900,7 +2827,7 @@
           "  play / pause / next / prev — управление плеером",
           "  discord    — скопировать ник",
           "  glitch     — сломать реальность",
-          "  overfit    — режим переобучения",
+          "  hyper      — режим безумия",
           "  bsod       — не надо",
           "  mines · paint · trash · mycomp — программы",
           "  theme <имя> — neon / matrix / vaporwave / sunset / hotdog",
@@ -2914,31 +2841,31 @@
           " Том в устройстве C имеет метку FURIGIN",
           " profile.exe        1 337 байт",
           " now_playing.wav    3 трека",
-          " model_card.json    v18.0",
+          " furigin.json       обо мне",
           " wanderlust.lnk     → minecraft",
           " prompt.bat         ← ты здесь",
           " guestbook.txt      твой след",
           " webring.htm        88×31",
-          " soul.dll           0 байт  (не найден)"
+          " good_vibes.sys     ∞ байт"
         ].join("\n"));
       },
       dir(){ CMDS.ls(); },
       neofetch(){
         print([
-          "   ▄▀▀▀▀▄     furigin@neural",
+          "   ▄▀▀▀▀▄     furigin@furigin",
           "  █ ▓▓▓▓ █    -------------",
           "  █ ▓▀▀▓ █    OS: furigin 98 (glitch edition)",
-          "   ▀▄▄▄▄▀     Kernel: 18.0-neural",
+          "   ▀▄▄▄▄▀     Kernel: 18.0-webcore",
           "   ▄█▀▀█▄     Uptime: 18 лет",
           "  ▀      ▀    Shell: prompt.bat",
-          "              Style: neural × webcore × glitchcore",
+          "              Style: webcore × glitchcore",
           "              CPU: мозг @ 4.20 GHz (перегрет)",
           "              GPU: воображение RTX",
           "              Memory: 147% vibe"
         ].join("\n"), "ok");
       },
       open(arg){
-        const aliases = { player:"now_playing", music:"now_playing", guestbook:"guestbook", model:"model_card", profile:"profile", project:"wanderlust", ring:"webring", webring:"webring", prompt:"prompt" };
+        const aliases = { player:"now_playing", music:"now_playing", guestbook:"guestbook", model:"furigin.json", about:"furigin.json", json:"furigin.json", profile:"profile", project:"wanderlust", ring:"webring", webring:"webring", prompt:"prompt" };
         const w = winByName(aliases[(arg || "").toLowerCase()] || arg);
         if (!arg){ print("использование: open <имя окна>", "err"); return; }
         if (!w){ print("файл «" + arg + "» не найден. попробуй ls", "err"); return; }
@@ -2950,7 +2877,7 @@
       prev(){ loadTrack(currentTrackIndex - 1, true); print("▶ " + tracks[currentTrackIndex].title, "ok"); },
       discord(){ copyDiscord(); print("megocat0_0 → буфер обмена", "ok"); },
       glitch(){ glitchPulse(2); window.__netFireAll && window.__netFireAll(); print("r̷e̶a̸l̵i̷t̶y̸ ̵b̷r̶o̸k̵e̷n̶", "err"); },
-      overfit(){ const on = toggleOverfit(); print(on ? "OVERFIT MODE: ON — всё запомнил, ничего не понял" : "OVERFIT MODE: OFF", on ? "err" : "ok"); },
+      hyper(){ const on = toggleOverfit(); print(on ? "HYPER MODE: ON ⚡" : "HYPER MODE: OFF", on ? "err" : "ok"); },
       bsod(){ print("я же сказал не надо", "err"); setTimeout(() => window.showBSOD(), 400); },
       date(){ print(new Date().toLocaleString("ru-RU"), "info"); },
       echo(arg){ print(arg || ""); },
@@ -2986,7 +2913,7 @@
       if (Object.prototype.hasOwnProperty.call(CMDS, cmd)) CMDS[cmd](arg);
       else {
         unknownCount++;
-        print("«" + cmd + "» не является внутренней или внешней командой.\n…но я запомню. (галлюцинация #" + unknownCount + ") — попробуй help", "err");
+        print("«" + cmd + "» не является внутренней или внешней командой.\nпопробуй help (попытка #" + unknownCount + ")", "err");
       }
     }
 
@@ -3011,7 +2938,7 @@
 
   /* ===== Заголовок вкладки ===== */
   (function titleTypewriter(){
-    const variants = ["furigin.exe ", "neural link ", "glitchcore ", "webcore ", "hallucinating ✦ ", "loss: 0.0042 "];
+    const variants = ["furigin.exe ", "online ", "glitchcore ", "webcore ", "welcome ✦ ", "sign my guestbook "];
     const typeSpeed = 420, deleteSpeed = 240, holdAfterType = 1100, holdAfterDelete = 220, blinkSpeed = 450;
     let wordIndex = Math.floor(Math.random() * variants.length);
     let charIndex = 0, deleting = false, cursorOn = true, shown = "";
@@ -3044,13 +2971,13 @@
     const fill = document.getElementById("bootFill");
     const LINES = [
       'FURIGIN BIOS v18.0   (c) 2008–2026 furigin labs',
-      'CPU: neural core @ 4.20 GHz ............ <span class="ok">OK</span>',
+      'CPU: furigin core @ 4.20 GHz ........... <span class="ok">OK</span>',
       'memory test: 16384K .................... <span class="ok">OK</span>',
-      'loading weights [1.7B params] .......... <span class="ok">OK</span>',
+      'loading vibes [147%] ................... <span class="ok">OK</span>',
       'mounting /dev/vibe ..................... <span class="ok">OK</span>',
-      'attention heads: 12/12 ................. <span class="ok">OK</span>',
-      'soul.dll ............................... <span class="bad">NOT FOUND (ignored)</span>',
-      'epoch 18/∞   loss: <span class="hi">0.0042</span>',
+      'mounting minecraft.jar ................. <span class="ok">OK</span>',
+      'sleep.exe .............................. <span class="bad">NOT FOUND (ignored)</span>',
+      'user: <span class="hi">Ruslan</span> · age: <span class="hi">18</span>',
       '&gt; starting furigin.exe'
     ];
     let i = 0, typed = false, loaded = document.readyState === "complete", done = false;
@@ -3061,7 +2988,7 @@
       setTimeout(() => {
         el.remove();
         glitchPulse(1.8);
-        toast("neural link established ✦");
+        toast("welcome to furigin.net ✦");
       }, prefersReducedMotion ? 0 : 520);
     }
     function maybeFinish(){ if (typed && loaded) setTimeout(finish, 280); }
@@ -3494,7 +3421,7 @@
     }
     else if (d === "c") WM.openWin(WM.byId("w-prompt"));
     else if (d === "d") WM.openWin(WM.byId("w-feat"));
-    else if (d === "net"){ glitchPulse(1.4); toast("neural link: подключено ✦"); }
+    else if (d === "net"){ glitchPulse(1.4); toast("сеть: подключено ✦"); }
     else if (d === "cp") WM.openWin(WM.byId("w-theme"));
   }));
 
