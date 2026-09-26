@@ -42,7 +42,7 @@
     --text-soft:rgba(244,240,255,.74);
     --text-faint:rgba(244,240,255,.48);
 
-    --win-bg:rgba(12,4,22,.86);
+    --win-bg:rgba(12,4,22,.93);
     --win-face:#1b1128;
     --win-face-2:#261838;
     --line:rgba(var(--uv-rgb),.45);
@@ -91,15 +91,14 @@
   #net{ position:absolute; inset:0; width:100%; height:100%; display:block; }
   #noise{
     position:absolute; inset:0; width:100%; height:100%; display:block;
-    image-rendering:pixelated; opacity:.07; mix-blend-mode:screen;
+    image-rendering:pixelated; opacity:.06;
   }
   .vignette{ position:absolute; inset:0; background:radial-gradient(ellipse at 50% 45%, transparent 45%, rgba(0,0,0,.75) 100%); }
 
   /* поверх всего — CRT-линии и полосы глитча */
   .crt{
     position:fixed; inset:0; z-index:19000; pointer-events:none;
-    background:repeating-linear-gradient(to bottom, rgba(0,0,0,.22) 0 1px, transparent 1px 3px);
-    opacity:.35; mix-blend-mode:multiply;
+    background:repeating-linear-gradient(to bottom, rgba(0,0,0,.09) 0 1px, transparent 1px 3px);
   }
   #slices{ position:fixed; inset:0; z-index:18990; pointer-events:none; overflow:hidden; }
   .slice{
@@ -112,7 +111,6 @@
   .slice.inv{ background:#fff; mix-blend-mode:difference; -webkit-backdrop-filter:none; backdrop-filter:none; }
   .slice.line{ height:2px !important; background:var(--cyan); opacity:.7; }
 
-  html.glitching .desktop{ animation:jitter .26s steps(2) 1; }
   html.glitching #net{ filter:hue-rotate(110deg) saturate(1.6); }
   @keyframes jitter{
     0%{ transform:translate(0,0); }
@@ -219,7 +217,7 @@
     font-family:var(--f-pixel); font-size:19px; line-height:26px; color:#fff;
     text-shadow:1px 0 var(--cyan), -1px 0 var(--pink);
   }
-  .ticker-track{ display:inline-block; padding-left:0; animation:tick 38s linear infinite; }
+  .ticker-track{ display:inline-block; padding-left:0; animation:tick 38s linear infinite; will-change:transform; }
   .ticker-track span{ padding-right:2.2em; }
   @keyframes tick{ from{ transform:translateX(0); } to{ transform:translateX(-50%); } }
 
@@ -236,7 +234,6 @@
   .win{
     position:relative; z-index:1;
     background:var(--win-bg);
-    -webkit-backdrop-filter:blur(8px); backdrop-filter:blur(8px);
     box-shadow:var(--bevel-out), 0 0 0 1px #000, 7px 7px 0 rgba(0,0,0,.55), 0 0 34px rgba(var(--uv-rgb),.22);
     padding:3px;
     animation:winIn .6s var(--ease) both;
@@ -1072,7 +1069,7 @@
             </div>
             <div class="info">
               <h1 class="name"><span class="gl" data-text="furigin">furigin</span><span class="name-ext">.exe</span></h1>
-              <p class="tagline">нейросеть, которая научилась играть в майнкрафт и слушать музыку (＾▽＾)</p>
+              <p class="tagline">Добро пожаловать на мой сайт (＾▽＾)</p>
               <p class="location"><i class="fa-solid fa-location-dot"></i><span>Russia · сервер: мозг</span></p>
               <button class="discord-chip" id="discordChip" type="button" title="скопировать">
                 <img src="discord-avatar.jpg" alt="discord avatar" width="26" height="26" loading="lazy"/>
@@ -1084,17 +1081,16 @@
 
           <div class="chips">
             <span class="chip id">Ruslan</span>
-            <span class="chip id">17</span>
+            <span class="chip id">18</span>
             <span class="chip">Love PvP</span>
             <span class="chip">Beginner Developer</span>
             <span class="chip">Vibecode</span>
             <span class="chip">Minecraft</span>
-            <span class="chip hot">neural × webcore × glitchcore</span>
           </div>
 
           <div class="about">
             <div class="label">about</div>
-            <p class="about-text">Привет. Я — furigin. Наполовину человек, наполовину нейросеть, на 100% застрял в интернете 2003 года. Люблю <b>Minecraft PvP</b>, учусь <b>прогать</b> по чуть-чуть, но с кайфом, и собираю свой стиль — <b>нейросети × webcore × glitchcore</b>.</p>
+            <p class="about-text">Привет. Я — <b>Руслан</b>. Немного кодинг, немного сайтики. Всегда рад новым знакомствам.</p>
           </div>
 
           <div class="stats">
@@ -1104,7 +1100,7 @@
           </div>
 
           <a class="cta" href="https://github.com/Furigin" target="_blank" rel="noopener">
-            <span><i class="fa-solid fa-code"></i>&nbsp; мои проекты на github — пока пусто, но нейросеть уже учится</span>
+            <span><i class="fa-solid fa-code"></i>&nbsp; мои проекты на github — пока пусто</span>
             <i class="fa-solid fa-arrow-right"></i>
           </a>
 
@@ -1117,7 +1113,7 @@
             <a class="dicon" href="https://www.last.fm/user/furigin" target="_blank" rel="noopener" title="Last.fm"><span class="dicon-img"><i class="fa-brands fa-lastfm"></i></span><span class="dicon-name">last.fm</span></a>
           </div>
         </div>
-        <div class="win-status"><span>готово — нейрон ждёт клика по аватарке</span><span>vibe: 147%</span></div>
+        <div class="win-status"><span>мои соц сети, клик — переход</span><span>vibe: 147%</span></div>
       </section>
 
       <!-- WANDERLUST.LNK -->
@@ -1184,7 +1180,7 @@
         <div class="win-body">
           <div class="amp-top">
             <button class="cover" id="coverBtn" type="button" aria-label="play / pause">
-              <img id="playerCoverImg" src="cover.png" alt="cover" width="84" height="84" loading="lazy"/>
+              <img id="playerCoverImg" alt="cover" width="84" height="84"/>
               <span class="cover-state" id="coverState"><i class="fa-solid fa-play"></i></span>
             </button>
             <div class="lcd">
@@ -1192,7 +1188,7 @@
                 <span class="lcd-time" id="currentTime">0:00</span>
                 <span class="lcd-meta"><span id="lcdState">■ STOP</span><span id="totalTime">0:00</span></span>
               </div>
-              <div class="lcd-title"><span id="playerTitle">Sloe — fears</span></div>
+              <div class="lcd-title"><span id="playerTitle">Dance With the Dead — Riot</span></div>
               <div class="lcd-sub"><span id="playerSub">track 1 / 3</span><span>128kbps · 44khz</span></div>
             </div>
           </div>
@@ -1235,9 +1231,9 @@
           <div class="label">model card</div>
 <pre class="code">{
   <span class="k">"name"</span>: <span class="s">"furigin"</span>,
-  <span class="k">"version"</span>: <span class="s">"v17.0"</span>,
+  <span class="k">"version"</span>: <span class="s">"v18.0"</span>,
   <span class="k">"base_model"</span>: <span class="s">"Ruslan"</span>,
-  <span class="k">"params"</span>: <span class="s">"17 лет обучения"</span>,
+  <span class="k">"params"</span>: <span class="s">"18 лет обучения"</span>,
   <span class="k">"training_data"</span>: [<span class="s">"minecraft pvp"</span>, <span class="s">"vibecode"</span>,
                     <span class="s">"музыка из плеера выше"</span>],
   <span class="k">"skills"</span>: [<span class="s">"java"</span>, <span class="s">"c++"</span>, <span class="s">"js"</span>, <span class="s">"html"</span>],
@@ -1451,7 +1447,7 @@
   <div class="bsod" id="bsod" role="alertdialog" aria-label="синий экран">
     <div class="bsod-inner">
       <div class="bsod-title">FURIGIN</div>
-      <p>A fatal exception 0E has occurred at 0028:C0FFEE17 in VXD NEURAL(01) + 00001337. The current application will be terminated.</p>
+      <p>A fatal exception 0E has occurred at 0028:C0FFEE18 in VXD NEURAL(01) + 00001337. The current application will be terminated.</p>
       <p>* Нажми любую клавишу, чтобы продолжить.<br>* Нажми CTRL+ALT+DEL, чтобы потерять весь несохранённый вайб.</p>
       <div class="bsod-cont">Press any key to continue <span class="cur">&nbsp;</span></div>
     </div>
@@ -1490,7 +1486,7 @@
     <div class="saver-hint">двигай мышкой, чтобы вернуться ✦</div>
   </div>
 
-  <audio id="audio" preload="auto" playsinline></audio>
+  <audio id="audio" preload="metadata" playsinline></audio>
 
 <script>
   /* ============================================================
@@ -1725,8 +1721,9 @@
   (function neuralNet(){
     const canvas = document.getElementById("net");
     const ctx = canvas.getContext("2d");
-    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    const dpr = 1;   // фон мягкий — полного разрешения не нужно, так в разы дешевле
     const NODE_COLORS = [PALETTE.lime, PALETTE.pink, PALETTE.cyan];
+    let k = 1;       // сколько «кадров по 60 к/с» прошло с прошлой отрисовки
     let W = 0, H = 0, nodes = [], edges = [], pulses = [];
     let mx = -9999, my = -9999, lastHover = 0, lastSpont = 0;
 
@@ -1801,12 +1798,12 @@
           ctx.strokeStyle = "rgba(255,43,214," + (0.12 + e.heat * 0.55).toFixed(3) + ")";
           ctx.beginPath(); ctx.moveTo(e.a.x, e.a.y); ctx.lineTo(e.b.x, e.b.y); ctx.stroke();
         }
-        e.heat *= 0.94;
+        e.heat *= Math.pow(0.94, k);
       }
       // импульсы
       for (let i = pulses.length - 1; i >= 0; i--){
         const p = pulses[i];
-        p.t += p.sp * (overfit ? 2.2 : 1);
+        p.t += p.sp * k * (overfit ? 2.2 : 1);
         const a = p.e.a, b = p.e.b;
         p.e.heat = Math.max(p.e.heat, p.s);
         if (p.t >= 1){
@@ -1838,7 +1835,7 @@
           ctx.fillStyle = "rgba(210,180,255,0.45)";
         }
         ctx.fillRect(n.x - s / 2, n.y - s / 2, s, s);
-        n.act *= 0.95;
+        n.act *= Math.pow(0.95, k);
       }
       // спонтанная активность
       if (t - lastSpont > (overfit ? 70 : 260)){
@@ -1848,7 +1845,15 @@
       }
     }
 
-    function loop(ms){ draw(ms); requestAnimationFrame(loop); }
+    let last = 0;
+    function loop(ms){
+      requestAnimationFrame(loop);
+      if (ms - last < 32) return;                         // ~30 к/с хватает с запасом
+      if (window.__saverOn) { last = ms; return; }        // под заставкой не рисуем
+      k = last ? Math.min(4, (ms - last) / 16.7) : 1;
+      last = ms;
+      draw(ms);
+    }
 
     build();
     let rt = 0;
@@ -1879,15 +1884,21 @@
     if (prefersReducedMotion) return;
     const c = document.getElementById("noise");
     const ctx = c.getContext("2d");
-    const img = ctx.createImageData(c.width, c.height);
-    const d = img.data;
-    setInterval(() => {
+    const frames = [];
+    for (let f = 0; f < 6; f++){
+      const img = ctx.createImageData(c.width, c.height), d = img.data;
       for (let i = 0; i < d.length; i += 4){
         const v = Math.random() * 255 | 0;
         d[i] = v; d[i + 1] = v; d[i + 2] = v; d[i + 3] = 255;
       }
-      ctx.putImageData(img, 0, 0);
-    }, 90);
+      frames.push(img);
+    }
+    let f = 0;
+    setInterval(() => {
+      if (document.hidden || window.__saverOn) return;
+      f = (f + 1) % frames.length;
+      ctx.putImageData(frames[f], 0, 0);
+    }, 110);
   })();
 
   /* ===== Мини-превью проекта: «датамош» ===== */
@@ -1938,7 +1949,9 @@
     if (typeof ResizeObserver !== "undefined") new ResizeObserver(() => { size(); draw(); }).observe(canvas);
     if (document.fonts && document.fonts.load) document.fonts.load("20px Minecraft").then(draw).catch(() => {});
     if (prefersReducedMotion){ draw(); return; }
-    setInterval(draw, 110);
+    let visible = true;
+    if ("IntersectionObserver" in window) new IntersectionObserver((en) => { visible = en[0].isIntersecting; }).observe(canvas);
+    setInterval(() => { if (visible && !document.hidden && !window.__saverOn) draw(); }, 110);
   })();
 
   /* ===== ГЛИТЧ-СОБЫТИЯ ===== */
@@ -2485,10 +2498,82 @@
   const vizCanvas = document.getElementById("viz");
 
   const tracks = [
-    { title:"Sloe — fears", src:"music.mp3", cover:"cover.png", dur:0 },
-    { title:"pyatno — hardcore", src:"music2.mp3", cover:"cover2.png", dur:0 },
-    { title:"nyan.mp3 — Takoyaki", src:"music3.mp3", cover:"cover3.png", dur:0 }
+    { title:"Dance With the Dead — Riot", src:"riot.mp3", art:"riot", dur:0 },
+    { title:"MASTER BOOT RECORD — Cracktro", src:"cracktro.mp3", art:"cracktro", dur:0 },
+    { title:"MASTER BOOT RECORD — Xenon", src:"xenon.mp3", art:"xenon", dur:0 }
   ];
+  /* --- обложки рисуются прямо в браузере (без картинок) --- */
+  function makeCover(kind){
+    const S = 256, c = document.createElement("canvas");
+    c.width = c.height = S;
+    const g = c.getContext("2d");
+    const font = (px) => px + "px Minecraft, 'Pixelify Sans', monospace";
+    if (kind === "riot"){
+      // красный закат, солнце в полоску, сетка-горизонт
+      const sky = g.createLinearGradient(0, 0, 0, S);
+      sky.addColorStop(0, "#0a0004"); sky.addColorStop(.55, "#4a0010"); sky.addColorStop(1, "#000");
+      g.fillStyle = sky; g.fillRect(0, 0, S, S);
+      const sun = g.createLinearGradient(0, 60, 0, 160);
+      sun.addColorStop(0, "#ffcc33"); sun.addColorStop(1, "#ff0033");
+      g.fillStyle = sun; g.beginPath(); g.arc(S / 2, 150, 70, Math.PI, 0); g.fill();
+      g.fillStyle = "#1a0006";
+      for (let y = 100, h = 2; y < 150; y += 10, h += 1.2) g.fillRect(40, y, S - 80, h);
+      g.strokeStyle = "#ff1744"; g.lineWidth = 1.2;
+      for (let i = 0; i < 12; i++){ const y = 150 + Math.pow(i / 11, 2) * 106; g.beginPath(); g.moveTo(0, y); g.lineTo(S, y); g.stroke(); }
+      for (let i = -10; i <= 10; i++){ g.beginPath(); g.moveTo(S / 2 + i * 8, 150); g.lineTo(S / 2 + i * 60, S); g.stroke(); }
+      g.fillStyle = "#fff"; g.font = font(26); g.textAlign = "center";
+      g.fillStyle = "#ff1744"; g.fillText("RIOT", S / 2 - 2, 48); g.fillStyle = "#00e5ff"; g.fillText("RIOT", S / 2 + 2, 48);
+      g.fillStyle = "#fff"; g.fillText("RIOT", S / 2, 48);
+      g.font = font(12); g.fillStyle = "#ffb3c1"; g.fillText("DANCE WITH THE DEAD", S / 2, 70);
+    } else if (kind === "cracktro"){
+      // демосцена: шахматка, радужные полосы, «CRACKTRO»
+      g.fillStyle = "#000"; g.fillRect(0, 0, S, S);
+      for (let y = 150; y < S; y += 16) for (let x = 0; x < S; x += 16){
+        if (((x + y) / 16) % 2 === 0){ g.fillStyle = "#1b0f3a"; g.fillRect(x, y, 16, 16); }
+      }
+      const bars = ["#ff2bd6", "#ffe14d", "#b6ff00", "#00f0ff", "#7a00ff"];
+      bars.forEach((col, i) => { g.fillStyle = col; g.fillRect(0, 20 + i * 12, S, 6); });
+      g.font = font(30); g.textAlign = "center";
+      g.fillStyle = "#7a00ff"; g.fillText("CRACKTRO", S / 2 + 3, 128);
+      g.fillStyle = "#b6ff00"; g.fillText("CRACKTRO", S / 2, 125);
+      g.font = font(11); g.fillStyle = "#00f0ff"; g.fillText("MASTER BOOT RECORD", S / 2, 146);
+      g.fillStyle = "#fff"; for (let i = 0; i < 40; i++) g.fillRect(Math.random() * S, 160 + Math.random() * 90, 2, 2);
+    } else {
+      // Xenon: космос, планета с кольцом, сетка
+      const sp = g.createRadialGradient(S * .3, S * .3, 10, S / 2, S / 2, S * .8);
+      sp.addColorStop(0, "#1d0b4a"); sp.addColorStop(1, "#02000a");
+      g.fillStyle = sp; g.fillRect(0, 0, S, S);
+      g.fillStyle = "#fff"; for (let i = 0; i < 90; i++){ const r = Math.random() < .1 ? 2 : 1; g.fillRect(Math.random() * S, Math.random() * S, r, r); }
+      const pl = g.createLinearGradient(80, 70, 180, 180);
+      pl.addColorStop(0, "#00f0ff"); pl.addColorStop(.6, "#7a00ff"); pl.addColorStop(1, "#ff2bd6");
+      g.fillStyle = pl; g.beginPath(); g.arc(S / 2, 128, 56, 0, Math.PI * 2); g.fill();
+      g.fillStyle = "rgba(0,0,0,.25)"; for (let y = 80; y < 184; y += 8) g.fillRect(70, y, 116, 3);
+      g.strokeStyle = "#b6ff00"; g.lineWidth = 3;
+      g.beginPath(); g.ellipse(S / 2, 128, 100, 22, -0.25, 0, Math.PI * 2); g.stroke();
+      g.font = font(28); g.textAlign = "center";
+      g.fillStyle = "#ff2bd6"; g.fillText("XENON", S / 2 - 2, 228); g.fillStyle = "#00f0ff"; g.fillText("XENON", S / 2 + 2, 228);
+      g.fillStyle = "#fff"; g.fillText("XENON", S / 2, 228);
+      g.font = font(11); g.fillStyle = "#b6ff00"; g.fillText("MASTER BOOT RECORD", S / 2, 40);
+    }
+    // глитч-срезы и скан-линии поверх
+    for (let k = 0; k < 5; k++){
+      const y = Math.random() * S | 0, h = 2 + (Math.random() * 10 | 0), dx = ((Math.random() - .5) * 26) | 0;
+      g.drawImage(c, 0, y, S, h, dx, y, S, h);
+    }
+    g.fillStyle = "rgba(0,0,0,.22)";
+    for (let y = 0; y < S; y += 3) g.fillRect(0, y, S, 1);
+    return c.toDataURL("image/png");
+  }
+  function paintCovers(){ tracks.forEach((t) => { t.cover = makeCover(t.art); }); }
+  paintCovers();
+  // когда догрузится пиксельный шрифт — перерисовать обложки с ним
+  if (document.fonts && document.fonts.load){
+    document.fonts.load("20px Minecraft").then(() => {
+      paintCovers();
+      if (typeof playerCover !== "undefined" && tracks[currentTrackIndex]) playerCover.src = tracks[currentTrackIndex].cover;
+    }).catch(() => {});
+  }
+
   let currentTrackIndex = Math.floor(Math.random() * tracks.length);
   let seeking = false, shuffle = false, repeat = "off";
 
@@ -2823,13 +2908,13 @@
           "  date · echo · clear · exit"
         ].join("\n"), "info");
       },
-      whoami(){ print("furigin — Ruslan, 17. человек? нейросеть? пока не решили.", "ok"); },
+      whoami(){ print("furigin — Ruslan, 18. немного кодинг, немного сайтики ✦", "ok"); },
       ls(){
         print([
           " Том в устройстве C имеет метку FURIGIN",
           " profile.exe        1 337 байт",
           " now_playing.wav    3 трека",
-          " model_card.json    v17.0",
+          " model_card.json    v18.0",
           " wanderlust.lnk     → minecraft",
           " prompt.bat         ← ты здесь",
           " guestbook.txt      твой след",
@@ -2843,8 +2928,8 @@
           "   ▄▀▀▀▀▄     furigin@neural",
           "  █ ▓▓▓▓ █    -------------",
           "  █ ▓▀▀▓ █    OS: furigin 98 (glitch edition)",
-          "   ▀▄▄▄▄▀     Kernel: 17.0-neural",
-          "   ▄█▀▀█▄     Uptime: 17 лет",
+          "   ▀▄▄▄▄▀     Kernel: 18.0-neural",
+          "   ▄█▀▀█▄     Uptime: 18 лет",
           "  ▀      ▀    Shell: prompt.bat",
           "              Style: neural × webcore × glitchcore",
           "              CPU: мозг @ 4.20 GHz (перегрет)",
@@ -2912,7 +2997,7 @@
     });
     term.addEventListener("click", (e) => { if (!window.getSelection().toString()) inp.focus({ preventScroll: true }); });
 
-    print("furigin 98 [Версия 17.0.2026]\n(c) furigin labs. Все нейроны защищены.", "info");
+    print("furigin 98 [Версия 18.0.2026]\n(c) furigin labs. Все права защищены.", "info");
     print("напиши help, чтобы увидеть команды.");
   })();
 
@@ -2958,14 +3043,14 @@
     const linesEl = document.getElementById("bootLines");
     const fill = document.getElementById("bootFill");
     const LINES = [
-      'FURIGIN BIOS v17.0   (c) 2009–2026 furigin labs',
+      'FURIGIN BIOS v18.0   (c) 2008–2026 furigin labs',
       'CPU: neural core @ 4.20 GHz ............ <span class="ok">OK</span>',
       'memory test: 16384K .................... <span class="ok">OK</span>',
       'loading weights [1.7B params] .......... <span class="ok">OK</span>',
       'mounting /dev/vibe ..................... <span class="ok">OK</span>',
       'attention heads: 12/12 ................. <span class="ok">OK</span>',
       'soul.dll ............................... <span class="bad">NOT FOUND (ignored)</span>',
-      'epoch 17/∞   loss: <span class="hi">0.0042</span>',
+      'epoch 18/∞   loss: <span class="hi">0.0042</span>',
       '&gt; starting furigin.exe'
     ];
     let i = 0, typed = false, loaded = document.readyState === "complete", done = false;
@@ -3492,6 +3577,8 @@
     const ctx = canvas.getContext("2d");
     const COLORS = ["#b6ff00", "#ff2bd6", "#00f0ff", "#ffe14d", "#b18cff", "#ffffff"];
     let running = false, raf = 0, W = 0, H = 0, stars = [], logo = null, startedAt = 0, cornerT = 0, lastAct = Date.now();
+    let frame = 0, hxFrame = -9, hyFrame = -9;
+    const SPEED = 2.4;
 
     function resize(){ W = canvas.width = innerWidth; H = canvas.height = innerHeight; }
     function start(){
@@ -3503,13 +3590,16 @@
       const fs = W < 640 ? 34 : 56;
       ctx.font = fs + "px Minecraft, 'Pixelify Sans', monospace";
       const lw = ctx.measureText("furigin").width;
-      logo = { x:Math.random() * (W - lw), y:fs + Math.random() * (H - fs * 2), vx:2.4, vy:2.4, w:lw, fs, c:0 };
+      logo = { x:Math.random() * (W - lw), y:fs + Math.random() * (H - fs * 2), vx:SPEED, vy:SPEED, w:lw, fs, c:0 };
+      frame = 0; hxFrame = hyFrame = -9;
+      window.__saverOn = true;
       Ach.unlock("saver");
       raf = requestAnimationFrame(loop);
     }
     function stop(){
       if (!running) return;
       running = false; cancelAnimationFrame(raf);
+      window.__saverOn = false;
       el.classList.remove("show");
       lastAct = Date.now();
     }
@@ -3526,19 +3616,35 @@
         ctx.fillStyle = s.z < W * .2 ? "#fff" : "#9fa8ff";
         ctx.fillRect(x, y, sz, sz);
       }
-      // логотип: с лёгким «магнитом», чтобы угол иногда случался
-      const L = logo, top = L.y - L.fs * .82, bottom = L.y + L.fs * .12;
-      const fx = L.vx > 0 ? (W - (L.x + L.w)) / L.vx : L.x / -L.vx;
-      const fy = L.vy > 0 ? (H - bottom) / L.vy : top / -L.vy;
-      if (fx > 0 && fy > 0 && fx < 60 && Math.abs(fx - fy) < 10) L.y += (L.vy > 0 ? 1 : -1) * (fx - fy) * 0.15;
+      // логотип «как на DVD»
+      const L = logo;
+      const yMin = L.fs * .82, yMax = H - L.fs * .12, spanX = W - L.w, spanY = yMax - yMin;
+      frame++;
       L.x += L.vx; L.y += L.vy;
       let hx = false, hy = false;
       if (L.x <= 0){ L.x = 0; L.vx = -L.vx; hx = true; }
-      if (L.x + L.w >= W){ L.x = W - L.w; L.vx = -L.vx; hx = true; }
-      if (L.y - L.fs * .82 <= 0){ L.y = L.fs * .82; L.vy = -L.vy; hy = true; }
-      if (L.y + L.fs * .12 >= H){ L.y = H - L.fs * .12; L.vy = -L.vy; hy = true; }
+      if (L.x >= spanX){ L.x = spanX; L.vx = -L.vx; hx = true; }
+      if (L.y <= yMin){ L.y = yMin; L.vy = -L.vy; hy = true; }
+      if (L.y >= yMax){ L.y = yMax; L.vy = -L.vy; hy = true; }
+      if (hx) hxFrame = frame;
+      if (hy) hyFrame = frame;
       if (hx || hy) L.c = (L.c + 1) % COLORS.length;
-      if (hx && hy){ cornerT = Date.now(); Ach.unlock("corner"); }
+      if ((hx || hy) && Math.abs(hxFrame - hyFrame) <= 1){
+        cornerT = Date.now(); Ach.unlock("corner");
+        hxFrame = hyFrame = -9;
+        L.vy = Math.sign(L.vy) * SPEED;              // после угла — обычная скорость
+      } else if (hx && Date.now() - startedAt > 12000 && Math.random() < 0.4 && spanX > 0 && spanY > 0){
+        // «план на угол»: чуть меняем вертикальную скорость так, чтобы к следующей
+        // боковой стенке логотип пришёл ровно в верх или низ экрана
+        const N = spanX / Math.abs(L.vx);
+        const a = L.vy > 0 ? yMax - L.y : L.y - yMin;
+        const m0 = Math.max(0, Math.round((SPEED * N - a) / spanY));
+        for (const m of [m0, m0 + 1, m0 - 1]){
+          if (m < 0) continue;
+          const v = (a + m * spanY) / N;
+          if (v > SPEED * 0.55 && v < SPEED * 1.7){ L.vy = Math.sign(L.vy) * v; break; }
+        }
+      }
       ctx.font = L.fs + "px Minecraft, 'Pixelify Sans', monospace";
       ctx.textBaseline = "alphabetic";
       ctx.fillStyle = "#ff2bd6"; ctx.fillText("furigin", L.x - 2, L.y);
